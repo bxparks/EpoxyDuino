@@ -82,7 +82,7 @@ If you want to add code that takes effect only on UnixHostDuino, you can use
 the following macro:
 ```C++
 #if ! defined(ARDUINO)
-  {code for UnixHostDuino}
+  ...
 #endif
 ```
 
@@ -140,7 +140,6 @@ The following functions and features of the Arduino framework are implemented:
 * `WString.h`
     * `class String`
     * `class __FlashStringHelper`, `F()`
-    * `
 * `Print.h`
     * `class Print`, `class Printable`
 * `pgmspace.h`
@@ -158,7 +157,8 @@ See [Arduino.h](https://github.com/bxparks/UnixHostDuino/blob/develop/Arduino.h)
 for the latest list.
 
 The `Serial` object sends the output to the `STDOUT`. It can also read from the
-`STDIN` (in raw mode).
+`STDIN`, in raw mode to avoid blocking while waiting for input from the
+keyboard..
 
 ## System Requirements
 
