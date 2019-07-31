@@ -12,13 +12,16 @@
 #include "Print.h"
 #include "StdioSerial.h"
 
+// Used by digitalRead() and digitalWrite()
 #define HIGH 0x1
 #define LOW  0x0
 
+// Used by pinMode()
 #define INPUT 0x0
 #define OUTPUT 0x1
 #define INPUT_PULLUP 0x2
 
+// Various math constants.
 #define PI 3.1415926535897932384626433832795
 #define HALF_PI 1.5707963267948966192313216916398
 #define TWO_PI 6.283185307179586476925286766559
@@ -35,6 +38,9 @@
 #define CHANGE 1
 #define FALLING 2
 #define RISING 3
+
+// Arbitrarily define the pin for the LED_BUILTIN
+#define LED_BUILTIN 1
 
 extern "C" {
 
