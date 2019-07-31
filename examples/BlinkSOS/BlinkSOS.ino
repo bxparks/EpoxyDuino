@@ -22,7 +22,7 @@
 #define LED_OFF LOW
 
 void setup() {
-#if defined(ARDUINO)
+#if ! defined(UNIX_HOST_DUINO)
   delay(1000); // some boards reboot twice
 #endif
   SERIAL_PORT_MONITOR.begin(115200);

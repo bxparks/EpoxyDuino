@@ -2,8 +2,8 @@
 
 This directory contains a small (but often effective) implementation of the
 Arduino programming framework for Linux and MacOS. Originally, it was created to
-allow [AUnit](https://github.com/bxparks/AUnit) unit tests to be written,
-compiled and run on a Linux or MacOS machine, instead of running on the embedded
+allow [AUnit](https://github.com/bxparks/AUnit) unit tests to be compiled and
+run on a Linux or MacOS machine, instead of running on the embedded
 microcontroller. As more Arduino functionality was added, it became useful for
 other Arduino programs, particularly ones that relied on just the `Serial`
 interface.
@@ -11,7 +11,7 @@ interface.
 The build process uses [GNU Make](https://www.gnu.org/software/make/manual/).
 A `Makefile` needs to be created inside the sketch folder. For example, if the
 sketch is `SampleTest/SampleTest.ino`, then the makefile should be
-`SampleTest/Makefile`. The unit test is compiled with just a `make` command. It
+`SampleTest/Makefile`. The sketch is compiled with just a `make` command. It
 produces an executable with a `.out` extension, for example, `SampleTest.out`.
 
 Running an Arduino program natively on Linux or MacOS has some advantages:
@@ -28,9 +28,8 @@ The disadvantages are:
 * There may be compiler differences between the desktop and the embedded
   environments (e.g. 8-bit integers versus 64-bit integers).
 
-## How to Use
+## Usage
 
-See the [BlinkSOS](examples/BlinkSOS) example project.
 The minimal `Makefile` has 3 lines:
 ```
 APP_NAME := {name of project}
@@ -38,7 +37,15 @@ ARDUINO_LIBS := {list of dependent Arduino libraries}
 include {path/to/UnixHostDuino.mk}
 ```
 
-To build the unit test, just run `make`:
+For example, the [examples/BlinkSOS](examples/BlinkSOS) project contains this
+Makefile:
+```
+APP_NAME := BlinkSOS
+ARDUINO_LIBS :=
+include ../../../UnixHostDuino/UnixHostDuino.mk
+```
+
+To build the program, just run `make`:
 ```
 $ cd examples/BlinkSOS
 $ make clean
@@ -81,7 +88,7 @@ program that compiles with UnixHostDuino will also compile under Ardunio IDE.
 If you want to add code that takes effect only on UnixHostDuino, you can use
 the following macro:
 ```C++
-#if ! defined(ARDUINO)
+#if defined(UNIX_HOST_DUINO)
   ...
 #endif
 ```
@@ -102,16 +109,15 @@ and the following works for MacOS:
 
 ### Additional Arduino Libraries
 
-The dependency to the `AUnit` library is always included by default.
-If the unit test depends on additional Arduino libraries, they must be specified
-in the `Makefile` using the `ARDUINO_LIBS` parameter. For example, this
-includes the`[AUnit](https://github.com/bxparks/AUnit) library if it is
-at the same level as UnixHostDuino::
+If the Arduino program depends on additional Arduino libraries, they must be
+specified in the `Makefile` using the `ARDUINO_LIBS` parameter. For example,
+this includes the`[AUnit](https://github.com/bxparks/AUnit) library if it is at
+the same level as UnixHostDuino::
 
 ```
-APP_NAME := BlinkSOSTest
+APP_NAME := SampleTest
 ARDUINO_LIBS := AUnit
-include ../UnixHostDuino/UnixHostDuino.mk
+include .../UnixHostDuino/UnixHostDuino.mk
 ```
 
 The libraries are referred
