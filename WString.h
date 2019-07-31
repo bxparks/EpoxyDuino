@@ -30,14 +30,10 @@
 #include "pgmspace.h"
 #include "avr_stdlib.h"
 
-// When compiling programs with this class, the following gcc parameters
-// dramatically increase performance and memory (RAM) efficiency, typically
-// with little or no increase in code size.
-//     -felide-constructors
-//     -std=c++0x
-
+// Macros for creating and using c-strings in PROGMEM.
 class __FlashStringHelper;
-#define F(string_literal) (reinterpret_cast<const __FlashStringHelper *>(PSTR(string_literal)))
+#define FPSTR(p) (reinterpret_cast<const __FlashStringHelper *>(p))
+#define F(s) FPSTR(PSTR(s))
 
 // An inherited class for holding the result of a concatenation.  These
 // result objects are assumed to be writable by subsequent concatenations.
