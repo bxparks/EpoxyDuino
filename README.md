@@ -164,9 +164,35 @@ The following functions and features of the Arduino framework are implemented:
 See [Arduino.h](https://github.com/bxparks/UnixHostDuino/blob/develop/Arduino.h)
 for the latest list.
 
-The `Serial` object sends the output to the `STDOUT`. It can also read from the
-`STDIN`, in raw mode to avoid blocking while waiting for input from the
-keyboard..
+### Serial Port Emulation
+
+The `Serial` object is an instance of the `StdioSerial` class which emulates the
+Serial port using the `STDIN` and `STDOUT` of the Unix system. `Serial.print()`
+sends the output to the `STDOUT` and `Serial.read()` reads from the `STDIN`.
+
+The `STDOUT` remains mostly in normal mode. In particular, `ONLCR` mode is
+enabled, which translates `\n` (NL) to `\r\n` (CR-NL). This allows the program
+to print a line of string terminating in just `\n` (e.g. in a `printf()`
+function) and the Unix `tty` device will automatically add the `\r` (CR) to
+start the next line at the left. (Interestingly, the `Print.println()` method
+prints `\r\n`, which gets translated into `\r\r\n` by the terminal, which still
+does the correct thing. The extra `\r` does not do any harm.)
+
+The `STDIN` is put into "raw" mode to avoid blocking the `loop()` function while
+waiting for input from the keyboard. It also allows `ICRNL` and `INLCR` which
+flips the mapping of `\r` and `\n` from the keyboard. That's because normally,
+the "Enter" or "Return" key transmits a `\r`, but internally, most string
+processing code wants to see a line terminated by `\n` instead. This is
+convenient because when the `\n` is printed back to the screen, it becomes
+translated into `\r\n`, which is what most people expect is the correct
+behavior.
+
+The `ISIG` option on the `tty` device is *enabled*. This allows the usual Unix
+signals to be active, such as Ctrl-C to quit the program, or Ctrl-Z to suspend
+the program. But this convenience means that the Arduino program running under
+`UnixHostDuino` will never receive a control character through the
+`Serial.read()` function. The advantages of having normal Unix signals seemed
+worth the trade-off.
 
 ## System Requirements
 
