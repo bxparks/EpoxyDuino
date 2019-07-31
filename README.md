@@ -70,14 +70,16 @@ The following functions and features of the Arduino framework are implemented:
     * `SERIAL_PORT_MONITOR`
 * `WString.h`
     * `class String`
+    * `class __FlashStringHelper`, `F()`
+    * `
 * `Print.h`
     * `class Print`, `class Printable`
-* `<pgmspace.h>`
+* `pgmspace.h`
     * `pgm_read_byte()`, `pgm_read_word()`, `pgm_read_dword()`,
       `pgm_read_float()`, `pgm_read_ptr()`
     * `strlen_P()`, `strcat_P()`, `strcpy_P()`, `strncpy_P()`, `strcmp_P()`,
       `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`
-    * `PROGMEM`, `PGM_P`, `PGM_VOID_P`, `PSTR()`, `F()`
+    * `PROGMEM`, `PGM_P`, `PGM_VOID_P`, `PSTR()`
 * `EEPROM.h`
     * compile only
 * `Wire.h`
@@ -100,4 +102,36 @@ the same level as the `UnixHostDuino` directory itself. (We assume that the
 additional libraries are siblings to the`UnixHostDuino/` library). This search
 location can be changed by the user using the `ARDUINO_LIB_DIR` environment
 variable. If this is set, then `make` will use this directory to look for the
-additional libraries, instead of the parent directory of `AUnit`.
+additional libraries, instead of sibling directories of `UnixHostDuino`.
+
+## System Requirements
+
+This library has been tested on:
+
+* Ubuntu 18.04
+    * g++ 7.4.0
+    * GNU Make 4.1
+* MacOS 10.14.5
+    * clang++ Apple LLVM version 10.0.1
+    * GNU Make 3.81
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
+## License
+
+[MIT License](https://opensource.org/licenses/MIT)
+
+## Feedback and Support
+
+If you have any questions, comments, bug reports, or feature requests, please
+file a GitHub ticket instead of emailing me unless the content is sensitive.
+(The problem with email is that I cannot reference the email conversation when
+other people ask similar questions later.) I'd love to hear about how this
+software and its documentation can be improved. I can't promise that I will
+incorporate everything, but I will give your ideas serious consideration.
+
+## Authors
+
+Created by Brian T. Park (brian@xparks.net).

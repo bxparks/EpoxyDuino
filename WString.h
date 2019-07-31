@@ -31,6 +31,7 @@
 #include "avr_stdlib.h"
 
 // Macros for creating and using c-strings in PROGMEM.
+// FPSTR() is defined for ESP8266 and ESP32 Cores, but not AVR or SAMD Cores.
 class __FlashStringHelper;
 #define FPSTR(p) (reinterpret_cast<const __FlashStringHelper *>(p))
 #define F(s) FPSTR(PSTR(s))
