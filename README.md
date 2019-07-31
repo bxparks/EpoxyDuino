@@ -30,10 +30,10 @@ The disadvantages are:
 
 ## How to Use
 
-See [BlinkSOS](examples/BlinkSOS) example project.
-The `Makefile` has 3 lines:
+See the [BlinkSOS](examples/BlinkSOS) example project.
+The minimal `Makefile` has 3 lines:
 ```
-APP_NAME := BlinkSOS
+APP_NAME := {name of project}
 ARDUINO_LIBS := {list of dependent Arduino libraries}
 include {path/to/UnixHostDuino.mk}
 ```
@@ -86,6 +86,43 @@ the following macro:
 #endif
 ```
 
+If you need to target Linux or MacOS specifically, I have found that the
+following works for Linux:
+```C++
+#if defined(__linux__)
+  ...
+#endif
+```
+and the following works for MacOS:
+```C++
+#if defined(__APPLE__)
+  ...
+#endif
+```
+
+### Additional Arduino Libraries
+
+The dependency to the `AUnit` library is always included by default.
+If the unit test depends on additional Arduino libraries, they must be specified
+in the `Makefile` using the `ARDUINO_LIBS` parameter. For example, this
+includes the`[AUnit](https://github.com/bxparks/AUnit) library if it is
+at the same level as UnixHostDuino::
+
+```
+APP_NAME := BlinkSOSTest
+ARDUINO_LIBS := AUnit
+include ../UnixHostDuino/UnixHostDuino.mk
+```
+
+The libraries are referred
+to by their base directory name (e.g. `AceButton`, or `AceRoutine`) not the full
+path. The `UnixHostDuino.mk` file will look for these additional libraries at
+the same level as the `UnixHostDuino` directory itself. (We assume that the
+additional libraries are siblings to the`UnixHostDuino/` library). This search
+location can be changed by the user using the `ARDUINO_LIB_DIR` environment
+variable. If this is set, then `make` will use this directory to look for the
+additional libraries, instead of sibling directories of `UnixHostDuino`.
+
 ## Supported Arduino Features
 
 The following functions and features of the Arduino framework are implemented:
@@ -122,19 +159,6 @@ for the latest list.
 
 The `Serial` object sends the output to the `STDOUT`. It can also read from the
 `STDIN` (in raw mode).
-
-## Additional Arduino Libraries
-
-The dependency to the `AUnit` library is always included by default.
-If the unit test depends on additional Arduino libraries, they must be specified
-in the `Makefile` using the `ARDUINO_LIBS` parameter. The libraries are referred
-to by their base directory name (e.g. `AceButton`, or `AceRoutine`) not the full
-path. The `UnixHostDuino.mk` file will look for these additional libraries at
-the same level as the `UnixHostDuino` directory itself. (We assume that the
-additional libraries are siblings to the`UnixHostDuino/` library). This search
-location can be changed by the user using the `ARDUINO_LIB_DIR` environment
-variable. If this is set, then `make` will use this directory to look for the
-additional libraries, instead of sibling directories of `UnixHostDuino`.
 
 ## System Requirements
 
