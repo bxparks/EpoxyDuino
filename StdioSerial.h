@@ -61,4 +61,6 @@ class StdioSerial: public Stream {
 
 extern StdioSerial Serial;
 
+#define SERIAL_PORT_MONITOR Serial
+
 #endif
