@@ -82,7 +82,7 @@ SRCS := ${SRCS} $(wildcard *.cpp) $(wildcard */*.cpp)
 OBJS += $(SRCS:%.cpp=%.o) $(APP_NAME).o
 
 $(APP_NAME).out: $(OBJS)
-	$(CXX) $(LDFLAGS) $(CPPFLAGS) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(APP_NAME).o: $(APP_NAME).ino
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -x c++ -c $<
