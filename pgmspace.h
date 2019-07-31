@@ -10,8 +10,8 @@
  * enough mappings to allow AUnit tests to compile and run on Linux or MacOS.
  */
 
-#ifndef UNITDUINO_PGMSPACE_H
-#define UNITDUINO_PGMSPACE_H
+#ifndef UNIX_HOST_DUINO_PGMSPACE_H
+#define UNIX_HOST_DUINO_PGMSPACE_H
 
 #include <string.h>
 

@@ -20,8 +20,8 @@
   parsing functions based on TextFinder library by Michael Margolis
 */
 
-#ifndef UNITDUINO_STREAM_H
-#define UNITDUINO_STREAM_H
+#ifndef UNIX_HOST_DUINO_STREAM_H
+#define UNIX_HOST_DUINO_STREAM_H
 
 #include <inttypes.h>
 #include "Print.h"

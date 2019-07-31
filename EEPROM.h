@@ -19,8 +19,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef UNITDUINO_EEPROM_H
-#define UNITDUINO_EEPROM_H
+#ifndef UNIX_HOST_DUINO_EEPROM_H
+#define UNIX_HOST_DUINO_EEPROM_H
 
 #include <inttypes.h>
 /*

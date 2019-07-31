@@ -20,8 +20,8 @@
   Modified 2012 by Todd Krein (todd@krein.org) to implement repeated starts
 */
 
-#ifndef UNITDUINO_WIRE_H
-#define UNITDUINO_WIRE_H
+#ifndef UNIX_HOST_DUINO_WIRE_H
+#define UNIX_HOST_DUINO_WIRE_H
 
 #include <inttypes.h>
 #include "Stream.h"

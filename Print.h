@@ -18,8 +18,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef UNITDUINO_PRINT_H
-#define UNITDUINO_PRINT_H
+#ifndef UNIX_HOST_DUINO_PRINT_H
+#define UNIX_HOST_DUINO_PRINT_H
 
 #include <inttypes.h>
 #include <string.h> // strlen()

@@ -6,8 +6,8 @@
  * Copyright (c) 2005-2013 Arduino Team
  */
 
-#ifndef UNITDUINO_ARDUINO_H
-#define UNITDUINO_ARDUINO_H
+#ifndef UNIX_HOST_DUINO_ARDUINO_H
+#define UNIX_HOST_DUINO_ARDUINO_H
 
 #include "Print.h"
 #include "StdioSerial.h"

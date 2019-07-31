@@ -5,16 +5,16 @@
 # The content will look like this:
 #
 #      APP_NAME := {name of *.ino file}
-#      ARDUINO_LIBS := AceTime {... additional Arduino libraries}
-#      include ../../../AUnit/unitduino/unitduino.mk
+#      ARDUINO_LIBS := AUnit AceTime {... additional Arduino libraries}
+#      include ../../../UnixHostDuino/UnixHostDuino.mk
 #
 # The 2 required parameters are:
 #
 #   * APP_NAME: base name of the Arduino sketch file,
 #     e.g. 'Blink' not 'Blink.ino'
-#   * ARDUINO_LIBS: list of dependent Arduino libraries.
-#     The unitduino directory and the AUnit library are automatically
-#     included.
+#   * ARDUINO_LIBS: list of dependent Arduino libraries in sibling directories
+#	  to UnixHostDuino (e.g. AUnit). The UnixHostDuino directory is
+#	  automatically included.
 #
 # Optional parameters are:
 #
@@ -32,15 +32,15 @@
 # Detect Linux or MacOS
 UNAME := $(shell uname)
 
-# Unitduino module directory.
-UNITDUINO_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+# UnixHostDuino module directory.
+UNIX_HOST_DUINO_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
-# If ARDUINO_LIB_DIR is not defined, assume that it's 2 directories
-# above the unitduino/ directory.
-ARDUINO_LIB_DIR ?= $(realpath $(UNITDUINO_DIR)/../..)
+# If ARDUINO_LIB_DIR is not defined, assume that it's 1 level
+# above the UnixHostDuino/ directory.
+ARDUINO_LIB_DIR ?= $(realpath $(UNIX_HOST_DUINO_DIR)/..)
 
-# Default modules which are automatically linked in: AUnit and AUnit/unitduino.
-DEFAULT_MODULES := $(UNITDUINO_DIR) ${ARDUINO_LIB_DIR}/AUnit
+# Default modules which are automatically linked in: UnixHostDuino/
+DEFAULT_MODULES := $(UNIX_HOST_DUINO_DIR)
 
 # Application Modules as specified by the application's ARDUINO_LIBS variable.
 APP_MODULES := $(foreach lib,$(ARDUINO_LIBS),${ARDUINO_LIB_DIR}/${lib})
@@ -65,7 +65,9 @@ CPPFLAGS += $(foreach module,$(ALL_MODULES),$(CPPFLAGS_EXPANSION))
 # linker settings (e.g. -lm)
 LDFLAGS ?=
 
-# C++ srcs. Support subdirectory expansions up to 3 levels below 'src/'.
+# C++ srcs. Old Arduino libraries place the source files at the top level.
+# Later Arduino libraries put the source files under the src/ directory.
+# Support subdirectory expansions up to 3 levels below 'src/'.
 # (There might be a better way to do this using GNU Make but I can't find a
 # mechanism that doesn't barf when the 'src/' directory doesn't exist.)
 SRCS_EXPANSION = $(wildcard $(module)/*.cpp) \
