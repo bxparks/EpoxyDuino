@@ -58,24 +58,32 @@ controller.
 
 The following functions and features of the Arduino framework are implemented:
 
-* `setup()`
-* `loop()`
-* `delay()`
-* `yield()`
-* `millis()`
-* `Serial`
-    * `Serial.print()`
-    * `Serial.println()`
-    * `Serial.read()`
-* `String`
-* `Print`
-* `<pgmspace.h>` (limited)
-* `PROGMEM`
-* `F()` macro
-* `EEPROM` (compilation only)
+* `Arduino.h`
+    * `setup()`, `loop()`
+    * `delay()`, `yield()`
+    * `millis()`, `micros()`
+    * `digitalWrite()`, `digitalRead()`, `pinMode()` (empty stubs)
+    * `HIGH`, `LOW`, `INPUT`, `OUTPUT`, `INPUT_PULLUP`
+* `StdioSerial.h`
+    * `Serial.print()`, `Serial.println()`, `Serial.write()`
+    * `Serial.read()`, `Serial.peek()`, `Serial.available()`
+    * `SERIAL_PORT_MONITOR`
+* `WString.h`
+    * `class String`
+* `Print.h`
+    * `class Print`, `class Printable`
+* `<pgmspace.h>`
+    * `pgm_read_byte()`, `pgm_read_word()`, `pgm_read_dword()`,
+      `pgm_read_float()`, `pgm_read_ptr()`
+    * `strlen_P()`, `strcat_P()`, `strcpy_P()`, `strncpy_P()`, `strcmp_P()`,
+      `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`
+    * `PROGMEM`, `PGM_P`, `PGM_VOID_P`, `PSTR()`, `F()`
+* `EEPROM.h`
+    * compile only
+* `Wire.h`
+    * compile only
 
-There maybe more that I have not yet documented, see
-[Arduino.h](https://github.com/bxparks/UnixHostDuino/blob/develop/Arduino.h)
+See [Arduino.h](https://github.com/bxparks/UnixHostDuino/blob/develop/Arduino.h)
 for the latest list.
 
 The `Serial` object sends the output to the `STDOUT`. It can also read from the
