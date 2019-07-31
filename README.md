@@ -30,29 +30,61 @@ The disadvantages are:
 
 ## How to Use
 
-The `Makefile` should have 3 lines:
+See [BlinkSOS](examples/BlinkSOS) example project.
+The `Makefile` has 3 lines:
 ```
-APP_NAME := SampleTest
+APP_NAME := BlinkSOS
 ARDUINO_LIBS := {list of dependent Arduino libraries}
 include {path/to/UnixHostDuino.mk}
 ```
 
 To build the unit test, just run `make`:
 ```
-$ cd SampleTest
+$ cd examples/BlinkSOS
 $ make clean
 $ make
 ```
 
 The executable will be created with a `.out` extension. To run it, just type:
 ```
-$ ./SampleTest.out
+$ ./BlinkSOS.out
 ```
 
 The output that would normally be printed on the `Serial` on an Arduino
 board will be sent to the `STDOUT` of the Linux or MacOS terminal. The output
 should be identical to what would be shown on the serial port of the Arduino
 controller.
+
+### Difference from Arduino IDE
+
+There are a number of small differences compared to the programming environment
+provided by the Arduino IDE:
+
+* The `*.ino` file is treated like a normal `*.cpp` file. So it must have
+  an `#include <Arduino.h>` include line at the top of the file. This is
+  compatible with the Arduino IDE which automatically includes `<Arduino.h>`.
+* The Arduion IDE supports multiple `ino` files in the same directory. (I
+  believe it simply concontenates them all into a single file.) UnixHostDuino
+  supports only one `ino` file in a given directory.
+* The Arduino IDE automatically generates forward declarations for functions
+  that appear *after* the global `setup()` and `loop()` methods. In a normal
+  C++ file, these forward declarations must be created by hand. The other
+  alternative is to move `loop()` and `setup()` functions to the end of the
+  `ino` file.
+
+Fortunately, the changes required to make an `ino` file compatible with
+UnixHostDuino are backwards compatible with the Arduino IDE. In other words, a
+program that compiles with UnixHostDuino will also compile under Ardunio IDE.
+
+### Conditional Code
+
+If you want to add code that takes effect only on UnixHostDuino, you can use
+the following macro:
+```C++
+#if ! defined(ARDUINO)
+  {code for UnixHostDuino}
+#endif
+```
 
 ## Supported Arduino Features
 
