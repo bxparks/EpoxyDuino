@@ -170,6 +170,12 @@ The `Serial` object is an instance of the `StdioSerial` class which emulates the
 Serial port using the `STDIN` and `STDOUT` of the Unix system. `Serial.print()`
 sends the output to the `STDOUT` and `Serial.read()` reads from the `STDIN`.
 
+The interaction with the Unix `tty` device is complicated, and I am not entirely
+sure that I have implemented things properly. See [Entering raw
+mode](https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html) for
+in-depth details. The following is a quick summary of how this is implemented
+under `UnixHostDuino`.
+
 The `STDOUT` remains mostly in normal mode. In particular, `ONLCR` mode is
 enabled, which translates `\n` (NL) to `\r\n` (CR-NL). This allows the program
 to print a line of string terminating in just `\n` (e.g. in a `printf()`
