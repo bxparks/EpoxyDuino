@@ -70,6 +70,7 @@ static void die(const char* s) {
 }
 
 static void disableRawMode() {
+  if (!isatty(STDIN_FILENO)) return;
   if (!inRawMode) return;
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1) {
     inRawMode = false; // prevent exit(1) from being called twice
@@ -78,9 +79,9 @@ static void disableRawMode() {
 }
 
 static void enableRawMode() {
-  if (!isatty(STDIN_FILENO)) {
-    die("enableRawMode(): redirection on STDIN not supported");
-  }
+  // If STDIN is not a real tty, simply return instead of dying so that the
+  // unit tests can run in a continuous integration framework, e.g. Jenkins.
+  if (!isatty(STDIN_FILENO)) return;
   if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) {
     die("enableRawMode(): tcgetattr() failure");
 	}
@@ -106,6 +107,7 @@ static void enableRawMode() {
 }
 
 static void handleControlC(int /*sig*/) {
+  if (!isatty(STDIN_FILENO)) return;
   if (inRawMode) {
     // If this returns an error, don't call die() because it will call exit(),
     // which may call this again, causing an infinite recursion.
