@@ -219,6 +219,20 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 [MIT License](https://opensource.org/licenses/MIT)
 
+## Bugs and Limitations
+
+If the executable (e.g. `SampleTest.out`) is piped to the `less(1)` or `more(1)`
+command, sometimes (not all the time) the executable hangs and displays nothing
+on the pager program. I don't know why, it probably has to do with the way that
+the `less` or `more` programs manipulate the `stdin`. The solution is to
+explicitly redirect the `stdin`:
+
+```
+$ ./SampleTest.out | less # hangs
+
+$ ./SampleTest.out < /dev/null | less # works
+```
+
 ## Feedback and Support
 
 If you have any questions, comments, bug reports, or feature requests, please
