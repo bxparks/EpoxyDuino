@@ -19,7 +19,7 @@ Running an Arduino program natively on Linux or MacOS has some advantages:
 * The development cycle can be lot faster because the compilers on the the
   desktop machines are a lot faster, and we also avoid the upload and flash
   process to the microcontroller.
-* The desktop machine can run unit tests which are too much flash or too
+* The desktop machine can run unit tests which require too much flash or too
   much memory to fit inside an embedded microcontroller.
 
 The disadvantages are:
@@ -28,7 +28,7 @@ The disadvantages are:
 * There may be compiler differences between the desktop and the embedded
   environments (e.g. 8-bit integers versus 64-bit integers).
 
-Version: 0.1 (2019-07-31)
+Version: 0.1.1 (2019-08-14)
 
 ## Usage
 
@@ -218,6 +218,20 @@ See [CHANGELOG.md](CHANGELOG.md).
 ## License
 
 [MIT License](https://opensource.org/licenses/MIT)
+
+## Bugs and Limitations
+
+If the executable (e.g. `SampleTest.out`) is piped to the `less(1)` or `more(1)`
+command, sometimes (not all the time) the executable hangs and displays nothing
+on the pager program. I don't know why, it probably has to do with the way that
+the `less` or `more` programs manipulate the `stdin`. The solution is to
+explicitly redirect the `stdin`:
+
+```
+$ ./SampleTest.out | less # hangs
+
+$ ./SampleTest.out < /dev/null | less # works
+```
 
 ## Feedback and Support
 

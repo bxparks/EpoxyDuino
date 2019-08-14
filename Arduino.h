@@ -15,8 +15,8 @@
 // Macros defined when running under UnixHostDuino
 #define UNIX_HOST_DUINO 1
 // xx.yy.zz => xxyyzz (without leading 0)
-#define UNIX_HOST_DUINO_VERSION 100
-#define UNIX_HOST_DUINO_VERSION_STRING "0.1"
+#define UNIX_HOST_DUINO_VERSION 101
+#define UNIX_HOST_DUINO_VERSION_STRING "0.1.1"
 
 // Used by digitalRead() and digitalWrite()
 #define HIGH 0x1
