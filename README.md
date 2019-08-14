@@ -19,7 +19,7 @@ Running an Arduino program natively on Linux or MacOS has some advantages:
 * The development cycle can be lot faster because the compilers on the the
   desktop machines are a lot faster, and we also avoid the upload and flash
   process to the microcontroller.
-* The desktop machine can run unit tests which are too much flash or too
+* The desktop machine can run unit tests which require too much flash or too
   much memory to fit inside an embedded microcontroller.
 
 The disadvantages are:
