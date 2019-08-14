@@ -28,7 +28,7 @@ The disadvantages are:
 * There may be compiler differences between the desktop and the embedded
   environments (e.g. 8-bit integers versus 64-bit integers).
 
-Version: 0.1 (2019-07-31)
+Version: 0.1.1 (2019-08-14)
 
 ## Usage
 
