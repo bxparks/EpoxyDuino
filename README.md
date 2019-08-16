@@ -228,6 +228,8 @@ the `less` or `more` programs manipulate the `stdin`. The solution is to
 explicitly redirect the `stdin`:
 
 ```
+$ ./SampleTest.out | grep failed # works
+
 $ ./SampleTest.out | less # hangs
 
 $ ./SampleTest.out < /dev/null | less # works
