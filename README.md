@@ -28,7 +28,7 @@ The disadvantages are:
 * There may be compiler differences between the desktop and the embedded
   environments (e.g. 8-bit integers versus 64-bit integers).
 
-Version: 0.1.1 (2019-08-14)
+Version: 0.1.2 (2019-09-04)
 
 ## Usage
 
@@ -63,6 +63,17 @@ The output that would normally be printed on the `Serial` on an Arduino
 board will be sent to the `STDOUT` of the Linux or MacOS terminal. The output
 should be identical to what would be shown on the serial port of the Arduino
 controller.
+
+### Using an Alternate C++ Compiler
+
+Normally the C++ compiler on Linux is `g++`. If you have `clang++` installed
+you can use that instead by specifying the `CXX` environment variable:
+```
+$ CXX=clang++ make
+```
+(This sets the `CXX` shell environment variable temporarily, for the duration of
+the `make` command, which causes `make` to set its internal `CXX` variable,
+which causes `UnixHostDuino.mk` to use `clang++` over the default `g++`.)
 
 ### Difference from Arduino IDE
 
@@ -228,6 +239,8 @@ the `less` or `more` programs manipulate the `stdin`. The solution is to
 explicitly redirect the `stdin`:
 
 ```
+$ ./SampleTest.out | grep failed # works
+
 $ ./SampleTest.out | less # hangs
 
 $ ./SampleTest.out < /dev/null | less # works

@@ -11,4 +11,8 @@ size_t StdioSerial::write(uint8_t c) {
   return (result == EOF) ? 0 : 1;
 }
 
+void StdioSerial::flush() {
+  fflush(stdout);
+}
+
 StdioSerial Serial;

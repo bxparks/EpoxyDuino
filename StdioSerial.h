@@ -19,6 +19,8 @@ class StdioSerial: public Stream {
 
     size_t write(uint8_t c) override;
 
+    void flush() override;
+
     operator bool() { return true; }
 
     int available() override { return mHead != mTail; }
