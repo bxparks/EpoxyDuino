@@ -1,6 +1,6 @@
 # UnixHostDuino
 
-This directory contains a small (but often effective) implementation of the
+This project contains a small (but often effective) implementation of the
 Arduino programming framework for Linux and MacOS. Originally, it was created to
 allow [AUnit](https://github.com/bxparks/AUnit) unit tests to be compiled and
 run on a Linux or MacOS machine, instead of running on the embedded
@@ -26,7 +26,7 @@ The disadvantages are:
 
 * Only a limited set of Arduino functions are supported (see below).
 * There may be compiler differences between the desktop and the embedded
-  environments (e.g. 8-bit integers versus 64-bit integers).
+  environments (e.g. 16-bit `int` versus 64-bit `int`).
 
 Version: 0.1.2 (2019-09-04)
 
