@@ -30,6 +30,24 @@ The disadvantages are:
 
 Version: 0.1.2 (2019-09-04)
 
+## Installation
+
+You need to grab the sources directly from GitHub. This project is *not* an
+Arduino library so it is not available through the [Arduino Library
+Manager](https://www.arduino.cc/en/guide/libraries) in the Arduino IDE.
+
+The location of the UnixHostDuino directory can be arbitrary, but a convenient
+location might be the same `./libraries/` directory used by the Arduino IDE to
+store other Arduino libraries:
+
+```
+$ cd {sketchbook_directory}/libraries
+$ git clone https://github.com/bxparks/UnixHostDuino.git
+```
+
+This will create a directory called
+`{sketchbook_directory}/libraries/UnixHostDuino`.
+
 ## Usage
 
 The minimal `Makefile` has 3 lines:
@@ -124,8 +142,8 @@ and the following works for MacOS:
 
 If the Arduino program depends on additional Arduino libraries, they must be
 specified in the `Makefile` using the `ARDUINO_LIBS` parameter. For example,
-this includes the`[AUnit](https://github.com/bxparks/AUnit) library if it is at
-the same level as UnixHostDuino::
+this includes the [AUnit](https://github.com/bxparks/AUnit) library if it is at
+the same level as UnixHostDuino:
 
 ```
 APP_NAME := SampleTest

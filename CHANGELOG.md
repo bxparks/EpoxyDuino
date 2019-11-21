@@ -1,6 +1,9 @@
 # Changelog
 
 * Unreleased
+    * Add 'Installation' section to the README.md.
+    * Add `UNIX_HOST_DUINO` macro symbol  to the CPPFLAGS to allow conditional
+      code that activates only when UnixHostDuino is used.
 * 0.1.2 (2019-09-04)
     * Implement `StdioSerial::flush()` to enable `Serial.flush()`.
 * 0.1.1 (2019-08-14)
