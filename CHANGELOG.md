@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* 0.1.3 (2019-11-21)
     * Add 'Installation' section to the README.md.
     * Add `UNIX_HOST_DUINO` macro symbol  to the CPPFLAGS to allow conditional
       code that activates only when UnixHostDuino is used.

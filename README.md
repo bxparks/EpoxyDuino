@@ -28,7 +28,7 @@ The disadvantages are:
 * There may be compiler differences between the desktop and the embedded
   environments (e.g. 16-bit `int` versus 64-bit `int`).
 
-Version: 0.1.2 (2019-09-04)
+Version: 0.1.3 (2019-11-21)
 
 ## Installation
 
