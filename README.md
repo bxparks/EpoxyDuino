@@ -1,6 +1,6 @@
 # UnixHostDuino
 
-This directory contains a small (but often effective) implementation of the
+This project contains a small (but often effective) implementation of the
 Arduino programming framework for Linux and MacOS. Originally, it was created to
 allow [AUnit](https://github.com/bxparks/AUnit) unit tests to be compiled and
 run on a Linux or MacOS machine, instead of running on the embedded
@@ -26,9 +26,27 @@ The disadvantages are:
 
 * Only a limited set of Arduino functions are supported (see below).
 * There may be compiler differences between the desktop and the embedded
-  environments (e.g. 8-bit integers versus 64-bit integers).
+  environments (e.g. 16-bit `int` versus 64-bit `int`).
 
-Version: 0.1.2 (2019-09-04)
+Version: 0.1.3 (2019-11-21)
+
+## Installation
+
+You need to grab the sources directly from GitHub. This project is *not* an
+Arduino library so it is not available through the [Arduino Library
+Manager](https://www.arduino.cc/en/guide/libraries) in the Arduino IDE.
+
+The location of the UnixHostDuino directory can be arbitrary, but a convenient
+location might be the same `./libraries/` directory used by the Arduino IDE to
+store other Arduino libraries:
+
+```
+$ cd {sketchbook_directory}/libraries
+$ git clone https://github.com/bxparks/UnixHostDuino.git
+```
+
+This will create a directory called
+`{sketchbook_directory}/libraries/UnixHostDuino`.
 
 ## Usage
 
@@ -124,8 +142,8 @@ and the following works for MacOS:
 
 If the Arduino program depends on additional Arduino libraries, they must be
 specified in the `Makefile` using the `ARDUINO_LIBS` parameter. For example,
-this includes the`[AUnit](https://github.com/bxparks/AUnit) library if it is at
-the same level as UnixHostDuino::
+this includes the [AUnit](https://github.com/bxparks/AUnit) library if it is at
+the same level as UnixHostDuino:
 
 ```
 APP_NAME := SampleTest

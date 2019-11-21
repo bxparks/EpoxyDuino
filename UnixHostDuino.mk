@@ -62,6 +62,11 @@ CPPFLAGS_EXPANSION = -I$(module) -I$(module)/src
 CPPFLAGS ?=
 CPPFLAGS += $(foreach module,$(ALL_MODULES),$(CPPFLAGS_EXPANSION))
 
+# Define a macro to indicate that UnixHostDuino is being used. Defined here
+# instead of Arduino.h so that files like 'compat.h' can determine the
+# compile-time environment without having to include <Arduino.h>.
+CPPFLAGS += -DUNIX_HOST_DUINO
+
 # linker settings (e.g. -lm)
 LDFLAGS ?=
 
