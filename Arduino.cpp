@@ -123,7 +123,7 @@ static void handleControlC(int /*sig*/) {
 // Main loop. User code will provide setup() and loop().
 // -----------------------------------------------------------------------
 
-int main(int argc, char** argv) {
+extern "C" int __main(int argc, char** argv) {
   signal(SIGINT, handleControlC);
   atexit(disableRawMode);
 	enableRawMode();
@@ -137,3 +137,5 @@ int main(int argc, char** argv) {
     yield();
   }
 }
+
+extern "C" int main(int argc, char** argv) __attribute__((weak, alias("__main")));
