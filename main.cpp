@@ -91,10 +91,7 @@ static void handleControlC(int /*sig*/) {
 // Main loop. User code will provide setup() and loop().
 // -----------------------------------------------------------------------
 
-int main(int argc, char** argv)
-__attribute__((weak));
-
-int main(int argc, char** argv) {
+extern "C" int unixhostduino_main(int argc, char** argv) {
   signal(SIGINT, handleControlC);
   atexit(disableRawMode);
   enableRawMode();
@@ -107,4 +104,11 @@ int main(int argc, char** argv) {
     loop();
     yield();
   }
+}
+
+extern "C" int main(int argc, char** argv)
+__attribute__((weak));
+
+int main(int argc, char** argv) {
+  return unixhostduino_main(argc, argv);
 }
