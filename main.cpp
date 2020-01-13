@@ -18,11 +18,10 @@
 #include "Arduino.h"
 
 #include <inttypes.h>
-#include <unistd.h> // usleep()
-#include <time.h> // clock_gettime()
 #include <signal.h> // SIGINT
 #include <stdlib.h> // exit()
 #include <stdio.h> // perror()
+#include <unistd.h> // read()
 #include <termios.h>
 
 // -----------------------------------------------------------------------
