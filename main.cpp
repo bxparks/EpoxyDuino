@@ -95,7 +95,7 @@ static void handleControlC(int /*sig*/) {
 int main(int argc, char** argv)
 __attribute__((weak));
 
-inline int __main(int argc, char** argv) {
+int main(int argc, char** argv) {
   signal(SIGINT, handleControlC);
   atexit(disableRawMode);
   enableRawMode();
@@ -108,8 +108,4 @@ inline int __main(int argc, char** argv) {
     loop();
     yield();
   }
-}
-
-int main(int argc, char** argv) {
-  return __main(argc, argv);
 }
