@@ -34,7 +34,7 @@ static struct termios orig_termios;
 static bool inRawMode = false;
 
 static void die(const char* s) {
-	perror(s);
+  perror(s);
   exit(1);
 }
 
@@ -43,8 +43,8 @@ static void disableRawMode() {
   if (!inRawMode) return;
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1) {
     inRawMode = false; // prevent exit(1) from being called twice
-		die("disableRawMode(): tcsetattr() failure");
-	}
+    die("disableRawMode(): tcsetattr() failure");
+  }
 }
 
 static void enableRawMode() {
@@ -53,7 +53,7 @@ static void enableRawMode() {
   if (!isatty(STDIN_FILENO)) return;
   if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) {
     die("enableRawMode(): tcgetattr() failure");
-	}
+  }
 
   struct termios raw = orig_termios;
   // The 'Enter' key in raw mode is ^M (\r, CR). But internally, we want this
