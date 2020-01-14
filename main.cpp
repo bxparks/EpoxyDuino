@@ -1,15 +1,15 @@
 /*
  * Copyright (c) 2019 Brian T. Park
- * 
+ *
  * Parts derived from the Arduino SDK
  * Copyright (c) 2005-2013 Arduino Team
- * 
+ *
  * Parts inspired by [Entering raw
  * mode](https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html).
  *
  * Parts inspired by [ESP8266 Host
  * Emulation](https://github.com/esp8266/Arduino/tree/master/tests/host).
- * 
+ *
  * The 'Serial' object sends output to STDOUT, and receives input from STDIN in
  * 'raw' mode. The main() loop checks the STDIN and if it finds a character,
  * inserts it into the Serial buffer.
@@ -91,7 +91,9 @@ static void handleControlC(int /*sig*/) {
 // Main loop. User code will provide setup() and loop().
 // -----------------------------------------------------------------------
 
-extern "C" int unixhostduino_main(int argc, char** argv) {
+extern "C" {
+
+int unixhostduino_main(int argc, char** argv) {
   signal(SIGINT, handleControlC);
   atexit(disableRawMode);
   enableRawMode();
@@ -106,9 +108,12 @@ extern "C" int unixhostduino_main(int argc, char** argv) {
   }
 }
 
-extern "C" int main(int argc, char** argv)
+// Weak reference so that the calling code can provide its own main().
+int main(int argc, char** argv)
 __attribute__((weak));
 
 int main(int argc, char** argv) {
   return unixhostduino_main(argc, argv);
+}
+
 }
