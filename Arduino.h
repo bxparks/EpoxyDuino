@@ -62,6 +62,11 @@ void setup();
 /** Provided in the client code's *.ino file. */
 void loop();
 
-}
+/** Default entrypoint, runs setup() and loop() */
+int unixhostduino_main(int argc, char** argv);
 
+/** Calls unixhostduino_main() unless overriden by user */
+int main(int argc, char** argv);
+
+}
 #endif
