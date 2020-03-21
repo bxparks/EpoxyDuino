@@ -1,6 +1,13 @@
 # Changelog
 
 * Unreleased
+* 0.2 (2020-03-21)
+    * Mark `main()` as a weak reference (supported by g++ and clang++) so that
+      UniHostDuino can be used as a library in programs that already provide a
+      `main()` function. (Thanks to Max Prokhorov mcspr@).
+    * Replace `ARDUINO_LIB_DIR` with `ARDUINO_LIB_DIRS` which supports
+      multiple external library locations, in addition to siblings of the
+      UnixHostDuino directory. The `ARDUINO_LIB_DIR` is no longer supported.
 * 0.1.3 (2019-11-21)
     * Add 'Installation' section to the README.md.
     * Add `UNIX_HOST_DUINO` macro symbol  to the CPPFLAGS to allow conditional
