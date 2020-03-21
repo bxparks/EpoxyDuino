@@ -14,7 +14,11 @@ sketch is `SampleTest/SampleTest.ino`, then the makefile should be
 `SampleTest/Makefile`. The sketch is compiled with just a `make` command. It
 produces an executable with a `.out` extension, for example, `SampleTest.out`.
 
-Running an Arduino program natively on Linux or MacOS has some advantages:
+To be clear, most Arduino programs have hardware dependencies which will *not*
+be supported by UnixHostDuino. However, if your program has limited hardware
+dependencies so that it is conceptually portable to a vanilla Unix environment,
+UnixHostDuino may work. Running an Arduino program natively on Linux or MacOS
+has some advantages:
 
 * The development cycle can be lot faster because the compilers on the the
   desktop machines are a lot faster, and we also avoid the upload and flash
@@ -93,9 +97,48 @@ $ CXX=clang++ make
 the `make` command, which causes `make` to set its internal `CXX` variable,
 which causes `UnixHostDuino.mk` to use `clang++` over the default `g++`.)
 
+### Additional Arduino Libraries
+
+If the Arduino program depends on additional Arduino libraries, they must be
+specified in the `Makefile` using the `ARDUINO_LIBS` parameter. For example,
+this includes the [AUnit](https://github.com/bxparks/AUnit) library if it is at
+the same level as UnixHostDuino:
+
+```
+APP_NAME := SampleTest
+ARDUINO_LIBS := AUnit AceButton AceTime
+include ../../UnixHostDuino/UnixHostDuino.mk
+```
+
+The libraries are referred to by their base directory name (e.g. `AceButton`,
+or `AceTime`) not the full path. The `UnixHostDuino.mk` file will look for
+these additional libraries at the same level as the `UnixHostDuino` directory
+itself.
+
+### Additional Arduino Library Locations
+
+By default, UnixHostDuino assumes that the additional libraries are siblings to
+the`UnixHostDuino/` library. Unfortunately, Arduino libraries tend to be
+scattered among many locations. These additional locations can be specified
+using the `ARDUINO_LIB_DIRS` variable. For example,
+
+```
+APP_NAME := SampleTest
+ARDUINO := ../../arduino-1.8.9
+ARDUINO_LIBS := AUnit AceButton AceTime
+ARDUINO_LIB_DIRS := \
+	$(ARDUINO)/portable/packages/arduino/hardware/avr/1.8.2/libraries \
+	$(ARDUINO)/libraries \
+	$(ARDUINO)/hardware/arduino/avr/libraries
+include ../../UnixHostDuino/UnixHostDuino.mk
+```
+
+Each of the `AUnit`, `AceButton` and `AceTime` libraries will be searched in
+each of the 3 directories given in the `ARDUINO_LIB_DIRS`.
+
 ### Difference from Arduino IDE
 
-There are a number of small differences compared to the programming environment
+There are a number of differences compared to the programming environment
 provided by the Arduino IDE:
 
 * The `*.ino` file is treated like a normal `*.cpp` file. So it must have
@@ -113,6 +156,16 @@ provided by the Arduino IDE:
 Fortunately, the changes required to make an `ino` file compatible with
 UnixHostDuino are backwards compatible with the Arduino IDE. In other words, a
 program that compiles with UnixHostDuino will also compile under Ardunio IDE.
+
+There are other substantial differences. The Arduino IDE supports multiple
+microcontroller board types, each using its own set of compiler tools and
+library locations. There is a complicated set of files and rules that determine
+how to find and use those tools and libraries. The UnixHostDuino tool does *not*
+use any of the configuration files used by the Arduino IDE. Sometimes, you can
+use the `ARDUINO_LIB_DIRS` to get around this limitations. However, when you
+start using `ARDUINO_LIB_DIRS`, you will often run into third party libraries
+using features which are not supported by the UnixHostDuino framework emulation
+layer.
 
 ### Conditional Code
 
@@ -137,28 +190,6 @@ and the following works for MacOS:
   ...
 #endif
 ```
-
-### Additional Arduino Libraries
-
-If the Arduino program depends on additional Arduino libraries, they must be
-specified in the `Makefile` using the `ARDUINO_LIBS` parameter. For example,
-this includes the [AUnit](https://github.com/bxparks/AUnit) library if it is at
-the same level as UnixHostDuino:
-
-```
-APP_NAME := SampleTest
-ARDUINO_LIBS := AUnit
-include .../UnixHostDuino/UnixHostDuino.mk
-```
-
-The libraries are referred
-to by their base directory name (e.g. `AceButton`, or `AceRoutine`) not the full
-path. The `UnixHostDuino.mk` file will look for these additional libraries at
-the same level as the `UnixHostDuino` directory itself. (We assume that the
-additional libraries are siblings to the`UnixHostDuino/` library). This search
-location can be changed by the user using the `ARDUINO_LIB_DIR` environment
-variable. If this is set, then `make` will use this directory to look for the
-additional libraries, instead of sibling directories of `UnixHostDuino`.
 
 ## Supported Arduino Features
 
