@@ -32,7 +32,7 @@ The disadvantages are:
 * There may be compiler differences between the desktop and the embedded
   environments (e.g. 16-bit `int` versus 64-bit `int`).
 
-Version: 0.1.3 (2019-11-21)
+Version: 0.2 (2020-03-21)
 
 ## Installation
 
@@ -265,7 +265,10 @@ worth the trade-off.
 This library has been tested on:
 
 * Ubuntu 18.04
+    * g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
     * g++ 7.4.0
+    * clang++ 8.0.0-3~ubuntu18.04.2
+    * clang++ 6.0.0-1ubuntu2
     * GNU Make 4.1
 * MacOS 10.14.5
     * clang++ Apple LLVM version 10.0.1
@@ -306,4 +309,6 @@ incorporate everything, but I will give your ideas serious consideration.
 
 ## Authors
 
-Created by Brian T. Park (brian@xparks.net).
+* Created by Brian T. Park (brian@xparks.net).
+* Support for using as library, by making `main()` a weak reference, added
+  by Max Prokhorov (prokhorov.max@outlook.com).
