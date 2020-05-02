@@ -1,6 +1,9 @@
 # Changelog
 
 * Unreleased
+* 0.2.1 (2020-05-02)
+    * Add `MORE_CLEAN`, an optional user-provided make-target to do additional
+      cleaning, such as removing directories created by code-generators.
 * 0.2 (2020-03-21)
     * Mark `main()` as a weak reference (supported by g++ and clang++) so that
       UniHostDuino can be used as a library in programs that already provide a

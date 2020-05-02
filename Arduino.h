@@ -13,8 +13,8 @@
 #include "StdioSerial.h"
 
 // xx.yy.zz => xxyyzz (without leading 0)
-#define UNIX_HOST_DUINO_VERSION 200
-#define UNIX_HOST_DUINO_VERSION_STRING "0.2"
+#define UNIX_HOST_DUINO_VERSION 201
+#define UNIX_HOST_DUINO_VERSION_STRING "0.2.1"
 
 // Used by digitalRead() and digitalWrite()
 #define HIGH 0x1
