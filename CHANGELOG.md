@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* 0.2.1 (2020-05-02)
     * Add `MORE_CLEAN`, an optional user-provided make-target to do additional
       cleaning, such as removing directories created by code-generators.
 * 0.2 (2020-03-21)

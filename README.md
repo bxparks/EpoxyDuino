@@ -32,7 +32,7 @@ The disadvantages are:
 * There may be compiler differences between the desktop and the embedded
   environments (e.g. 16-bit `int` versus 64-bit `int`).
 
-Version: 0.2 (2020-03-21)
+Version: 0.2.1 (2020-05-02)
 
 ## Installation
 
