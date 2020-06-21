@@ -1,6 +1,8 @@
 # Changelog
 
 * Unreleased
+    * Add `#define` for various digital and analog pins: `D0`-`D19`, `A0`-`A9`.
+    * Add stub for `analogRead()`.
 * 0.2.1 (2020-05-02)
     * Add `MORE_CLEAN`, an optional user-provided make-target to do additional
       cleaning, such as removing directories created by code-generators.
