@@ -1,6 +1,11 @@
 # Changelog
 
 * Unreleased
+* 0.3 (2020-08-20)
+    * Add `#define` for various digital and analog pins: `D0`-`D19`, `A0`-`A9`.
+    * Add stub for `analogRead()`.
+    * Add `Print.printf()` provided by a significant number of Arduino boards
+      (ESP8266, ESP32, Teensy, etc).
 * 0.2.1 (2020-05-02)
     * Add `MORE_CLEAN`, an optional user-provided make-target to do additional
       cleaning, such as removing directories created by code-generators.

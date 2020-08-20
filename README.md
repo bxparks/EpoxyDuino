@@ -32,7 +32,7 @@ The disadvantages are:
 * There may be compiler differences between the desktop and the embedded
   environments (e.g. 16-bit `int` versus 64-bit `int`).
 
-Version: 0.2.1 (2020-05-02)
+Version: 0.3 (2020-08-20)
 
 ## Installation
 
@@ -200,6 +200,7 @@ The following functions and features of the Arduino framework are implemented:
     * `delay()`, `yield()`
     * `millis()`, `micros()`
     * `digitalWrite()`, `digitalRead()`, `pinMode()` (empty stubs)
+    * `analogRead()` (empty stub)
     * `HIGH`, `LOW`, `INPUT`, `OUTPUT`, `INPUT_PULLUP`
 * `StdioSerial.h`
     * `Serial.print()`, `Serial.println()`, `Serial.write()`
@@ -207,9 +208,11 @@ The following functions and features of the Arduino framework are implemented:
     * `SERIAL_PORT_MONITOR`
 * `WString.h`
     * `class String`
-    * `class __FlashStringHelper`, `F()`
+    * `class __FlashStringHelper`, `F()`, `FPSTR()`
 * `Print.h`
     * `class Print`, `class Printable`
+    * `Print.printf()` - extended function supported by some Arduino compatible
+      microcontrollers
 * `pgmspace.h`
     * `pgm_read_byte()`, `pgm_read_word()`, `pgm_read_dword()`,
       `pgm_read_float()`, `pgm_read_ptr()`
@@ -223,6 +226,12 @@ The following functions and features of the Arduino framework are implemented:
 
 See [Arduino.h](https://github.com/bxparks/UnixHostDuino/blob/develop/Arduino.h)
 for the latest list.
+
+The `Print.printf()` function is an extension to the `Print` class that is
+provided by many Arduino-compatible microcontrollers (but not the AVR
+controllers). It is implemented here for convenience. The size of the internal
+buffer is `250` characters, which can be changed by changing the
+`PRINTF_BUFFER_SIZE` parameter if needed.
 
 ### Serial Port Emulation
 
@@ -270,6 +279,9 @@ This library has been tested on:
     * clang++ 8.0.0-3~ubuntu18.04.2
     * clang++ 6.0.0-1ubuntu2
     * GNU Make 4.1
+* Ubuntu 20.04
+    * g++ (Ubuntu 9.3.0-10ubuntu2) 9.3.0
+    * GNU Make 4.2.1
 * MacOS 10.14.5
     * clang++ Apple LLVM version 10.0.1
     * GNU Make 3.81
