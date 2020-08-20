@@ -38,9 +38,9 @@
 UNAME := $(shell uname)
 
 # UnixHostDuino module directory.
-UNIX_HOST_DUINO_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+UNIX_HOST_DUINO_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 # Assume that there are other libs are siblings to UnixHostDuino
-UNIX_HOST_DUINO_LIB_DIR := $(realpath $(UNIX_HOST_DUINO_DIR)/..)
+UNIX_HOST_DUINO_LIB_DIR := $(abspath $(UNIX_HOST_DUINO_DIR)/..)
 
 # List of Arduino IDE library folders, both built-in to the Arduino IDE
 # and those downloaded later, e.g. in the portable/ directory or .arduino15/
