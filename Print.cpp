@@ -19,7 +19,8 @@
 
  Modified 23 November 2006 by David A. Mellis
  Modified 03 August 2015 by Chuck Todd
- */
+ Modified 2018 by Brian T. Park
+*/
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,6 +29,9 @@
 #include <math.h>
 #include "pgmspace.h"
 #include "Print.h"
+
+// Size of the internal printf() buffer
+#define PRINTF_BUFFER_SIZE 250
 
 // Public Methods //////////////////////////////////////////////////////////////
 
@@ -200,13 +204,13 @@ size_t Print::println(const Printable& x)
 }
 
 size_t Print::printf(const char* fmt, ...) {
-  char buf[200];
+  char buf[PRINTF_BUFFER_SIZE];
   va_list args;
   va_start(args, fmt);
-  int status = vsnprintf(buf, 200, fmt, args);
+  int status = vsnprintf(buf, PRINTF_BUFFER_SIZE, fmt, args);
   va_end(args);
   if (status >= 0) {
-    buf[199] = '\0';
+    buf[PRINTF_BUFFER_SIZE - 1] = '\0';
     size_t n = print(buf);
     return n;
   } else {
