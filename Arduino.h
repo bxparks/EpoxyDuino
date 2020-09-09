@@ -103,4 +103,10 @@ int unixhostduino_main(int argc, char** argv);
 int main(int argc, char** argv);
 
 }
+
+// WMath prototypes
+long random(long);
+long random(long, long);
+void randomSeed(unsigned long);
+
 #endif
