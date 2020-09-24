@@ -17,8 +17,9 @@ produces an executable with a `.out` extension, for example, `SampleTest.out`.
 To be clear, most Arduino programs have hardware dependencies which will *not*
 be supported by UnixHostDuino. However, if your program has limited hardware
 dependencies so that it is conceptually portable to a vanilla Unix environment,
-UnixHostDuino may work. Running an Arduino program natively on Linux or MacOS
-has some advantages:
+UnixHostDuino may work.
+
+Running an Arduino program natively on Linux or MacOS has some advantages:
 
 * The development cycle can be lot faster because the compilers on the the
   desktop machines are a lot faster, and we also avoid the upload and flash
@@ -32,7 +33,9 @@ The disadvantages are:
 * There may be compiler differences between the desktop and the embedded
   environments (e.g. 16-bit `int` versus 64-bit `int`).
 
-Version: 0.3 (2020-08-20)
+**Version**: 0.3 (2020-08-20)
+
+**Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
 ## Installation
 
@@ -285,10 +288,6 @@ This library has been tested on:
 * MacOS 10.14.5
     * clang++ Apple LLVM version 10.0.1
     * GNU Make 3.81
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
