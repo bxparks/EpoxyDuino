@@ -23,10 +23,9 @@
 */
 
 #include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <math.h>
+#include <stdio.h> // vsnprintf
+#include <stdarg.h> // va_list, va_start()
+#include <math.h> // isnan(), isinf()
 #include "pgmspace.h"
 #include "Print.h"
 
