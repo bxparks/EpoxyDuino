@@ -33,7 +33,7 @@ The disadvantages are:
 * There may be compiler differences between the desktop and the embedded
   environments (e.g. 16-bit `int` versus 64-bit `int`).
 
-**Version**: 0.3 (2020-08-20)
+**Version**: 0.3.1 (2020-11-16)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
