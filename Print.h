@@ -23,7 +23,7 @@
 
 #include <inttypes.h>
 #include <string.h> // strlen()
-#include <stdio.h> // for size_t
+#include <stddef.h> // size_t
 
 #include "WString.h"
 #include "Printable.h"

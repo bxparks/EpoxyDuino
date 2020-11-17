@@ -1,6 +1,8 @@
 # Changelog
 
-* Unreleased
+* 0.3.1 (2020-11-16)
+    * Add support for `random()` function.
+    * Cleanup header files.
 * 0.3 (2020-08-20)
     * Add `#define` for various digital and analog pins: `D0`-`D19`, `A0`-`A9`.
     * Add stub for `analogRead()`.

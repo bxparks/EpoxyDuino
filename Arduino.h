@@ -13,8 +13,8 @@
 #include "StdioSerial.h"
 
 // xx.yy.zz => xxyyzz (without leading 0)
-#define UNIX_HOST_DUINO_VERSION 300
-#define UNIX_HOST_DUINO_VERSION_STRING "0.3.0"
+#define UNIX_HOST_DUINO_VERSION 301
+#define UNIX_HOST_DUINO_VERSION_STRING "0.3.1"
 
 // Used by digitalRead() and digitalWrite()
 #define HIGH 0x1
@@ -103,4 +103,10 @@ int unixhostduino_main(int argc, char** argv);
 int main(int argc, char** argv);
 
 }
+
+// WMath prototypes
+long random(long);
+long random(long, long);
+void randomSeed(unsigned long);
+
 #endif
