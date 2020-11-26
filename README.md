@@ -31,7 +31,8 @@ The disadvantages are:
 
 * Only a limited set of Arduino functions are supported (see below).
 * There may be compiler differences between the desktop and the embedded
-  environments (e.g. 16-bit `int` versus 64-bit `int`).
+  environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
+  64-bit `long`).
 
 **Version**: 0.3.1 (2020-11-16)
 
