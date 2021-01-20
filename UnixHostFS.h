@@ -12,6 +12,13 @@
 
 namespace fs {
 
+/*
+ * Convert OpenMode and AccessMode to "r", "w", "r+", etc according to the
+ * table in fopen(1). Essentially, this code reverses the mapping defined
+ * by sflags() function in FS.cpp.
+ */
+const char* rsflags(OpenMode openMode, AccessMode accessMode);
+
 class UnixHostFileImpl: public FileImpl {
   public:
     UnixHostFileImpl(const char* fileName, FILE* file) :
@@ -105,28 +112,7 @@ class UnixHostDirImpl: public DirImpl {
     }
 
     FileImplPtr openFile(OpenMode openMode, AccessMode accessMode) override {
-      // Convert OpenMode and AccessMode to "r", "w", "r+", etc according to the
-      // table in fopen(1). Essentially, this code reverses the mapping defined
-      // by sflags() function in FS.cpp.
-      const char* mode;
-      if (accessMode == AM_READ) {
-        mode = "r";
-      } else if (accessMode == AM_WRITE) {
-        if (openMode == OM_TRUNCATE) {
-          mode = "w";
-        } else {
-          mode = "a";
-        }
-      } else if (accessMode == AM_RW) {
-        if (openMode == OM_DEFAULT) {
-          mode = "r+";
-        } else if (openMode == OM_TRUNCATE) {
-          mode = "w+";
-        } else {
-          mode = "a+";
-        }
-      }
-
+      const char* mode = rsflags(openMode, accessMode);
       FILE* file = fopen(fileName(), mode);
       return std::make_shared<UnixHostFileImpl>(fileName(), file);
     }
@@ -225,7 +211,9 @@ class UnixHostFSImpl: public FSImpl {
         OpenMode openMode,
         AccessMode accessMode
     ) override {
-      return 0;
+      const char* mode = rsflags(openMode, accessMode);
+      FILE* file = fopen(path, mode);
+      return std::make_shared<UnixHostFileImpl>(path, file);
     }
 
     bool exists(const char* path) override {
