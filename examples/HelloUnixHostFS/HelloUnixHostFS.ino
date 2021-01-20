@@ -47,20 +47,19 @@ void setup() {
   while (!SERIAL_PORT_MONITOR); // For Leonardo/Micro
 
 #if defined(UNIX_HOST_DUINO)
-  SERIAL_PORT_MONITOR.println(F("Inizializing UnixHostFS..."));
+  SERIAL_PORT_MONITOR.print(F("Inizializing UnixHostFS..."));
   FS& filesystem = UnixHostFS;
 #else
-  SERIAL_PORT_MONITOR.println(F("Inizializing LittleFS..."));
+  SERIAL_PORT_MONITOR.print(F("Inizializing LittleFS..."));
   FS& filesystem = LittleFS;
 #endif
 
   if (filesystem.begin()){
-      SERIAL_PORT_MONITOR.println(F("done."));
+    SERIAL_PORT_MONITOR.println(F("done."));
+    listDir(filesystem);
   } else {
-      SERIAL_PORT_MONITOR.println(F("fail."));
+    SERIAL_PORT_MONITOR.println(F("fail."));
   }
-
-  listDir(filesystem);
 
 #if defined(UNIX_HOST_DUINO)
   exit(0);
