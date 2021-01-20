@@ -25,7 +25,7 @@ class UnixHostFileImpl: public FileImpl {
         fileName_(fileName),
         file_(file) {
       int fd = fileno(file);
-      fstat(fd, &stat_);
+      ::fstat(fd, &stat_);
     }
 
     ~UnixHostFileImpl() override {
@@ -53,12 +53,12 @@ class UnixHostFileImpl: public FileImpl {
       } else {
         whence = SEEK_SET;
       }
-      fseek(file_, pos, whence);
+      ::fseek(file_, pos, whence);
       return true;
     }
 
     size_t position() const override {
-      return ftell(file_);
+      return ::ftell(file_);
     }
 
     size_t size() const override {
@@ -71,7 +71,7 @@ class UnixHostFileImpl: public FileImpl {
 
     void close() override {
       if (file_) {
-        fclose(file_);
+        ::fclose(file_);
         file_ = nullptr;
       }
     }
@@ -106,14 +106,14 @@ class UnixHostDirImpl: public DirImpl {
 
     ~UnixHostDirImpl() override {
       if (dir_) {
-        closedir(dir_);
+        ::closedir(dir_);
         dir_ = nullptr;
       }
     }
 
     FileImplPtr openFile(OpenMode openMode, AccessMode accessMode) override {
       const char* mode = rsflags(openMode, accessMode);
-      FILE* file = fopen(fileName(), mode);
+      FILE* file = ::fopen(fileName(), mode);
       return std::make_shared<UnixHostFileImpl>(fileName(), file);
     }
 
@@ -143,11 +143,11 @@ class UnixHostDirImpl: public DirImpl {
     }
 
     bool next() override {
-      dirEntry_ = readdir(dir_);
+      dirEntry_ = ::readdir(dir_);
       if (dirEntry_ != nullptr) {
         // TODO: Do I need to recreate the full path if this file is
         // under a subdirectory?
-        lstat(fileName(), &stat_);
+        ::lstat(fileName(), &stat_);
       }
       return dirEntry_ != nullptr;
     }
@@ -179,12 +179,12 @@ class UnixHostFSImpl: public FSImpl {
       }
 
       struct stat rootStats;
-      int status = lstat(fsroot_, &rootStats);
+      int status = ::lstat(fsroot_, &rootStats);
       if (status != 0) {
         int mkdirStatus = ::mkdir(fsroot_, 0700);
         if (mkdirStatus != 0) return false;
         // Check the directory again
-        status = lstat(fsroot_, &rootStats);
+        status = ::lstat(fsroot_, &rootStats);
         if (status != 0) return false;
       }
       if (! S_ISDIR(rootStats.st_mode)) return false;
@@ -212,7 +212,13 @@ class UnixHostFSImpl: public FSImpl {
         AccessMode accessMode
     ) override {
       const char* mode = rsflags(openMode, accessMode);
-      FILE* file = fopen(path, mode);
+      /*
+      std::string unixPath(fsroot_);
+      unixPath += '/';
+      unixPath += path;
+      FILE* file = ::fopen(unixPath.c_str(), mode);
+      */
+      FILE* file = ::fopen(path, mode);
       return std::make_shared<UnixHostFileImpl>(path, file);
     }
 
@@ -221,7 +227,13 @@ class UnixHostFSImpl: public FSImpl {
     }
 
     DirImplPtr openDir(const char* path) override {
-      DIR* dir = opendir(path);
+      /*
+      std::string unixPath(fsroot_);
+      unixPath += '/';
+      unixPath += path;
+      DIR* dir = ::opendir(unixPath.c_str());
+      */
+      DIR* dir = ::opendir(path);
       return std::make_shared<UnixHostDirImpl>(dir);
     }
 
