@@ -2,5 +2,6 @@
 # Makefile to compile and run Arduino programs natively on Linux or MacOS.
 
 APP_NAME := HelloUnixHostFS
+#ARDUINO_LIB_DIR := $(HOME)/src/arduino/libraries
 ARDUINO_LIBS := UnixHostFS
-include ../../../UnixHostDuino/UnixHostDuino.mk
+include $(HOME)/src/UnixHostDuino/UnixHostDuino.mk

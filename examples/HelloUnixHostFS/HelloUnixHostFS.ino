@@ -15,7 +15,8 @@ void listDir(FS& filesystem) {
   Dir dir = filesystem.openDir("./");
   // Cycle all the content
   while (dir.next()) {
-    // Print file
+    // Print directory entry
+    SERIAL_PORT_MONITOR.print("Dir: ");
     SERIAL_PORT_MONITOR.print(dir.fileName());
     if (dir.isDirectory()) {
       SERIAL_PORT_MONITOR.println('/');
@@ -23,16 +24,17 @@ void listDir(FS& filesystem) {
       SERIAL_PORT_MONITOR.println();
     }
 
-    /*
     // If element have a size display It else write 0
+    SERIAL_PORT_MONITOR.print("File: ");
     if (dir.fileSize()) {
         File f = dir.openFile("r");
+        SERIAL_PORT_MONITOR.print(f.name());
+        SERIAL_PORT_MONITOR.print(':');
         SERIAL_PORT_MONITOR.println(f.size());
         f.close();
     } else {
         SERIAL_PORT_MONITOR.println("0");
     }
-    */
   }
 }
 

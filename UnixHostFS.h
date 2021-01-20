@@ -22,10 +22,7 @@ class UnixHostFileImpl: public FileImpl {
     }
 
     ~UnixHostFileImpl() override {
-      if (file_) {
-        fclose(file_);
-        file_ = nullptr;
-      }
+      close();
     }
 
     size_t write(const uint8_t *buf, size_t size) override {
@@ -66,7 +63,10 @@ class UnixHostFileImpl: public FileImpl {
     }
 
     void close() override {
-      fclose(file_);
+      if (file_) {
+        fclose(file_);
+        file_ = nullptr;
+      }
     }
 
     const char* name() const override {
@@ -105,8 +105,9 @@ class UnixHostDirImpl: public DirImpl {
     }
 
     FileImplPtr openFile(OpenMode openMode, AccessMode accessMode) override {
-      // Convert OpenMode and AccessMode to "r", "w", "r+", etc according to
-      // the table in fopen(1).
+      // Convert OpenMode and AccessMode to "r", "w", "r+", etc according to the
+      // table in fopen(1). Essentially, this code reverses the mapping defined
+      // by sflags() function in FS.cpp.
       const char* mode;
       if (accessMode == AM_READ) {
         mode = "r";
@@ -125,6 +126,7 @@ class UnixHostDirImpl: public DirImpl {
           mode = "a+";
         }
       }
+
       FILE* file = fopen(fileName(), mode);
       return std::make_shared<UnixHostFileImpl>(fileName(), file);
     }
@@ -134,7 +136,7 @@ class UnixHostDirImpl: public DirImpl {
     }
 
     size_t fileSize() override {
-      return 0;
+      return (dirEntry_) ? stat_.st_size : 0;
     }
 
     // Return the last written time for a file.  Undefined when called on a
@@ -156,6 +158,11 @@ class UnixHostDirImpl: public DirImpl {
 
     bool next() override {
       dirEntry_ = readdir(dir_);
+      if (dirEntry_ != nullptr) {
+        // TODO: Do I need to recreate the full path if this file is
+        // under a subdirectory?
+        lstat(fileName(), &stat_);
+      }
       return dirEntry_ != nullptr;
     }
 
@@ -166,6 +173,7 @@ class UnixHostDirImpl: public DirImpl {
   private:
     DIR* dir_;
     struct dirent* dirEntry_;
+    struct stat stat_;
 };
 
 class UnixHostFSImpl: public FSImpl {
