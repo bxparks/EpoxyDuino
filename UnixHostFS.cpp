@@ -1,3 +1,5 @@
+#include <stdio.h> // remove()
+#include <ftw.h> // nftw()
 #include <string>
 #include "UnixHostFS.h"
 
@@ -6,6 +8,8 @@ using std::string;
 namespace fs {
 
 FS UnixHostFS(FSImplPtr(new UnixHostFSImpl()));
+
+//-----------------------------------------------------------------------------
 
 const char* rsflags(OpenMode openMode, AccessMode accessMode) {
   const char* mode;
@@ -46,4 +50,61 @@ string fileNameConcat(const string& a, const string& b) {
   return merged;
 }
 
+//-----------------------------------------------------------------------------
+
+const char* UnixHostFSImpl::getFSRoot() {
+  const char* envroot = getenv("UNIX_HOST_FS_ROOT");
+  if (envroot) {
+    return envroot;
+  } else {
+    return "fsdata";
+  }
 }
+
+bool UnixHostFSImpl::begin() {
+  fsroot_ = getFSRoot();
+
+  // Create the root directory if it does not exist.
+  struct stat rootStats;
+  int status = ::lstat(fsroot_, &rootStats);
+  if (status != 0) {
+    int mkdirStatus = ::mkdir(fsroot_, 0700);
+    if (mkdirStatus != 0) return false;
+    // Check the directory again
+    status = ::lstat(fsroot_, &rootStats);
+    if (status != 0) return false;
+  }
+  if (! S_ISDIR(rootStats.st_mode)) return false;
+  return true;
+}
+
+static int removeFileOrDir(
+    const char *fpath,
+    const struct stat *sb,
+    int typeflag,
+    struct FTW *ftwbuf)
+{
+  /*
+  if (typeflag == FTW_F) {
+    printf("File: %s\n", fpath);
+  } else if (typeflag == FTW_SL) {
+    printf("Symlink: %s\n", fpath);
+  } if (typeflag == FTW_DP) {
+    printf("Post Dir: %s\n", fpath);
+  }
+  */
+  int status = 0;
+  if (ftwbuf->level != 0) {
+    // Remove only children, not the top-level directory
+    status = remove(fpath);
+  }
+  return status;
+}
+
+bool UnixHostFSImpl::format() {
+  int status = nftw(fsroot_, removeFileOrDir, 5,
+      FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
+  return status == 0;
+}
+
+} // fs

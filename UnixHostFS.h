@@ -195,34 +195,12 @@ class UnixHostFSImpl: public FSImpl {
       return true;
     }
 
-    bool begin() override {
-      const char* envroot = getenv("UNIX_HOST_FS_ROOT");
-      if (envroot) {
-        fsroot_ = envroot;
-      } else {
-        fsroot_ = "fsdata";
-      }
-
-      struct stat rootStats;
-      int status = ::lstat(fsroot_, &rootStats);
-      if (status != 0) {
-        int mkdirStatus = ::mkdir(fsroot_, 0700);
-        if (mkdirStatus != 0) return false;
-        // Check the directory again
-        status = ::lstat(fsroot_, &rootStats);
-        if (status != 0) return false;
-      }
-      if (! S_ISDIR(rootStats.st_mode)) return false;
-      return true;
-    }
+    bool begin() override;
 
     void end() override {
     }
 
-    bool format() override {
-      // TODO: Implement me
-      return true;
-    }
+    bool format() override;
 
     bool info(FSInfo& info) override {
       // TODO: Implement me
@@ -277,6 +255,8 @@ class UnixHostFSImpl: public FSImpl {
     }
 
   private:
+    static const char* getFSRoot();
+
     const char* fsroot_;
 };
 
