@@ -12,7 +12,7 @@ const char* rsflags(OpenMode openMode, AccessMode accessMode) {
   if (accessMode == AM_READ) {
     mode = "r";
   } else if (accessMode == AM_WRITE) {
-    if (openMode == OM_TRUNCATE) {
+    if (openMode & OM_TRUNCATE) {
       mode = "w";
     } else {
       mode = "a";
@@ -20,7 +20,7 @@ const char* rsflags(OpenMode openMode, AccessMode accessMode) {
   } else if (accessMode == AM_RW) {
     if (openMode == OM_DEFAULT) {
       mode = "r+";
-    } else if (openMode == OM_TRUNCATE) {
+    } else if (openMode & OM_TRUNCATE) {
       mode = "w+";
     } else {
       mode = "a+";

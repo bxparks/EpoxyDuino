@@ -11,6 +11,8 @@
 using fs::UnixHostFS;
 
 void listDir(FS& filesystem) {
+  SERIAL_PORT_MONITOR.println("== Dir List '/'");
+
   // Open dir folder
   Dir dir = filesystem.openDir("/");
   // Cycle all the content
@@ -38,6 +40,30 @@ void listDir(FS& filesystem) {
   }
 }
 
+void writeFile(FS& filesystem) {
+  SERIAL_PORT_MONITOR.println("== Writing 'testfile.txt'");
+
+  File f = filesystem.open("testfile.txt", "w");
+  f.println("This is a test");
+  f.println(42);
+  f.println(42.0);
+  f.println(42, 16);
+  f.close();
+}
+
+void readFile(FS& filesystem) {
+  SERIAL_PORT_MONITOR.println("== Reading 'testfile.txt'");
+
+  File f = filesystem.open("testfile.txt", "r");
+  while (f.available()) {
+    String s = f.readStringUntil('\r');
+    SERIAL_PORT_MONITOR.print(s);
+    f.read();
+    SERIAL_PORT_MONITOR.println();
+  }
+  f.close();
+}
+
 void setup() {
 #if ! defined(UNIX_HOST_DUINO)
   delay(1000); // some boards reboot twice
@@ -57,6 +83,8 @@ void setup() {
   if (filesystem.begin()){
     SERIAL_PORT_MONITOR.println(F("done."));
     listDir(filesystem);
+    writeFile(filesystem);
+    readFile(filesystem);
   } else {
     SERIAL_PORT_MONITOR.println(F("fail."));
   }

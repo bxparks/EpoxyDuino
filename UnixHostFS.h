@@ -38,11 +38,11 @@ class UnixHostFileImpl: public FileImpl {
     }
 
     size_t write(const uint8_t *buf, size_t size) override {
-      return 0;
+      return ::fwrite(buf, 1, size, file_);
     }
 
     size_t read(uint8_t* buf, size_t size) override {
-      return 0;
+      return ::fread(buf, 1, size, file_);
     }
 
     void flush() override {
