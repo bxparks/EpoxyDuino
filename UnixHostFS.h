@@ -28,9 +28,7 @@ class UnixHostFileImpl: public FileImpl {
       : path_(path),
         mode_(mode)
     {
-      file_ = ::fopen(path_.c_str(), mode_);
-      int fd = fileno(file_);
-      ::fstat(fd, &stat_);
+      open(path, mode);
     }
 
     ~UnixHostFileImpl() override {
@@ -71,8 +69,14 @@ class UnixHostFileImpl: public FileImpl {
     }
 
     bool truncate(uint32_t size) override {
-      // TODO: Implement me
-      return false;
+      flush();
+      int fd = fileno(file_);
+      int status = ftruncate(fd, size);
+      if (status == 0) {
+        close();
+        open(path_, mode_);
+      }
+      return status == 0;
     }
 
     void close() override {
@@ -100,6 +104,13 @@ class UnixHostFileImpl: public FileImpl {
     }
 
   private:
+
+    void open(const std::string& path, const char* mode) {
+      file_ = ::fopen(path_.c_str(), mode_);
+      int fd = fileno(file_);
+      ::fstat(fd, &stat_);
+    }
+
     const std::string path_;
     const char* const mode_;
     FILE* file_;
