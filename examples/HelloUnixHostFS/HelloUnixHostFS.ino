@@ -1,3 +1,5 @@
+#include <stdio.h> // remove()
+#include <ftw.h> // nftw()
 #include <Arduino.h>
 
 #if defined(UNIX_HOST_DUINO)
@@ -9,6 +11,31 @@
 #endif
 
 using fs::UnixHostFS;
+
+int removeFile(
+    const char *fpath,
+    const struct stat *sb,
+    int typeflag,
+    struct FTW *ftwbuf)
+{
+  if (typeflag == FTW_F) {
+    printf("File: %s\n", fpath);
+  } else if (typeflag == FTW_SL) {
+    printf("Symlink: %s\n", fpath);
+  } if (typeflag == FTW_DP) {
+    printf("Post Dir: %s\n", fpath);
+  }
+  int status = 0;
+  if (ftwbuf->level != 0) {
+    status = remove(fpath);
+  }
+  return status;
+}
+
+void removeFtw() {
+  SERIAL_PORT_MONITOR.println("== FTW List '/'");
+  nftw("fsdata", removeFile, 5, FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
+}
 
 void listDir(FS& fileSystem) {
   SERIAL_PORT_MONITOR.println("== Dir List '/'");
@@ -92,6 +119,7 @@ void setup() {
     listDir(fileSystem);
     writeFile(fileSystem);
     readFile(fileSystem);
+    removeFtw();
   } else {
     SERIAL_PORT_MONITOR.println(F("fail."));
   }
