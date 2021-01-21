@@ -71,6 +71,7 @@ class UnixHostFileImpl: public FileImpl {
     }
 
     bool truncate(uint32_t size) override {
+      // TODO: Implement me
       return false;
     }
 
@@ -82,6 +83,7 @@ class UnixHostFileImpl: public FileImpl {
     }
 
     const char* name() const override {
+      // TODO: Return just the last file component, instead of the full path
       return path_.c_str();
     }
 
@@ -126,6 +128,7 @@ class UnixHostDirImpl: public DirImpl {
     }
 
     const char* fileName() override {
+      // TODO: Return only the last file component, instead of the entire path
       return dirEntry_->d_name;
     }
 
@@ -161,6 +164,7 @@ class UnixHostDirImpl: public DirImpl {
     }
 
     bool rewind() override {
+      // TODO: Implement me
       return true;
     }
 
@@ -176,6 +180,7 @@ class UnixHostFSImpl: public FSImpl {
     ~UnixHostFSImpl() override { }
 
     bool setConfig(const FSConfig &cfg) override {
+      // TODO: Implement me
       return true;
     }
 
@@ -204,14 +209,17 @@ class UnixHostFSImpl: public FSImpl {
     }
 
     bool format() override {
+      // TODO: Implement me
       return true;
     }
 
     bool info(FSInfo& info) override {
+      // TODO: Implement me
       return true;
     }
 
     bool info64(FSInfo64& info) override {
+      // TODO: Implement me
       return true;
     }
 
@@ -226,7 +234,10 @@ class UnixHostFSImpl: public FSImpl {
     }
 
     bool exists(const char* path) override {
-      return false;
+      struct stat stats;
+      std::string unixPath = fileNameConcat(fsroot_, path);
+      int status = ::lstat(unixPath.c_str(), &stats);
+      return status == 0;
     }
 
     DirImplPtr openDir(const char* path) override {
@@ -235,18 +246,22 @@ class UnixHostFSImpl: public FSImpl {
     }
 
     bool rename(const char* pathFrom, const char* pathTo) override {
+      // TODO: Implement me
       return false;
     }
 
     bool remove(const char* path) override {
+      // TODO: Implement me
       return false;
     }
 
     bool mkdir(const char* path) override {
+      // TODO: Implement me
       return false;
     }
 
     bool rmdir(const char* path) override {
+      // TODO: Implement me
       return false;
     }
 

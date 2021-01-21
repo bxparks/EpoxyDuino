@@ -49,6 +49,13 @@ void writeFile(FS& fileSystem) {
   f.println(42.0);
   f.println(42, 16);
   f.close();
+
+  bool exists = fileSystem.exists("testfile.txt");
+  if (exists) {
+    SERIAL_PORT_MONITOR.println("'testfile.txt' created");
+  } else {
+    SERIAL_PORT_MONITOR.println("ERROR: 'testfile.txt' not created");
+  }
 }
 
 void readFile(FS& fileSystem) {
