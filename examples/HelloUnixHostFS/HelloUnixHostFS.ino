@@ -10,11 +10,11 @@
 
 using fs::UnixHostFS;
 
-void listDir(FS& filesystem) {
+void listDir(FS& fileSystem) {
   SERIAL_PORT_MONITOR.println("== Dir List '/'");
 
   // Open dir folder
-  Dir dir = filesystem.openDir("/");
+  Dir dir = fileSystem.openDir("/");
   // Cycle all the content
   while (dir.next()) {
     // Print directory entry
@@ -40,10 +40,10 @@ void listDir(FS& filesystem) {
   }
 }
 
-void writeFile(FS& filesystem) {
+void writeFile(FS& fileSystem) {
   SERIAL_PORT_MONITOR.println("== Writing 'testfile.txt'");
 
-  File f = filesystem.open("testfile.txt", "w");
+  File f = fileSystem.open("testfile.txt", "w");
   f.println("This is a test");
   f.println(42);
   f.println(42.0);
@@ -51,10 +51,10 @@ void writeFile(FS& filesystem) {
   f.close();
 }
 
-void readFile(FS& filesystem) {
+void readFile(FS& fileSystem) {
   SERIAL_PORT_MONITOR.println("== Reading 'testfile.txt'");
 
-  File f = filesystem.open("testfile.txt", "r");
+  File f = fileSystem.open("testfile.txt", "r");
   while (f.available()) {
     String s = f.readStringUntil('\r');
     SERIAL_PORT_MONITOR.print(s);
@@ -74,17 +74,17 @@ void setup() {
 
 #if defined(UNIX_HOST_DUINO)
   SERIAL_PORT_MONITOR.print(F("Inizializing UnixHostFS..."));
-  FS& filesystem = UnixHostFS;
+  FS& fileSystem = UnixHostFS;
 #else
   SERIAL_PORT_MONITOR.print(F("Inizializing LittleFS..."));
-  FS& filesystem = LittleFS;
+  FS& fileSystem = LittleFS;
 #endif
 
-  if (filesystem.begin()){
+  if (fileSystem.begin()){
     SERIAL_PORT_MONITOR.println(F("done."));
-    listDir(filesystem);
-    writeFile(filesystem);
-    readFile(filesystem);
+    listDir(fileSystem);
+    writeFile(fileSystem);
+    readFile(fileSystem);
   } else {
     SERIAL_PORT_MONITOR.println(F("fail."));
   }
