@@ -69,11 +69,9 @@ class UnixHostFileImpl: public FileImpl {
     }
 
     bool truncate(uint32_t size) override {
-      flush();
-      int fd = fileno(file_);
-      int status = ftruncate(fd, size);
+      close();
+      int status = ::truncate(path_.c_str(), size);
       if (status == 0) {
-        close();
         open(path_, mode_);
       }
       return status == 0;
@@ -92,6 +90,7 @@ class UnixHostFileImpl: public FileImpl {
     }
 
     const char* fullName() const override {
+      // TODO: Strip off the rootfs component.
       return path_.c_str();
     }
 
