@@ -12,7 +12,7 @@ using fs::UnixHostFS;
 
 void listDir(FS& filesystem) {
   // Open dir folder
-  Dir dir = filesystem.openDir("./");
+  Dir dir = filesystem.openDir("/");
   // Cycle all the content
   while (dir.next()) {
     // Print directory entry

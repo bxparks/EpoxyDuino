@@ -12,19 +12,24 @@
 
 namespace fs {
 
-/*
+/**
  * Convert OpenMode and AccessMode to "r", "w", "r+", etc according to the
  * table in fopen(1). Essentially, this code reverses the mapping defined
  * by sflags() function in FS.cpp.
  */
 const char* rsflags(OpenMode openMode, AccessMode accessMode);
 
+/** Concatenate 2 file paths. */
+std::string fileNameConcat(const std::string& a, const std::string& b);
+
 class UnixHostFileImpl: public FileImpl {
   public:
-    UnixHostFileImpl(const char* fileName, FILE* file) :
-        fileName_(fileName),
-        file_(file) {
-      int fd = fileno(file);
+    UnixHostFileImpl(const std::string& path, const char* mode)
+      : path_(path),
+        mode_(mode)
+    {
+      file_ = ::fopen(path_.c_str(), mode_);
+      int fd = fileno(file_);
       ::fstat(fd, &stat_);
     }
 
@@ -77,11 +82,11 @@ class UnixHostFileImpl: public FileImpl {
     }
 
     const char* name() const override {
-      return fileName_;
+      return path_.c_str();
     }
 
     const char* fullName() const override {
-      return fileName_;
+      return path_.c_str();
     }
 
     bool isFile() const override {
@@ -93,16 +98,19 @@ class UnixHostFileImpl: public FileImpl {
     }
 
   private:
-    const char* fileName_;
+    const std::string path_;
+    const char* const mode_;
     FILE* file_;
     struct stat stat_;
 };
 
 class UnixHostDirImpl: public DirImpl {
   public:
-    UnixHostDirImpl(DIR* dir)
-      : dir_(dir)
-      {}
+    UnixHostDirImpl(const std::string& path)
+      : path_(path)
+    {
+      dir_ = ::opendir(path_.c_str());
+    }
 
     ~UnixHostDirImpl() override {
       if (dir_) {
@@ -113,8 +121,8 @@ class UnixHostDirImpl: public DirImpl {
 
     FileImplPtr openFile(OpenMode openMode, AccessMode accessMode) override {
       const char* mode = rsflags(openMode, accessMode);
-      FILE* file = ::fopen(fileName(), mode);
-      return std::make_shared<UnixHostFileImpl>(fileName(), file);
+      std::string unixPath = fileNameConcat(path_, fileName());
+      return std::make_shared<UnixHostFileImpl>(unixPath, mode);
     }
 
     const char* fileName() override {
@@ -157,6 +165,7 @@ class UnixHostDirImpl: public DirImpl {
     }
 
   private:
+    const std::string path_;
     DIR* dir_;
     struct dirent* dirEntry_;
     struct stat stat_;
@@ -212,14 +221,8 @@ class UnixHostFSImpl: public FSImpl {
         AccessMode accessMode
     ) override {
       const char* mode = rsflags(openMode, accessMode);
-      /*
-      std::string unixPath(fsroot_);
-      unixPath += '/';
-      unixPath += path;
-      FILE* file = ::fopen(unixPath.c_str(), mode);
-      */
-      FILE* file = ::fopen(path, mode);
-      return std::make_shared<UnixHostFileImpl>(path, file);
+      std::string unixPath = fileNameConcat(fsroot_, path);
+      return std::make_shared<UnixHostFileImpl>(unixPath, mode);
     }
 
     bool exists(const char* path) override {
@@ -227,14 +230,8 @@ class UnixHostFSImpl: public FSImpl {
     }
 
     DirImplPtr openDir(const char* path) override {
-      /*
-      std::string unixPath(fsroot_);
-      unixPath += '/';
-      unixPath += path;
-      DIR* dir = ::opendir(unixPath.c_str());
-      */
-      DIR* dir = ::opendir(path);
-      return std::make_shared<UnixHostDirImpl>(dir);
+      std::string unixPath = fileNameConcat(fsroot_, path);
+      return std::make_shared<UnixHostDirImpl>(unixPath);
     }
 
     bool rename(const char* pathFrom, const char* pathTo) override {
