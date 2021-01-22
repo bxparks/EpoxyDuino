@@ -97,17 +97,6 @@ board will be sent to the `STDOUT` of the Linux or MacOS terminal. The output
 should be identical to what would be shown on the serial port of the Arduino
 controller.
 
-### Using an Alternate C++ Compiler
-
-Normally the C++ compiler on Linux is `g++`. If you have `clang++` installed
-you can use that instead by specifying the `CXX` environment variable:
-```
-$ CXX=clang++ make
-```
-(This sets the `CXX` shell environment variable temporarily, for the duration of
-the `make` command, which causes `make` to set its internal `CXX` variable,
-which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
-
 ### Additional Arduino Libraries
 
 If the Arduino program depends on additional Arduino libraries, they must be
@@ -122,32 +111,52 @@ include ../../EpoxyDuino/EpoxyDuino.mk
 ```
 
 The libraries are referred to by their base directory name (e.g. `AceButton`,
-or `AceTime`) not the full path. The `EpoxyDuino.mk` file will look for
-these additional libraries at the same level as the `EpoxyDuino` directory
-itself.
+or `AceTime`) not the full path. By default, the `EpoxyDuino.mk` file will look
+for these additional libraries at the following locations:
+
+* `EPOXY_DUINO_DIR/..` - in other words, siblings to the `EpoxyDuino` install
+  directory (this assumes that EpoxyDuino was installed in the Arduino
+  `libraries` directory as recommended above)
+* `EPOXY_DUINO_DIR/libraries/` - additional libraries provided by the EpoxyDuino
+  project itself
+* under each of the additional directories listed in `ARDUINO_LIB_DIRS` (see
+  below)
 
 ### Additional Arduino Library Locations
 
-By default, EpoxyDuino assumes that the additional libraries are siblings to
-the`EpoxyDuino/` library. Unfortunately, Arduino libraries tend to be
-scattered among many locations. These additional locations can be specified
-using the `ARDUINO_LIB_DIRS` variable. For example,
+As explained above, EpoxyDuino normally assumes that the additional libraries
+are siblings to the`EpoxyDuino/` directory or under the `EpoxyDuino/libraries/`
+directory. If you need to import additional Arduino libraries, you need to tell
+`EpoxyDuino` where they are because Arduino libraries tend to be scattered among
+many different locations. These additional locations can be specified using the
+`ARDUINO_LIB_DIRS` variable. For example,
 
 ```
 APP_NAME := SampleTest
-ARDUINO_IDE_DIR := ../../arduino-1.8.9
+arduino_ide_dir := ../../arduino-1.8.9
 ARDUINO_LIBS := AUnit AceButton AceTime
 ARDUINO_LIB_DIRS := \
-	$(ARDUINO_IDE_DIR)/portable/packages/arduino/hardware/avr/1.8.2/libraries \
-	$(ARDUINO_IDE_DIR)/libraries \
-	$(ARDUINO_IDE_DIR)/hardware/arduino/avr/libraries
+	$(arduino_ide_dir)/portable/packages/arduino/hardware/avr/1.8.2/libraries \
+	$(arduino_ide_dir)/libraries \
+	$(arduino_ide_dir)/hardware/arduino/avr/libraries
 include ../../EpoxyDuino/EpoxyDuino.mk
 ```
 
 Each of the `AUnit`, `AceButton` and `AceTime` libraries will be searched in
 each of the 3 directories given in the `ARDUINO_LIB_DIRS`. (The
-`ARDUINO_IDE_DIR` is a convenience temporary variable. It has no significance to
+`arduino_ide_dir` is a convenience temporary variable. It has no significance to
 `EpoxyDuino.mk`)
+
+### Using an Alternate C++ Compiler
+
+Normally the C++ compiler on Linux is `g++`. If you have `clang++` installed
+you can use that instead by specifying the `CXX` environment variable:
+```
+$ CXX=clang++ make
+```
+(This sets the `CXX` shell environment variable temporarily, for the duration of
+the `make` command, which causes `make` to set its internal `CXX` variable,
+which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
 
 ### Difference from Arduino IDE
 

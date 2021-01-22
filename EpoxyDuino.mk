@@ -39,10 +39,12 @@
 # Detect Linux or MacOS
 UNAME := $(shell uname)
 
-# EpoxyDuino module directory.
+# EpoxyDuino directory.
 EPOXY_DUINO_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-# Assume that there are other libs are siblings to EpoxyDuino
-EPOXY_DUINO_LIB_DIR := $(abspath $(EPOXY_DUINO_DIR)/..)
+# Look for libraries under ./EpoxyDuino/libraries/
+EPOXY_DUINO_LIB_DIR := $(abspath $(EPOXY_DUINO_DIR)/libraries)
+# Look for libraries which are siblings to ./EpoxyDuino/
+EPOXY_DUINO_SIBLING_DIR := $(abspath $(EPOXY_DUINO_DIR)/..)
 
 # List of Arduino IDE library folders, both built-in to the Arduino IDE
 # and those downloaded later, e.g. in the portable/ directory or .arduino15/
@@ -52,9 +54,10 @@ ARDUINO_LIB_DIRS ?=
 # Default modules which are automatically linked in: EpoxyDuino/
 DEFAULT_MODULES := $(EPOXY_DUINO_DIR)
 
-# Look for the ARDUINO_LIBS modules under each of the ARDUINO_LIB_DIRS and
-# EPOXY_DUINO_LIB_DIR.
+# Look for libraries under EPOXY_DUINO_LIB_DIR, EPOXY_DUINO_SIBLING_DIR, and
+# each of the directories listed in ARDUINO_LIB_DIRS.
 APP_MODULES := $(foreach lib,$(ARDUINO_LIBS),${EPOXY_DUINO_LIB_DIR}/${lib})
+APP_MODULES += $(foreach lib,$(ARDUINO_LIBS),${EPOXY_DUINO_SIBLING_DIR}/${lib})
 APP_MODULES += \
 	$(foreach lib_dir,$(ARDUINO_LIB_DIRS),\
 		$(foreach lib,$(ARDUINO_LIBS),\
