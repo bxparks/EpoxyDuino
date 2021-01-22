@@ -11,8 +11,8 @@
  * AUnit tests on Linux or MacOS.
  */
 
-#ifndef UNIX_HOST_DUINO_AVR_STDLIB_H
-#define UNIX_HOST_DUINO_AVR_STDLIB_H
+#ifndef EPOXY_DUINO_AVR_STDLIB_H
+#define EPOXY_DUINO_AVR_STDLIB_H
 
 extern "C" {
 
