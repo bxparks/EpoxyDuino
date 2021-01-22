@@ -234,8 +234,10 @@ class UnixHostFSImpl: public FSImpl {
     }
 
     bool rename(const char* pathFrom, const char* pathTo) override {
-      // TODO: Implement me
-      return false;
+      std::string unixPathFrom = fileNameConcat(fsroot_, pathFrom);
+      std::string unixPathTo = fileNameConcat(fsroot_, pathTo);
+      int status = ::rename(unixPathFrom.c_str(), unixPathTo.c_str());
+      return status == 0;
     }
 
     bool remove(const char* path) override {

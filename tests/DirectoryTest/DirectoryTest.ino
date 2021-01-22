@@ -27,16 +27,27 @@ using namespace fs;
   #error Unsupported platform
 #endif
 
+static const char FILE_NAME[] = "testfile.txt";
+static const char FILE_NAME2[] = "testfile2.txt";
+static const char TEXT[] = "This is a test";
+
+//---------------------------------------------------------------------------
+// Tests for UnixHostFileImpl
 //---------------------------------------------------------------------------
 
-test(readEmptyDirectory_contains_dot_and_dotdot) {
+test(UnixHostDirImpl, openDir) {
   Dir dir = FILE_SYSTEM.openDir("/");
   int count = 0;
   while (dir.next()) {
     count++;
   }
+  // Each directory contains "." and ".."
   assertEqual(2, count);
 }
+
+//---------------------------------------------------------------------------
+// Tests for UnixHostFileImpl
+//---------------------------------------------------------------------------
 
 static void writeFile(const char* fileName, const char* text) {
   File f = FILE_SYSTEM.open(fileName, "w");
@@ -51,15 +62,7 @@ static void readFileInto(File& f, Print& printStr) {
   }
 }
 
-static const char FILE_NAME[] = "testfile.txt";
-static const char TEXT[] = "This is a test";
-
-test(writeFile_existsFile) {
-  writeFile(FILE_NAME, TEXT);
-  assertTrue(FILE_SYSTEM.exists(FILE_NAME));
-}
-
-test(writeFile_readFile) {
+test(UnixHostFileImplTest, writeFile_readFile) {
   writeFile(FILE_NAME, TEXT);
 
   File f = FILE_SYSTEM.open(FILE_NAME, "r");
@@ -70,7 +73,7 @@ test(writeFile_readFile) {
   assertEqual(TEXT, printStr.getCstr());
 }
 
-test(writeFile_seekFile) {
+test(UnixHostFileImplTest, seekFile) {
   writeFile(FILE_NAME, TEXT);
 
   File f = FILE_SYSTEM.open(FILE_NAME, "r");
@@ -82,7 +85,7 @@ test(writeFile_seekFile) {
   assertEqual(F("is a test"), printStr.getCstr());
 }
 
-test(writeFile_truncate) {
+test(UnixHostFileImplTest, truncate) {
   writeFile(FILE_NAME, TEXT);
   File f = FILE_SYSTEM.open(FILE_NAME, "r");
   bool status = f.truncate(0);
@@ -90,7 +93,7 @@ test(writeFile_truncate) {
   assertEqual((size_t) 0, f.size());
 }
 
-test(writeFile_validateProperties) {
+test(UnixHostFileImplTest, validateProperties) {
   writeFile(FILE_NAME, TEXT);
 
   File f = FILE_SYSTEM.open(FILE_NAME, "r");
@@ -98,6 +101,23 @@ test(writeFile_validateProperties) {
   assertTrue(f.isFile());
   assertFalse(f.isDirectory());
   f.close();
+}
+
+//---------------------------------------------------------------------------
+// Tests for UnixHostFSImpl
+//---------------------------------------------------------------------------
+
+test(UnixHostFSImplTest, exists) {
+  writeFile(FILE_NAME, TEXT);
+  assertTrue(FILE_SYSTEM.exists(FILE_NAME));
+}
+
+test(UnixHostFSImplTest, rename) {
+  writeFile(FILE_NAME, TEXT);
+
+  FILE_SYSTEM.rename(FILE_NAME, FILE_NAME2);
+  assertFalse(FILE_SYSTEM.exists(FILE_NAME));
+  assertTrue(FILE_SYSTEM.exists(FILE_NAME2));
 }
 
 //---------------------------------------------------------------------------
