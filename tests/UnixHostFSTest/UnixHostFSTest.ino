@@ -1,19 +1,18 @@
-#line 2 "DirectoryTest.ino"
+#line 2 "UnixHostFSTest"
 
 #include <Arduino.h>
 #include <AUnit.h>
 #include <AceCommon.h> // PrintStr
 
-using ace_common::PrintStr;
-
 #if defined(UNIX_HOST_DUINO)
   #include <UnixHostFS.h>
 #elif defined(ESP8266)
-  #inclue <LittleFS.h>
+  #include <LittleFS.h>
 #else
   #error Unsupported platform
 #endif
 
+using ace_common::PrintStr;
 using aunit::TestRunner;
 using namespace fs;
 
