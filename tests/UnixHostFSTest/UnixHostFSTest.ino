@@ -57,8 +57,12 @@ test(UnixHostDirImpl, next) {
     count++;
   }
 
+#if defined(UNIX_HOST_DUINO)
   // Each directory contains "." and ".."
   assertEqual(3, count);
+#else
+  assertEqual(1, count);
+#endif
 }
 
 test(UnixHostDirImpl, rewind) {
@@ -72,14 +76,22 @@ test(UnixHostDirImpl, rewind) {
   while (dir.next()) {
     count++;
   }
+#if defined(UNIX_HOST_DUINO)
   assertEqual(3, count);
+#else
+  assertEqual(1, count);
+#endif
 
   // Rewind the directory and count again.
   dir.rewind();
   while (dir.next()) {
     count++;
   }
+#if defined(UNIX_HOST_DUINO)
   assertEqual(6, count);
+#else
+  assertEqual(2, count);
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -109,6 +121,10 @@ test(UnixHostFileImplTest, seekFile) {
   assertEqual(F("is a test"), printStr.getCstr());
 }
 
+#if defined(UNIX_HOST_DUINO)
+// Seems to fail on actual ESP8266 using LittleFS:
+// Panic lfs.c:3041 lfs_file_truncate: Assertion '(file->flags & 3) !=
+// LFS_O_RDONLY' failed.
 test(UnixHostFileImplTest, truncate) {
   writeFile(FILE_NAME, TEXT);
   File f = FILE_SYSTEM.open(FILE_NAME, "r");
@@ -116,6 +132,7 @@ test(UnixHostFileImplTest, truncate) {
   assertTrue(status);
   assertEqual((size_t) 0, f.size());
 }
+#endif
 
 test(UnixHostFileImplTest, validateProperties) {
   writeFile(FILE_NAME, TEXT);
