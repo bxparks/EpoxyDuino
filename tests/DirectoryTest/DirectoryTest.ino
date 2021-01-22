@@ -31,24 +31,6 @@ static const char FILE_NAME[] = "testfile.txt";
 static const char FILE_NAME2[] = "testfile2.txt";
 static const char TEXT[] = "This is a test";
 
-//---------------------------------------------------------------------------
-// Tests for UnixHostFileImpl
-//---------------------------------------------------------------------------
-
-test(UnixHostDirImpl, openDir) {
-  Dir dir = FILE_SYSTEM.openDir("/");
-  int count = 0;
-  while (dir.next()) {
-    count++;
-  }
-  // Each directory contains "." and ".."
-  assertEqual(2, count);
-}
-
-//---------------------------------------------------------------------------
-// Tests for UnixHostFileImpl
-//---------------------------------------------------------------------------
-
 static void writeFile(const char* fileName, const char* text) {
   File f = FILE_SYSTEM.open(fileName, "w");
   f.print(text);
@@ -61,6 +43,49 @@ static void readFileInto(File& f, Print& printStr) {
     printStr.write(c);
   }
 }
+
+//---------------------------------------------------------------------------
+// Tests for UnixHostDirImpl
+//---------------------------------------------------------------------------
+
+test(UnixHostDirImpl, next) {
+  FILE_SYSTEM.format();
+  writeFile(FILE_NAME, TEXT);
+
+  Dir dir = FILE_SYSTEM.openDir("/");
+  int count = 0;
+  while (dir.next()) {
+    count++;
+  }
+
+  // Each directory contains "." and ".."
+  assertEqual(3, count);
+}
+
+test(UnixHostDirImpl, rewind) {
+  // Clear the filesystem, and create one file.
+  FILE_SYSTEM.format();
+  writeFile(FILE_NAME, TEXT);
+
+  // Count number of entries, including the "." and "..".
+  Dir dir = FILE_SYSTEM.openDir("/");
+  int count = 0;
+  while (dir.next()) {
+    count++;
+  }
+  assertEqual(3, count);
+
+  // Rewind the directory and count again.
+  dir.rewind();
+  while (dir.next()) {
+    count++;
+  }
+  assertEqual(6, count);
+}
+
+//---------------------------------------------------------------------------
+// Tests for UnixHostFileImpl
+//---------------------------------------------------------------------------
 
 test(UnixHostFileImplTest, writeFile_readFile) {
   writeFile(FILE_NAME, TEXT);

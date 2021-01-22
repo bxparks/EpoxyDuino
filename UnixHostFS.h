@@ -174,7 +174,7 @@ class UnixHostDirImpl: public DirImpl {
     }
 
     bool rewind() override {
-      // TODO: Implement me
+      ::rewinddir(dir_);
       return true;
     }
 
