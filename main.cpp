@@ -15,7 +15,7 @@
  * inserts it into the Serial buffer.
  */
 
-#ifdef UNIX_HOST_DUINO
+#ifdef EPOXY_DUINO
 
 #include "Arduino.h"
 #include <inttypes.h>
@@ -119,4 +119,4 @@ int main(int argc, char** argv) {
 
 }
 
-#endif // #ifdef UNIX_HOST_DUINO
+#endif // #ifdef EPOXY_DUINO
