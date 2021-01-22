@@ -14,6 +14,7 @@ jobs:
       run: |
         cd ..
         git clone https://github.com/bxparks/AUnit
+        git clone https://github.com/bxparks/AceCommon
 
     - name: Verify examples
       run: |
