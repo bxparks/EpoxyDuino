@@ -1,6 +1,13 @@
 # Changelog
 
 * Unreleased
+* 0.5 (2021-01-21)
+    * **Breaking Change** Change project name to "EpoxyDuino". The
+      `UNIX_HOST_DUINO` macro is replaced with `EPOXY_DUINO`, and the
+      `UnixHostDuino.mk` file is now `EpoxyDuino.mk`. The old macro and file are
+      retained for backwards compatibility, but the GitHub repo name has
+      changed. See
+      [Issue #15](https://github.com/bxparks/UnixHostDuino/issues/15).
 * 0.4 (2021-01-21)
     * Wrap `#ifdef` around `main()` to avoid conflict when compiling other
       Arduino cores with UnixHostDuino inside the `libraries/` directory.

@@ -13,8 +13,8 @@
 #include "StdioSerial.h"
 
 // xx.yy.zz => xxyyzz (without leading 0)
-#define EPOXY_DUINO_VERSION 400
-#define EPOXY_DUINO_VERSION_STRING "0.4"
+#define EPOXY_DUINO_VERSION 500
+#define EPOXY_DUINO_VERSION_STRING "0.5"
 
 // Used by digitalRead() and digitalWrite()
 #define HIGH 0x1
