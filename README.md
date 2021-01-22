@@ -1,5 +1,7 @@
 # EpoxyDuino
 
+![AUnit Tests](https://github.com/bxparks/EpoxyDuino/workflows/AUnit%20Tests/badge.svg)
+
 This project contains a small (but often effective) implementation of the
 Arduino programming framework for Linux, MacOS and potentially other POSIX-like
 systems. Originally, it was created to
