@@ -241,8 +241,9 @@ class UnixHostFSImpl: public FSImpl {
     }
 
     bool remove(const char* path) override {
-      // TODO: Implement me
-      return false;
+      std::string unixPath = fileNameConcat(fsroot_, path);
+      int status = ::remove(unixPath.c_str());
+      return status == 0;
     }
 
     bool mkdir(const char* path) override {

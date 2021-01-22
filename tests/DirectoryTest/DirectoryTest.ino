@@ -115,9 +115,18 @@ test(UnixHostFSImplTest, exists) {
 test(UnixHostFSImplTest, rename) {
   writeFile(FILE_NAME, TEXT);
 
+  assertTrue(FILE_SYSTEM.exists(FILE_NAME));
   FILE_SYSTEM.rename(FILE_NAME, FILE_NAME2);
   assertFalse(FILE_SYSTEM.exists(FILE_NAME));
   assertTrue(FILE_SYSTEM.exists(FILE_NAME2));
+}
+
+test(UnixHostFSImplTest, remove) {
+  writeFile(FILE_NAME, TEXT);
+
+  assertTrue(FILE_SYSTEM.exists(FILE_NAME));
+  FILE_SYSTEM.remove(FILE_NAME);
+  assertFalse(FILE_SYSTEM.exists(FILE_NAME));
 }
 
 //---------------------------------------------------------------------------
