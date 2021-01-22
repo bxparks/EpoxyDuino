@@ -1,5 +1,12 @@
 # Changelog
 
+* Unreleased
+* 0.4 (2021-01-21)
+    * Wrap `#ifdef` around `main()` to avoid conflict when compiling other
+      Arduino cores with UnixHostDuino inside the `libraries/` directory.
+    * Make `Stream::readBytes()` and `Stream::readString()` virtual, for
+      compatibility with ESP8266, ESP32, STM32 and probably other 3rd party
+      cores.
 * 0.3.1 (2020-11-16)
     * Add support for `random()` function.
     * Cleanup header files.

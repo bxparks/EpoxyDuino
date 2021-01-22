@@ -15,8 +15,9 @@
  * inserts it into the Serial buffer.
  */
 
-#include "Arduino.h"
+#ifdef UNIX_HOST_DUINO
 
+#include "Arduino.h"
 #include <inttypes.h>
 #include <signal.h> // SIGINT
 #include <stdlib.h> // exit()
@@ -117,3 +118,5 @@ int main(int argc, char** argv) {
 }
 
 }
+
+#endif // #ifdef UNIX_HOST_DUINO

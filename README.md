@@ -31,9 +31,10 @@ The disadvantages are:
 
 * Only a limited set of Arduino functions are supported (see below).
 * There may be compiler differences between the desktop and the embedded
-  environments (e.g. 16-bit `int` versus 64-bit `int`).
+  environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
+  64-bit `long`).
 
-**Version**: 0.3.1 (2020-11-16)
+**Version**: 0.4 (2021-01-21)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -127,17 +128,19 @@ using the `ARDUINO_LIB_DIRS` variable. For example,
 
 ```
 APP_NAME := SampleTest
-ARDUINO := ../../arduino-1.8.9
+ARDUINO_IDE_DIR := ../../arduino-1.8.9
 ARDUINO_LIBS := AUnit AceButton AceTime
 ARDUINO_LIB_DIRS := \
-	$(ARDUINO)/portable/packages/arduino/hardware/avr/1.8.2/libraries \
-	$(ARDUINO)/libraries \
-	$(ARDUINO)/hardware/arduino/avr/libraries
+	$(ARDUINO_IDE_DIR)/portable/packages/arduino/hardware/avr/1.8.2/libraries \
+	$(ARDUINO_IDE_DIR)/libraries \
+	$(ARDUINO_IDE_DIR)/hardware/arduino/avr/libraries
 include ../../UnixHostDuino/UnixHostDuino.mk
 ```
 
 Each of the `AUnit`, `AceButton` and `AceTime` libraries will be searched in
-each of the 3 directories given in the `ARDUINO_LIB_DIRS`.
+each of the 3 directories given in the `ARDUINO_LIB_DIRS`. (The
+`ARDUINO_IDE_DIR` is a convenience temporary variable. It has no significance to
+`UnixHostDuino.mk`)
 
 ### Difference from Arduino IDE
 
