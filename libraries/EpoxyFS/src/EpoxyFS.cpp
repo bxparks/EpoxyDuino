@@ -1,13 +1,13 @@
 #include <stdio.h> // remove()
 #include <ftw.h> // nftw()
 #include <string>
-#include "UnixHostFS.h"
+#include "EpoxyFS.h"
 
 using std::string;
 
 namespace fs {
 
-FS UnixHostFS(FSImplPtr(new UnixHostFSImpl()));
+FS EpoxyFS(FSImplPtr(new EpoxyFSImpl()));
 
 //-----------------------------------------------------------------------------
 
@@ -52,8 +52,8 @@ string fileNameConcat(const string& a, const string& b) {
 
 //-----------------------------------------------------------------------------
 
-const char* UnixHostFSImpl::getFSRoot() {
-  const char* envroot = getenv("UNIX_HOST_FS_ROOT");
+const char* EpoxyFSImpl::getFSRoot() {
+  const char* envroot = getenv("EPOXY_FS_ROOT");
   if (envroot) {
     return envroot;
   } else {
@@ -61,7 +61,7 @@ const char* UnixHostFSImpl::getFSRoot() {
   }
 }
 
-bool UnixHostFSImpl::begin() {
+bool EpoxyFSImpl::begin() {
   fsroot_ = getFSRoot();
 
   // Create the root directory if it does not exist.
@@ -101,7 +101,7 @@ static int removeFileOrDir(
   return status;
 }
 
-bool UnixHostFSImpl::format() {
+bool EpoxyFSImpl::format() {
   int status = nftw(fsroot_, removeFileOrDir, 5,
       FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
   return status == 0;

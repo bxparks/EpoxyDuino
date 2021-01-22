@@ -2,15 +2,15 @@
 #include <ftw.h> // nftw()
 #include <Arduino.h>
 
-#if defined(UNIX_HOST_DUINO)
-  #include <UnixHostFS.h>
+#if defined(EPOXY_DUINO)
+  #include <EpoxyFS.h>
 #elif defined(ESP8266)
   #include <LittleFS.h>
 #else
   #error Unsupported platform
 #endif
 
-using fs::UnixHostFS;
+using fs::EpoxyFS;
 
 int removeFile(
     const char *fpath,
@@ -99,16 +99,16 @@ void readFile(FS& fileSystem) {
 }
 
 void setup() {
-#if ! defined(UNIX_HOST_DUINO)
+#if ! defined(EPOXY_DUINO)
   delay(1000); // some boards reboot twice
 #endif
 
   SERIAL_PORT_MONITOR.begin(115200);
   while (!SERIAL_PORT_MONITOR); // For Leonardo/Micro
 
-#if defined(UNIX_HOST_DUINO)
-  SERIAL_PORT_MONITOR.print(F("Inizializing UnixHostFS..."));
-  FS& fileSystem = UnixHostFS;
+#if defined(EPOXY_DUINO)
+  SERIAL_PORT_MONITOR.print(F("Inizializing EpoxyFS..."));
+  FS& fileSystem = EpoxyFS;
 #else
   SERIAL_PORT_MONITOR.print(F("Inizializing LittleFS..."));
   FS& fileSystem = LittleFS;
@@ -124,7 +124,7 @@ void setup() {
     SERIAL_PORT_MONITOR.println(F("fail."));
   }
 
-#if defined(UNIX_HOST_DUINO)
+#if defined(EPOXY_DUINO)
   exit(0);
 #endif
 }

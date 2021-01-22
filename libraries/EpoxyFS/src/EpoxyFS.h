@@ -1,5 +1,5 @@
-#ifndef UNIX_HOST_FS_H
-#define UNIX_HOST_FS_H
+#ifndef EPOXY_FS_H
+#define EPOXY_FS_H
 
 #include <stdio.h> // fopen(), ftell(), etc
 #include <sys/types.h>
@@ -22,16 +22,16 @@ const char* rsflags(OpenMode openMode, AccessMode accessMode);
 /** Concatenate 2 file paths. */
 std::string fileNameConcat(const std::string& a, const std::string& b);
 
-class UnixHostFileImpl: public FileImpl {
+class EpoxyFileImpl: public FileImpl {
   public:
-    UnixHostFileImpl(const std::string& path, const char* mode)
+    EpoxyFileImpl(const std::string& path, const char* mode)
       : path_(path),
         mode_(mode)
     {
       open(path, mode);
     }
 
-    ~UnixHostFileImpl() override {
+    ~EpoxyFileImpl() override {
       close();
     }
 
@@ -116,15 +116,15 @@ class UnixHostFileImpl: public FileImpl {
     struct stat stat_;
 };
 
-class UnixHostDirImpl: public DirImpl {
+class EpoxyDirImpl: public DirImpl {
   public:
-    UnixHostDirImpl(const std::string& path)
+    EpoxyDirImpl(const std::string& path)
       : path_(path)
     {
       dir_ = ::opendir(path_.c_str());
     }
 
-    ~UnixHostDirImpl() override {
+    ~EpoxyDirImpl() override {
       if (dir_) {
         ::closedir(dir_);
         dir_ = nullptr;
@@ -134,7 +134,7 @@ class UnixHostDirImpl: public DirImpl {
     FileImplPtr openFile(OpenMode openMode, AccessMode accessMode) override {
       const char* mode = rsflags(openMode, accessMode);
       std::string unixPath = fileNameConcat(path_, fileName());
-      return std::make_shared<UnixHostFileImpl>(unixPath, mode);
+      return std::make_shared<EpoxyFileImpl>(unixPath, mode);
     }
 
     const char* fileName() override {
@@ -185,9 +185,9 @@ class UnixHostDirImpl: public DirImpl {
     struct stat stat_;
 };
 
-class UnixHostFSImpl: public FSImpl {
+class EpoxyFSImpl: public FSImpl {
   public:
-    ~UnixHostFSImpl() override { }
+    ~EpoxyFSImpl() override { }
 
     bool setConfig(const FSConfig &cfg) override {
       // TODO: Implement me
@@ -218,7 +218,7 @@ class UnixHostFSImpl: public FSImpl {
     ) override {
       const char* mode = rsflags(openMode, accessMode);
       std::string unixPath = fileNameConcat(fsroot_, path);
-      return std::make_shared<UnixHostFileImpl>(unixPath, mode);
+      return std::make_shared<EpoxyFileImpl>(unixPath, mode);
     }
 
     bool exists(const char* path) override {
@@ -230,7 +230,7 @@ class UnixHostFSImpl: public FSImpl {
 
     DirImplPtr openDir(const char* path) override {
       std::string unixPath = fileNameConcat(fsroot_, path);
-      return std::make_shared<UnixHostDirImpl>(unixPath);
+      return std::make_shared<EpoxyDirImpl>(unixPath);
     }
 
     bool rename(const char* pathFrom, const char* pathTo) override {
@@ -262,8 +262,8 @@ class UnixHostFSImpl: public FSImpl {
     const char* fsroot_;
 };
 
-extern FS UnixHostFS;
+extern FS EpoxyFS;
 
 } // fs
 
-#endif // UNIX_HOST_FS_H
+#endif // EPOXY_FS_H

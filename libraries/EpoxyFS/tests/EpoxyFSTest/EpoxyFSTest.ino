@@ -1,11 +1,11 @@
-#line 2 "UnixHostFSTest"
+#line 2 "EpoxyFSTest"
 
 #include <Arduino.h>
 #include <AUnit.h>
 #include <AceCommon.h> // PrintStr
 
-#if defined(UNIX_HOST_DUINO)
-  #include <UnixHostFS.h>
+#if defined(EPOXY_DUINO)
+  #include <EpoxyFS.h>
 #elif defined(ESP8266)
   #include <LittleFS.h>
 #else
@@ -18,8 +18,8 @@ using namespace fs;
 
 //---------------------------------------------------------------------------
 
-#if defined(UNIX_HOST_DUINO)
-  FS& FILE_SYSTEM = UnixHostFS;
+#if defined(EPOXY_DUINO)
+  FS& FILE_SYSTEM = EpoxyFS;
 #elif defined(ESP8266)
   FS& FILE_SYSTEM = LittleFS;
 #else
@@ -44,10 +44,10 @@ static void readFileInto(File& f, Print& printStr) {
 }
 
 //---------------------------------------------------------------------------
-// Tests for UnixHostDirImpl
+// Tests for EpoxyDirImpl
 //---------------------------------------------------------------------------
 
-test(UnixHostDirImpl, next) {
+test(EpoxyDirImpl, next) {
   FILE_SYSTEM.format();
   writeFile(FILE_NAME, TEXT);
 
@@ -57,7 +57,7 @@ test(UnixHostDirImpl, next) {
     count++;
   }
 
-#if defined(UNIX_HOST_DUINO)
+#if defined(EPOXY_DUINO)
   // Each directory contains "." and ".."
   assertEqual(3, count);
 #else
@@ -65,7 +65,7 @@ test(UnixHostDirImpl, next) {
 #endif
 }
 
-test(UnixHostDirImpl, rewind) {
+test(EpoxyDirImpl, rewind) {
   // Clear the filesystem, and create one file.
   FILE_SYSTEM.format();
   writeFile(FILE_NAME, TEXT);
@@ -76,7 +76,7 @@ test(UnixHostDirImpl, rewind) {
   while (dir.next()) {
     count++;
   }
-#if defined(UNIX_HOST_DUINO)
+#if defined(EPOXY_DUINO)
   assertEqual(3, count);
 #else
   assertEqual(1, count);
@@ -87,7 +87,7 @@ test(UnixHostDirImpl, rewind) {
   while (dir.next()) {
     count++;
   }
-#if defined(UNIX_HOST_DUINO)
+#if defined(EPOXY_DUINO)
   assertEqual(6, count);
 #else
   assertEqual(2, count);
@@ -95,10 +95,10 @@ test(UnixHostDirImpl, rewind) {
 }
 
 //---------------------------------------------------------------------------
-// Tests for UnixHostFileImpl
+// Tests for EpoxyFileImpl
 //---------------------------------------------------------------------------
 
-test(UnixHostFileImplTest, writeFile_readFile) {
+test(EpoxyFileImplTest, writeFile_readFile) {
   writeFile(FILE_NAME, TEXT);
 
   File f = FILE_SYSTEM.open(FILE_NAME, "r");
@@ -109,7 +109,7 @@ test(UnixHostFileImplTest, writeFile_readFile) {
   assertEqual(TEXT, printStr.getCstr());
 }
 
-test(UnixHostFileImplTest, seekFile) {
+test(EpoxyFileImplTest, seekFile) {
   writeFile(FILE_NAME, TEXT);
 
   File f = FILE_SYSTEM.open(FILE_NAME, "r");
@@ -121,11 +121,11 @@ test(UnixHostFileImplTest, seekFile) {
   assertEqual(F("is a test"), printStr.getCstr());
 }
 
-#if defined(UNIX_HOST_DUINO)
+#if defined(EPOXY_DUINO)
 // Seems to fail on actual ESP8266 using LittleFS:
 // Panic lfs.c:3041 lfs_file_truncate: Assertion '(file->flags & 3) !=
 // LFS_O_RDONLY' failed.
-test(UnixHostFileImplTest, truncate) {
+test(EpoxyFileImplTest, truncate) {
   writeFile(FILE_NAME, TEXT);
   File f = FILE_SYSTEM.open(FILE_NAME, "r");
   bool status = f.truncate(0);
@@ -134,7 +134,7 @@ test(UnixHostFileImplTest, truncate) {
 }
 #endif
 
-test(UnixHostFileImplTest, validateProperties) {
+test(EpoxyFileImplTest, validateProperties) {
   writeFile(FILE_NAME, TEXT);
 
   File f = FILE_SYSTEM.open(FILE_NAME, "r");
@@ -145,15 +145,15 @@ test(UnixHostFileImplTest, validateProperties) {
 }
 
 //---------------------------------------------------------------------------
-// Tests for UnixHostFSImpl
+// Tests for EpoxyFSImpl
 //---------------------------------------------------------------------------
 
-test(UnixHostFSImplTest, exists) {
+test(EpoxyFSImplTest, exists) {
   writeFile(FILE_NAME, TEXT);
   assertTrue(FILE_SYSTEM.exists(FILE_NAME));
 }
 
-test(UnixHostFSImplTest, rename) {
+test(EpoxyFSImplTest, rename) {
   writeFile(FILE_NAME, TEXT);
 
   assertTrue(FILE_SYSTEM.exists(FILE_NAME));
@@ -162,7 +162,7 @@ test(UnixHostFSImplTest, rename) {
   assertTrue(FILE_SYSTEM.exists(FILE_NAME2));
 }
 
-test(UnixHostFSImplTest, remove) {
+test(EpoxyFSImplTest, remove) {
   writeFile(FILE_NAME, TEXT);
 
   assertTrue(FILE_SYSTEM.exists(FILE_NAME));
@@ -175,7 +175,7 @@ test(UnixHostFSImplTest, remove) {
 bool setupStatus = true;
 
 void setup() {
-#if ! defined(UNIX_HOST_DUINO)
+#if ! defined(EPOXY_DUINO)
   delay(1000); // wait to prevent garbage on SERIAL_PORT_MONITOR
 #endif
 
