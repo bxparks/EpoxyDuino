@@ -6,15 +6,15 @@
  * Copyright (c) 2005-2013 Arduino Team
  */
 
-#ifndef UNIX_HOST_DUINO_ARDUINO_H
-#define UNIX_HOST_DUINO_ARDUINO_H
+#ifndef EPOXY_DUINO_ARDUINO_H
+#define EPOXY_DUINO_ARDUINO_H
 
 #include "Print.h"
 #include "StdioSerial.h"
 
 // xx.yy.zz => xxyyzz (without leading 0)
-#define UNIX_HOST_DUINO_VERSION 400
-#define UNIX_HOST_DUINO_VERSION_STRING "0.4"
+#define EPOXY_DUINO_VERSION 400
+#define EPOXY_DUINO_VERSION_STRING "0.4"
 
 // Used by digitalRead() and digitalWrite()
 #define HIGH 0x1

@@ -3,8 +3,8 @@
  * MIT License
  */
 
-#ifndef UNIX_HOST_DUINO_STDIO_SERIAL_H
-#define UNIX_HOST_DUINO_STDIO_SERIAL_H
+#ifndef EPOXY_DUINO_STDIO_SERIAL_H
+#define EPOXY_DUINO_STDIO_SERIAL_H
 
 #include "Print.h"
 #include "Stream.h"

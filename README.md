@@ -1,7 +1,8 @@
-# UnixHostDuino
+# EpoxyDuino
 
 This project contains a small (but often effective) implementation of the
-Arduino programming framework for Linux and MacOS. Originally, it was created to
+Arduino programming framework for Linux, MacOS and potentially other POSIX-like
+systems. Originally, it was created to
 allow [AUnit](https://github.com/bxparks/AUnit) unit tests to be compiled and
 run on a Linux or MacOS machine, instead of running on the embedded
 microcontroller. As more Arduino functionality was added, it became useful for
@@ -15,9 +16,9 @@ sketch is `SampleTest/SampleTest.ino`, then the makefile should be
 produces an executable with a `.out` extension, for example, `SampleTest.out`.
 
 To be clear, most Arduino programs have hardware dependencies which will *not*
-be supported by UnixHostDuino. However, if your program has limited hardware
+be supported by EpoxyDuino. However, if your program has limited hardware
 dependencies so that it is conceptually portable to a vanilla Unix environment,
-UnixHostDuino may work.
+EpoxyDuino may work.
 
 Running an Arduino program natively on Linux or MacOS has some advantages:
 
@@ -44,17 +45,17 @@ You need to grab the sources directly from GitHub. This project is *not* an
 Arduino library so it is not available through the [Arduino Library
 Manager](https://www.arduino.cc/en/guide/libraries) in the Arduino IDE.
 
-The location of the UnixHostDuino directory can be arbitrary, but a convenient
+The location of the EpoxyDuino directory can be arbitrary, but a convenient
 location might be the same `./libraries/` directory used by the Arduino IDE to
 store other Arduino libraries:
 
 ```
 $ cd {sketchbook_directory}/libraries
-$ git clone https://github.com/bxparks/UnixHostDuino.git
+$ git clone https://github.com/bxparks/EpoxyDuino.git
 ```
 
 This will create a directory called
-`{sketchbook_directory}/libraries/UnixHostDuino`.
+`{sketchbook_directory}/libraries/EpoxyDuino`.
 
 ## Usage
 
@@ -62,7 +63,7 @@ The minimal `Makefile` has 3 lines:
 ```
 APP_NAME := {name of project}
 ARDUINO_LIBS := {list of dependent Arduino libraries}
-include {path/to/UnixHostDuino.mk}
+include {path/to/EpoxyDuino.mk}
 ```
 
 For example, the [examples/BlinkSOS](examples/BlinkSOS) project contains this
@@ -70,7 +71,7 @@ Makefile:
 ```
 APP_NAME := BlinkSOS
 ARDUINO_LIBS :=
-include ../../../UnixHostDuino/UnixHostDuino.mk
+include ../../../EpoxyDuino/EpoxyDuino.mk
 ```
 
 To build the program, just run `make`:
@@ -99,30 +100,30 @@ $ CXX=clang++ make
 ```
 (This sets the `CXX` shell environment variable temporarily, for the duration of
 the `make` command, which causes `make` to set its internal `CXX` variable,
-which causes `UnixHostDuino.mk` to use `clang++` over the default `g++`.)
+which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
 
 ### Additional Arduino Libraries
 
 If the Arduino program depends on additional Arduino libraries, they must be
 specified in the `Makefile` using the `ARDUINO_LIBS` parameter. For example,
 this includes the [AUnit](https://github.com/bxparks/AUnit) library if it is at
-the same level as UnixHostDuino:
+the same level as EpoxyDuino:
 
 ```
 APP_NAME := SampleTest
 ARDUINO_LIBS := AUnit AceButton AceTime
-include ../../UnixHostDuino/UnixHostDuino.mk
+include ../../EpoxyDuino/EpoxyDuino.mk
 ```
 
 The libraries are referred to by their base directory name (e.g. `AceButton`,
-or `AceTime`) not the full path. The `UnixHostDuino.mk` file will look for
-these additional libraries at the same level as the `UnixHostDuino` directory
+or `AceTime`) not the full path. The `EpoxyDuino.mk` file will look for
+these additional libraries at the same level as the `EpoxyDuino` directory
 itself.
 
 ### Additional Arduino Library Locations
 
-By default, UnixHostDuino assumes that the additional libraries are siblings to
-the`UnixHostDuino/` library. Unfortunately, Arduino libraries tend to be
+By default, EpoxyDuino assumes that the additional libraries are siblings to
+the`EpoxyDuino/` library. Unfortunately, Arduino libraries tend to be
 scattered among many locations. These additional locations can be specified
 using the `ARDUINO_LIB_DIRS` variable. For example,
 
@@ -134,13 +135,13 @@ ARDUINO_LIB_DIRS := \
 	$(ARDUINO_IDE_DIR)/portable/packages/arduino/hardware/avr/1.8.2/libraries \
 	$(ARDUINO_IDE_DIR)/libraries \
 	$(ARDUINO_IDE_DIR)/hardware/arduino/avr/libraries
-include ../../UnixHostDuino/UnixHostDuino.mk
+include ../../EpoxyDuino/EpoxyDuino.mk
 ```
 
 Each of the `AUnit`, `AceButton` and `AceTime` libraries will be searched in
 each of the 3 directories given in the `ARDUINO_LIB_DIRS`. (The
 `ARDUINO_IDE_DIR` is a convenience temporary variable. It has no significance to
-`UnixHostDuino.mk`)
+`EpoxyDuino.mk`)
 
 ### Difference from Arduino IDE
 
@@ -151,7 +152,7 @@ provided by the Arduino IDE:
   an `#include <Arduino.h>` include line at the top of the file. This is
   compatible with the Arduino IDE which automatically includes `<Arduino.h>`.
 * The Arduion IDE supports multiple `ino` files in the same directory. (I
-  believe it simply concontenates them all into a single file.) UnixHostDuino
+  believe it simply concontenates them all into a single file.) EpoxyDuino
   supports only one `ino` file in a given directory.
 * The Arduino IDE automatically generates forward declarations for functions
   that appear *after* the global `setup()` and `loop()` methods. In a normal
@@ -160,25 +161,25 @@ provided by the Arduino IDE:
   `ino` file.
 
 Fortunately, the changes required to make an `ino` file compatible with
-UnixHostDuino are backwards compatible with the Arduino IDE. In other words, a
-program that compiles with UnixHostDuino will also compile under Ardunio IDE.
+EpoxyDuino are backwards compatible with the Arduino IDE. In other words, a
+program that compiles with EpoxyDuino will also compile under Ardunio IDE.
 
 There are other substantial differences. The Arduino IDE supports multiple
 microcontroller board types, each using its own set of compiler tools and
 library locations. There is a complicated set of files and rules that determine
-how to find and use those tools and libraries. The UnixHostDuino tool does *not*
+how to find and use those tools and libraries. The EpoxyDuino tool does *not*
 use any of the configuration files used by the Arduino IDE. Sometimes, you can
 use the `ARDUINO_LIB_DIRS` to get around this limitations. However, when you
 start using `ARDUINO_LIB_DIRS`, you will often run into third party libraries
-using features which are not supported by the UnixHostDuino framework emulation
+using features which are not supported by the EpoxyDuino framework emulation
 layer.
 
 ### Conditional Code
 
-If you want to add code that takes effect only on UnixHostDuino, you can use
+If you want to add code that takes effect only on EpoxyDuino, you can use
 the following macro:
 ```C++
-#if defined(UNIX_HOST_DUINO)
+#if defined(EPOXY_DUINO)
   ...
 #endif
 ```
@@ -230,7 +231,7 @@ The following functions and features of the Arduino framework are implemented:
 * `Wire.h`
     * compile only
 
-See [Arduino.h](https://github.com/bxparks/UnixHostDuino/blob/develop/Arduino.h)
+See [Arduino.h](https://github.com/bxparks/EpoxyDuino/blob/develop/Arduino.h)
 for the latest list.
 
 The `Print.printf()` function is an extension to the `Print` class that is
@@ -249,7 +250,7 @@ The interaction with the Unix `tty` device is complicated, and I am not entirely
 sure that I have implemented things properly. See [Entering raw
 mode](https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html) for
 in-depth details. The following is a quick summary of how this is implemented
-under `UnixHostDuino`.
+under `EpoxyDuino`.
 
 The `STDOUT` remains mostly in normal mode. In particular, `ONLCR` mode is
 enabled, which translates `\n` (NL) to `\r\n` (CR-NL). This allows the program
@@ -271,7 +272,7 @@ behavior.
 The `ISIG` option on the `tty` device is *enabled*. This allows the usual Unix
 signals to be active, such as Ctrl-C to quit the program, or Ctrl-Z to suspend
 the program. But this convenience means that the Arduino program running under
-`UnixHostDuino` will never receive a control character through the
+`EpoxyDuino` will never receive a control character through the
 `Serial.read()` function. The advantages of having normal Unix signals seemed
 worth the trade-off.
 
@@ -287,6 +288,7 @@ This library has been tested on:
     * GNU Make 4.1
 * Ubuntu 20.04
     * g++ (Ubuntu 9.3.0-10ubuntu2) 9.3.0
+    * clang++ version 10.0.0-4ubuntu1
     * GNU Make 4.2.1
 * MacOS 10.14.5
     * clang++ Apple LLVM version 10.0.1

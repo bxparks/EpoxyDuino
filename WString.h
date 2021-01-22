@@ -20,8 +20,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef UNIX_HOST_DUINO_STRING_H
-#define UNIX_HOST_DUINO_STRING_H
+#ifndef EPOXY_DUINO_STRING_H
+#define EPOXY_DUINO_STRING_H
 #ifdef __cplusplus
 
 #include <stdlib.h>
@@ -225,4 +225,4 @@ public:
 };
 
 #endif  // __cplusplus
-#endif  // UNIX_HOST_DUINO_STRING_H
+#endif  // EPOXY_DUINO_STRING_H
