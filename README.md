@@ -44,7 +44,7 @@ The disadvantages are:
 **Breaking Change**: Prior to v0.5, this project was known as "UnixHostDuino".
 The old `UNIX_HOST_DUINO` macro and `UnixHostDuino.mk` include file still exist
 for backwards compatibility. See
-[Issue #15](https://github.com/bxparks/UnixHostDuino/issues/15)
+[Issue #15](https://github.com/bxparks/EpoxyDuino/issues/15)
 for more details.
 
 ## Installation
