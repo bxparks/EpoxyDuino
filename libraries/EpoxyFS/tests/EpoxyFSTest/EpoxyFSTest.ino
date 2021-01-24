@@ -60,12 +60,7 @@ test(EpoxyDirImpl, next) {
     count++;
   }
 
-#if defined(EPOXY_DUINO)
-  // Each directory contains "." and ".."
-  assertEqual(3, count);
-#else
   assertEqual(1, count);
-#endif
 }
 
 test(EpoxyDirImpl, rewind) {
@@ -79,22 +74,14 @@ test(EpoxyDirImpl, rewind) {
   while (dir.next()) {
     count++;
   }
-#if defined(EPOXY_DUINO)
-  assertEqual(3, count);
-#else
   assertEqual(1, count);
-#endif
 
   // Rewind the directory and count again.
   dir.rewind();
   while (dir.next()) {
     count++;
   }
-#if defined(EPOXY_DUINO)
-  assertEqual(6, count);
-#else
   assertEqual(2, count);
-#endif
 }
 
 //---------------------------------------------------------------------------

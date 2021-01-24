@@ -181,12 +181,17 @@ class EpoxyDirImpl: public DirImpl {
     }
 
     bool next() override {
-      dirEntry_ = ::readdir(dir_);
-      if (dirEntry_ != nullptr) {
-        // TODO: Do I need to recreate the full path if this file is
-        // under a subdirectory?
-        ::lstat(fileName(), &stat_);
+      // Skip over the Unix "." and ".." directories which don't exist on
+      // LittleFS or SPIFFS.
+      while (true) {
+        dirEntry_ = ::readdir(dir_);
+        if (dirEntry_ == nullptr) return false;
+        if (strcmp(fileName(), ".") != 0
+            && strcmp(fileName(), "..") != 0) break;
       }
+      // TODO: Do I need to recreate the full path if this file is
+      // under a subdirectory?
+      ::lstat(fileName(), &stat_);
       return dirEntry_ != nullptr;
     }
 
