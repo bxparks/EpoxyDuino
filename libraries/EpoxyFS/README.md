@@ -14,7 +14,6 @@ a Linux (and hopefully on a MacOS) machine using EpoxyDuino.
   FS& FILE_SYSTEM = fs::EpoxyFS;
 #elif defined(ESP8266)
   #include <LittleFS.h>
-  using fs::LittleFS;
   FS& FILE_SYSTEM = fs::LittleFS;
 #else
   #error Unsupported platform
@@ -51,9 +50,14 @@ the
 
 environment variable. For example, setting
 
-* `EPOXY_FS_ROOT=/tmp/fsdata`
+* `$ export EPOXY_FS_ROOT=/tmp/fsdata`
 
 sets the root to the `/tmp/fsdata` directory.
+
+**DANGER**: The `EpoxyFS::format()` method creates a blank file system. To
+achieve that, the method recursively removes all files and directories under the
+`EPOXY_FS_ROOT` directory. If you set the `EPOXY_FS_ROOT` to an incorrect value,
+you may remove a **lot** of files quickly and permanently. Be very careful!
 
 ## Bugs and LImitation
 
