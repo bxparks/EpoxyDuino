@@ -42,28 +42,36 @@ void listDir(FS& fileSystem) {
 
   // Open dir folder
   Dir dir = fileSystem.openDir("/");
+
+  int count = 1;
   // Cycle all the content
   while (dir.next()) {
-    // Print directory entry
-    SERIAL_PORT_MONITOR.print("Dir: ");
+    SERIAL_PORT_MONITOR.print("Dir entry #");
+    SERIAL_PORT_MONITOR.println(count);
+
+    // Print info from directory entry
+    SERIAL_PORT_MONITOR.print("Dir: fileName()=");
     SERIAL_PORT_MONITOR.print(dir.fileName());
     if (dir.isDirectory()) {
-      SERIAL_PORT_MONITOR.println('/');
+      SERIAL_PORT_MONITOR.print("; isDirectory=true");
     } else {
-      SERIAL_PORT_MONITOR.println();
+      SERIAL_PORT_MONITOR.print("; isDirectory=false");
     }
+    SERIAL_PORT_MONITOR.print("; fileSize()=");
+    SERIAL_PORT_MONITOR.println(dir.fileSize());
 
-    // If element have a size display It else write 0
+    // Print info from File object.
     SERIAL_PORT_MONITOR.print("File: ");
-    if (dir.fileSize()) {
-        File f = dir.openFile("r");
-        SERIAL_PORT_MONITOR.print(f.name());
-        SERIAL_PORT_MONITOR.print(':');
-        SERIAL_PORT_MONITOR.println(f.size());
-        f.close();
-    } else {
-        SERIAL_PORT_MONITOR.println("0");
-    }
+    File f = dir.openFile("r");
+    SERIAL_PORT_MONITOR.print("name()=");
+    SERIAL_PORT_MONITOR.print(f.name());
+    SERIAL_PORT_MONITOR.print("; fullName()=");
+    SERIAL_PORT_MONITOR.print(f.fullName());
+    SERIAL_PORT_MONITOR.print("; size()=");
+    SERIAL_PORT_MONITOR.println(f.size());
+    f.close();
+
+    count++;
   }
 }
 
@@ -86,9 +94,13 @@ void writeFile(FS& fileSystem) {
 }
 
 void readFile(FS& fileSystem) {
-  SERIAL_PORT_MONITOR.println("== Reading 'testfile.txt'");
+  SERIAL_PORT_MONITOR.println("== Reading '/testfile.txt'");
 
-  File f = fileSystem.open("testfile.txt", "r");
+  File f = fileSystem.open("/testfile.txt", "r");
+  SERIAL_PORT_MONITOR.print("name(): ");
+  SERIAL_PORT_MONITOR.println(f.name());
+  SERIAL_PORT_MONITOR.print("fullName(): ");
+  SERIAL_PORT_MONITOR.println(f.fullName());
   while (f.available()) {
     String s = f.readStringUntil('\r');
     SERIAL_PORT_MONITOR.print(s);
