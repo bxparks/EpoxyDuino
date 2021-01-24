@@ -27,7 +27,10 @@ using namespace fs;
 #endif
 
 static const char FILE_NAME[] = "testfile.txt";
+static const char FILE_PATH[] = "/testfile.txt";
+
 static const char FILE_NAME2[] = "testfile2.txt";
+static const char FILE_PATH2[] = "/testfile2.txt";
 static const char TEXT[] = "This is a test";
 
 static void writeFile(const char* fileName, const char* text) {
@@ -57,12 +60,7 @@ test(EpoxyDirImpl, next) {
     count++;
   }
 
-#if defined(EPOXY_DUINO)
-  // Each directory contains "." and ".."
-  assertEqual(3, count);
-#else
   assertEqual(1, count);
-#endif
 }
 
 test(EpoxyDirImpl, rewind) {
@@ -76,22 +74,14 @@ test(EpoxyDirImpl, rewind) {
   while (dir.next()) {
     count++;
   }
-#if defined(EPOXY_DUINO)
-  assertEqual(3, count);
-#else
   assertEqual(1, count);
-#endif
 
   // Rewind the directory and count again.
   dir.rewind();
   while (dir.next()) {
     count++;
   }
-#if defined(EPOXY_DUINO)
-  assertEqual(6, count);
-#else
   assertEqual(2, count);
-#endif
 }
 
 //---------------------------------------------------------------------------
@@ -99,9 +89,12 @@ test(EpoxyDirImpl, rewind) {
 //---------------------------------------------------------------------------
 
 test(EpoxyFileImplTest, writeFile_readFile) {
-  writeFile(FILE_NAME, TEXT);
+  writeFile(FILE_PATH, TEXT);
 
-  File f = FILE_SYSTEM.open(FILE_NAME, "r");
+  File f = FILE_SYSTEM.open(FILE_PATH, "r");
+  assertEqual(FILE_NAME, f.name());
+  assertEqual(FILE_PATH, f.fullName());
+
   PrintStr<64> printStr;
   readFileInto(f, printStr);
   f.close();
@@ -110,9 +103,9 @@ test(EpoxyFileImplTest, writeFile_readFile) {
 }
 
 test(EpoxyFileImplTest, seekFile) {
-  writeFile(FILE_NAME, TEXT);
+  writeFile(FILE_PATH, TEXT);
 
-  File f = FILE_SYSTEM.open(FILE_NAME, "r");
+  File f = FILE_SYSTEM.open(FILE_PATH, "r");
   PrintStr<64> printStr;
   f.seek(5);
   readFileInto(f, printStr);
@@ -126,8 +119,9 @@ test(EpoxyFileImplTest, seekFile) {
 // Panic lfs.c:3041 lfs_file_truncate: Assertion '(file->flags & 3) !=
 // LFS_O_RDONLY' failed.
 test(EpoxyFileImplTest, truncate) {
-  writeFile(FILE_NAME, TEXT);
-  File f = FILE_SYSTEM.open(FILE_NAME, "r");
+  writeFile(FILE_PATH, TEXT);
+
+  File f = FILE_SYSTEM.open(FILE_PATH, "r");
   bool status = f.truncate(0);
   assertTrue(status);
   assertEqual((size_t) 0, f.size());
@@ -135,9 +129,9 @@ test(EpoxyFileImplTest, truncate) {
 #endif
 
 test(EpoxyFileImplTest, validateProperties) {
-  writeFile(FILE_NAME, TEXT);
+  writeFile(FILE_PATH, TEXT);
 
-  File f = FILE_SYSTEM.open(FILE_NAME, "r");
+  File f = FILE_SYSTEM.open(FILE_PATH, "r");
   assertEqual(sizeof(TEXT) - 1, f.size());
   assertTrue(f.isFile());
   assertFalse(f.isDirectory());
@@ -149,25 +143,25 @@ test(EpoxyFileImplTest, validateProperties) {
 //---------------------------------------------------------------------------
 
 test(EpoxyFSImplTest, exists) {
-  writeFile(FILE_NAME, TEXT);
-  assertTrue(FILE_SYSTEM.exists(FILE_NAME));
+  writeFile(FILE_PATH, TEXT);
+  assertTrue(FILE_SYSTEM.exists(FILE_PATH));
 }
 
 test(EpoxyFSImplTest, rename) {
-  writeFile(FILE_NAME, TEXT);
+  writeFile(FILE_PATH, TEXT);
 
-  assertTrue(FILE_SYSTEM.exists(FILE_NAME));
-  FILE_SYSTEM.rename(FILE_NAME, FILE_NAME2);
-  assertFalse(FILE_SYSTEM.exists(FILE_NAME));
-  assertTrue(FILE_SYSTEM.exists(FILE_NAME2));
+  assertTrue(FILE_SYSTEM.exists(FILE_PATH));
+  FILE_SYSTEM.rename(FILE_PATH, FILE_PATH2);
+  assertFalse(FILE_SYSTEM.exists(FILE_PATH));
+  assertTrue(FILE_SYSTEM.exists(FILE_PATH2));
 }
 
 test(EpoxyFSImplTest, remove) {
-  writeFile(FILE_NAME, TEXT);
+  writeFile(FILE_PATH, TEXT);
 
-  assertTrue(FILE_SYSTEM.exists(FILE_NAME));
-  FILE_SYSTEM.remove(FILE_NAME);
-  assertFalse(FILE_SYSTEM.exists(FILE_NAME));
+  assertTrue(FILE_SYSTEM.exists(FILE_PATH));
+  FILE_SYSTEM.remove(FILE_PATH);
+  assertFalse(FILE_SYSTEM.exists(FILE_PATH));
 }
 
 //---------------------------------------------------------------------------

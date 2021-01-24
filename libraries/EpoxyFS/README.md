@@ -53,7 +53,7 @@ environment variable. For example, setting
 
 * `EPOXY_FS_ROOT=/tmp/fsdata`
 
-sets the root to the `/tmp` directory.
+sets the root to the `/tmp/fsdata` directory.
 
 ## Bugs and LImitation
 

@@ -19,15 +19,28 @@ namespace fs {
  */
 const char* rsflags(OpenMode openMode, AccessMode accessMode);
 
-/** Concatenate 2 file paths. */
+/** Concatenate 2 file components. */
 std::string fileNameConcat(const std::string& a, const std::string& b);
 
 class EpoxyFileImpl: public FileImpl {
   public:
-    EpoxyFileImpl(const std::string& path, const char* mode)
-      : path_(path),
+    EpoxyFileImpl(
+        const char* fsroot,
+        const std::string& path,
+        const char* mode
+    ) :
+        fsroot_(fsroot),
+        path_(path),
         mode_(mode)
     {
+      // Extract the basename of path
+      size_t pos = path_.find_last_of("/");
+      if (pos == std::string::npos) {
+        name_ = path;
+      } else {
+        name_ = path_.substr(pos + 1, std::string::npos);
+      }
+
       open(path, mode);
     }
 
@@ -70,7 +83,8 @@ class EpoxyFileImpl: public FileImpl {
 
     bool truncate(uint32_t size) override {
       close();
-      int status = ::truncate(path_.c_str(), size);
+      std::string unixPath = fileNameConcat(fsroot_, path_);
+      int status = ::truncate(unixPath.c_str(), size);
       if (status == 0) {
         open(path_, mode_);
       }
@@ -85,12 +99,10 @@ class EpoxyFileImpl: public FileImpl {
     }
 
     const char* name() const override {
-      // TODO: Return just the last file component, instead of the full path
-      return path_.c_str();
+      return name_.c_str();
     }
 
     const char* fullName() const override {
-      // TODO: Strip off the rootfs component.
       return path_.c_str();
     }
 
@@ -105,23 +117,29 @@ class EpoxyFileImpl: public FileImpl {
   private:
 
     void open(const std::string& path, const char* mode) {
-      file_ = ::fopen(path_.c_str(), mode_);
+      std::string unixPath = fileNameConcat(fsroot_, path);
+      file_ = ::fopen(unixPath.c_str(), mode_);
       int fd = fileno(file_);
       ::fstat(fd, &stat_);
     }
 
+    const char* const fsroot_;
     const std::string path_;
     const char* const mode_;
+
+    std::string name_;
     FILE* file_;
     struct stat stat_;
 };
 
 class EpoxyDirImpl: public DirImpl {
   public:
-    EpoxyDirImpl(const std::string& path)
-      : path_(path)
+    EpoxyDirImpl(const char* fsroot, const std::string& path)
+      : fsroot_(fsroot),
+        path_(path)
     {
-      dir_ = ::opendir(path_.c_str());
+      std::string unixPath = fileNameConcat(fsroot, path);
+      dir_ = ::opendir(unixPath.c_str());
     }
 
     ~EpoxyDirImpl() override {
@@ -133,12 +151,11 @@ class EpoxyDirImpl: public DirImpl {
 
     FileImplPtr openFile(OpenMode openMode, AccessMode accessMode) override {
       const char* mode = rsflags(openMode, accessMode);
-      std::string unixPath = fileNameConcat(path_, fileName());
-      return std::make_shared<EpoxyFileImpl>(unixPath, mode);
+      std::string filePath = fileNameConcat(path_, fileName());
+      return std::make_shared<EpoxyFileImpl>(fsroot_, filePath, mode);
     }
 
     const char* fileName() override {
-      // TODO: Return only the last file component, instead of the entire path
       return dirEntry_->d_name;
     }
 
@@ -164,12 +181,17 @@ class EpoxyDirImpl: public DirImpl {
     }
 
     bool next() override {
-      dirEntry_ = ::readdir(dir_);
-      if (dirEntry_ != nullptr) {
-        // TODO: Do I need to recreate the full path if this file is
-        // under a subdirectory?
-        ::lstat(fileName(), &stat_);
+      // Skip over the Unix "." and ".." directories which don't exist on
+      // LittleFS or SPIFFS.
+      while (true) {
+        dirEntry_ = ::readdir(dir_);
+        if (dirEntry_ == nullptr) return false;
+        if (strcmp(fileName(), ".") != 0
+            && strcmp(fileName(), "..") != 0) break;
       }
+      // TODO: Do I need to recreate the full path if this file is
+      // under a subdirectory?
+      ::lstat(fileName(), &stat_);
       return dirEntry_ != nullptr;
     }
 
@@ -179,7 +201,9 @@ class EpoxyDirImpl: public DirImpl {
     }
 
   private:
+    const char* const fsroot_;
     const std::string path_;
+
     DIR* dir_;
     struct dirent* dirEntry_;
     struct stat stat_;
@@ -217,8 +241,7 @@ class EpoxyFSImpl: public FSImpl {
         AccessMode accessMode
     ) override {
       const char* mode = rsflags(openMode, accessMode);
-      std::string unixPath = fileNameConcat(fsroot_, path);
-      return std::make_shared<EpoxyFileImpl>(unixPath, mode);
+      return std::make_shared<EpoxyFileImpl>(fsroot_, path, mode);
     }
 
     bool exists(const char* path) override {
@@ -229,8 +252,7 @@ class EpoxyFSImpl: public FSImpl {
     }
 
     DirImplPtr openDir(const char* path) override {
-      std::string unixPath = fileNameConcat(fsroot_, path);
-      return std::make_shared<EpoxyDirImpl>(unixPath);
+      return std::make_shared<EpoxyDirImpl>(fsroot_, path);
     }
 
     bool rename(const char* pathFrom, const char* pathTo) override {
