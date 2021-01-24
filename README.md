@@ -333,6 +333,10 @@ $ ./SampleTest.out < /dev/null | less # works
 
 ## Feedback and Support
 
+If you find this library useful, consider starring this project on GitHub. The
+stars will let me prioritize the more popular libraries over the less popular
+ones.
+
 If you have any questions, comments, bug reports, or feature requests, please
 file a GitHub ticket instead of emailing me unless the content is sensitive.
 (The problem with email is that I cannot reference the email conversation when
