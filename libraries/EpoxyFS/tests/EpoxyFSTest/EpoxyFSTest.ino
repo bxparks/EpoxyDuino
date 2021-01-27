@@ -31,6 +31,10 @@ static const char FILE_PATH[] = "/testfile.txt";
 
 static const char FILE_NAME2[] = "testfile2.txt";
 static const char FILE_PATH2[] = "/testfile2.txt";
+
+static const char FILE_NAME_DOES_NOT_EXIST[] = "doesnotexist.txt";
+static const char FILE_PATH_DOES_NOT_EXIST[] = "/doesnotexist.txt";
+
 static const char TEXT[] = "This is a test";
 
 static void writeFile(const char* filePath, const char* text) {
@@ -157,7 +161,15 @@ test(EpoxyFileImplTest, validateProperties) {
 // Tests for EpoxyFSImpl
 //---------------------------------------------------------------------------
 
+test(EpoxyFSImplTest, open_non_existing) {
+  assertFalse(FILE_SYSTEM.exists(FILE_PATH_DOES_NOT_EXIST));
+  File f = FILE_SYSTEM.open(FILE_PATH_DOES_NOT_EXIST, "r");
+  assertFalse(!!f);
+}
+
 test(EpoxyFSImplTest, exists) {
+  assertFalse(FILE_SYSTEM.exists(FILE_PATH_DOES_NOT_EXIST));
+
   writeFile(FILE_PATH, TEXT);
   assertTrue(FILE_SYSTEM.exists(FILE_PATH));
 
@@ -167,8 +179,8 @@ test(EpoxyFSImplTest, exists) {
 
 test(EpoxyFSImplTest, rename) {
   writeFile(FILE_PATH, TEXT);
-
   assertTrue(FILE_SYSTEM.exists(FILE_PATH));
+
   FILE_SYSTEM.rename(FILE_PATH, FILE_PATH2);
   assertFalse(FILE_SYSTEM.exists(FILE_PATH));
   assertTrue(FILE_SYSTEM.exists(FILE_PATH2));

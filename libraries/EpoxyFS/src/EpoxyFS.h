@@ -27,12 +27,18 @@ class EpoxyFileImpl: public FileImpl {
     EpoxyFileImpl(
         const char* fsroot,
         const std::string& path,
-        const char* mode
+        const char* mode,
+        FILE* fp
     ) :
         fsroot_(fsroot),
         path_(path),
-        mode_(mode)
+        mode_(mode),
+        fp_(fp)
     {
+      // Extract file info
+      int fd = fileno(fp_);
+      ::fstat(fd, &stat_);
+
       // Extract the basename of path
       size_t pos = path_.find_last_of("/");
       if (pos == std::string::npos) {
@@ -40,8 +46,6 @@ class EpoxyFileImpl: public FileImpl {
       } else {
         name_ = path_.substr(pos + 1, std::string::npos);
       }
-
-      open(path, mode);
     }
 
     ~EpoxyFileImpl() override {
@@ -49,15 +53,15 @@ class EpoxyFileImpl: public FileImpl {
     }
 
     size_t write(const uint8_t *buf, size_t size) override {
-      return ::fwrite(buf, 1, size, file_);
+      return ::fwrite(buf, 1, size, fp_);
     }
 
     size_t read(uint8_t* buf, size_t size) override {
-      return ::fread(buf, 1, size, file_);
+      return ::fread(buf, 1, size, fp_);
     }
 
     void flush() override {
-      fflush(file_);
+      fflush(fp_);
     }
 
     bool seek(uint32_t pos, SeekMode mode) override {
@@ -69,32 +73,38 @@ class EpoxyFileImpl: public FileImpl {
       } else {
         whence = SEEK_SET;
       }
-      ::fseek(file_, pos, whence);
+      ::fseek(fp_, pos, whence);
       return true;
     }
 
     size_t position() const override {
-      return ::ftell(file_);
+      return ::ftell(fp_);
     }
 
     size_t size() const override {
       return stat_.st_size;
     }
 
+    // There are 2 Unix truncate functions, truncate(path, ...) and
+    // ftruncate(fd, ...), neither take the (FILE*) pointer. I tried truncating
+    // it with the fd descriptor, but I couldn't get it to work. Truncating
+    // using the full filePath works, but I have to close the FILE* buffer.
+    // Which means that I have to reopen the file. If there is an easier way of
+    // doing this, I'd be happy to learn it.
     bool truncate(uint32_t size) override {
       close();
       std::string unixPath = fileNameConcat(fsroot_, path_);
       int status = ::truncate(unixPath.c_str(), size);
       if (status == 0) {
-        open(path_, mode_);
+        reopen();
       }
       return status == 0;
     }
 
     void close() override {
-      if (file_) {
-        ::fclose(file_);
-        file_ = nullptr;
+      if (fp_) {
+        ::fclose(fp_);
+        fp_ = nullptr;
       }
     }
 
@@ -116,19 +126,19 @@ class EpoxyFileImpl: public FileImpl {
 
   private:
 
-    void open(const std::string& path, const char* mode) {
-      std::string unixPath = fileNameConcat(fsroot_, path);
-      file_ = ::fopen(unixPath.c_str(), mode_);
-      int fd = fileno(file_);
+    void reopen() {
+      std::string unixPath = fileNameConcat(fsroot_, path_);
+      fp_ = ::fopen(unixPath.c_str(), mode_);
+      int fd = fileno(fp_);
       ::fstat(fd, &stat_);
     }
 
     const char* const fsroot_;
     const std::string path_;
     const char* const mode_;
+    FILE* fp_;
 
     std::string name_;
-    FILE* file_;
     struct stat stat_;
 };
 
@@ -152,7 +162,13 @@ class EpoxyDirImpl: public DirImpl {
     FileImplPtr openFile(OpenMode openMode, AccessMode accessMode) override {
       const char* mode = rsflags(openMode, accessMode);
       std::string filePath = fileNameConcat(path_, fileName());
-      return std::make_shared<EpoxyFileImpl>(fsroot_, filePath, mode);
+      std::string unixPath = fileNameConcat(fsroot_, filePath);
+      FILE* fp = ::fopen(unixPath.c_str(), mode);
+      if (fp) {
+        return std::make_shared<EpoxyFileImpl>(fsroot_, filePath, mode, fp);
+      } else {
+        return nullptr;
+      }
     }
 
     const char* fileName() override {
@@ -240,8 +256,14 @@ class EpoxyFSImpl: public FSImpl {
         OpenMode openMode,
         AccessMode accessMode
     ) override {
+      std::string unixPath = fileNameConcat(fsroot_, path);
       const char* mode = rsflags(openMode, accessMode);
-      return std::make_shared<EpoxyFileImpl>(fsroot_, path, mode);
+      FILE* fp = ::fopen(unixPath.c_str(), mode);
+      if (fp) {
+        return std::make_shared<EpoxyFileImpl>(fsroot_, path, mode, fp);
+      } else {
+        return nullptr;
+      }
     }
 
     bool exists(const char* path) override {
