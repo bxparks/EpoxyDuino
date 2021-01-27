@@ -102,7 +102,7 @@ static int removeFileOrDir(
 }
 
 bool EpoxyFSImpl::format() {
-  int status = nftw(fsroot_, removeFileOrDir, 5,
+  int status = nftw(fsroot_, removeFileOrDir, 5 /*nopenfd*/,
       FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
   return status == 0;
 }
