@@ -33,8 +33,8 @@ static const char FILE_NAME2[] = "testfile2.txt";
 static const char FILE_PATH2[] = "/testfile2.txt";
 static const char TEXT[] = "This is a test";
 
-static void writeFile(const char* fileName, const char* text) {
-  File f = FILE_SYSTEM.open(fileName, "w");
+static void writeFile(const char* filePath, const char* text) {
+  File f = FILE_SYSTEM.open(filePath, "w");
   f.print(text);
   f.close();
 }
@@ -51,8 +51,7 @@ static void readFileInto(File& f, Print& printStr) {
 //---------------------------------------------------------------------------
 
 test(EpoxyDirImpl, next) {
-  FILE_SYSTEM.format();
-  writeFile(FILE_NAME, TEXT);
+  writeFile(FILE_PATH, TEXT);
 
   Dir dir = FILE_SYSTEM.openDir("/");
   int count = 0;
@@ -61,14 +60,15 @@ test(EpoxyDirImpl, next) {
   }
 
   assertEqual(1, count);
+
+  // Clean up
+  FILE_SYSTEM.remove(FILE_PATH);
 }
 
 test(EpoxyDirImpl, rewind) {
-  // Clear the filesystem, and create one file.
-  FILE_SYSTEM.format();
-  writeFile(FILE_NAME, TEXT);
+  writeFile(FILE_PATH, TEXT);
 
-  // Count number of entries, including the "." and "..".
+  // Count number of entries
   Dir dir = FILE_SYSTEM.openDir("/");
   int count = 0;
   while (dir.next()) {
@@ -82,6 +82,9 @@ test(EpoxyDirImpl, rewind) {
     count++;
   }
   assertEqual(2, count);
+
+  // Clean up
+  FILE_SYSTEM.remove(FILE_PATH);
 }
 
 //---------------------------------------------------------------------------
@@ -100,6 +103,9 @@ test(EpoxyFileImplTest, writeFile_readFile) {
   f.close();
 
   assertEqual(TEXT, printStr.getCstr());
+
+  // Clean up
+  FILE_SYSTEM.remove(FILE_PATH);
 }
 
 test(EpoxyFileImplTest, seekFile) {
@@ -112,6 +118,9 @@ test(EpoxyFileImplTest, seekFile) {
   f.close();
 
   assertEqual(F("is a test"), printStr.getCstr());
+
+  // Clean up
+  FILE_SYSTEM.remove(FILE_PATH);
 }
 
 #if defined(EPOXY_DUINO)
@@ -125,6 +134,9 @@ test(EpoxyFileImplTest, truncate) {
   bool status = f.truncate(0);
   assertTrue(status);
   assertEqual((size_t) 0, f.size());
+
+  // Clean up
+  FILE_SYSTEM.remove(FILE_PATH);
 }
 #endif
 
@@ -136,6 +148,9 @@ test(EpoxyFileImplTest, validateProperties) {
   assertTrue(f.isFile());
   assertFalse(f.isDirectory());
   f.close();
+
+  // Clean up
+  FILE_SYSTEM.remove(FILE_PATH);
 }
 
 //---------------------------------------------------------------------------
@@ -145,6 +160,9 @@ test(EpoxyFileImplTest, validateProperties) {
 test(EpoxyFSImplTest, exists) {
   writeFile(FILE_PATH, TEXT);
   assertTrue(FILE_SYSTEM.exists(FILE_PATH));
+
+  // Clean up
+  FILE_SYSTEM.remove(FILE_PATH);
 }
 
 test(EpoxyFSImplTest, rename) {
@@ -154,6 +172,9 @@ test(EpoxyFSImplTest, rename) {
   FILE_SYSTEM.rename(FILE_PATH, FILE_PATH2);
   assertFalse(FILE_SYSTEM.exists(FILE_PATH));
   assertTrue(FILE_SYSTEM.exists(FILE_PATH2));
+
+  // Clean up
+  FILE_SYSTEM.remove(FILE_PATH2);
 }
 
 test(EpoxyFSImplTest, remove) {
@@ -178,14 +199,12 @@ void setup() {
 
   if (FILE_SYSTEM.begin()){
     SERIAL_PORT_MONITOR.println(F("FileSystem initialized."));
+
+    // To reduce wear, format only once at the start of the test suite.
+    FILE_SYSTEM.format();
   } else {
     SERIAL_PORT_MONITOR.println(F("FileSystem init failed"));
     setupStatus = false;
-  }
-
-  // Start each test with a clean slate.
-  if (setupStatus) {
-    FILE_SYSTEM.format();
   }
 }
 
