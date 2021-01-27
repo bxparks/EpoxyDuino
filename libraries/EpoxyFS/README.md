@@ -43,16 +43,16 @@ void loop() {
 ## Root of the File System
 
 By default, the root of the file system is located in a directory named
-`./fsdata` in the *current directory*. This location can be changed by setting
-the
+`./epoxyfsdata` in the *current directory*. This location can be changed by
+setting the
 
 * `EPOXY_FS_ROOT`
 
 environment variable. For example, setting
 
-* `$ export EPOXY_FS_ROOT=/tmp/fsdata`
+* `$ export EPOXY_FS_ROOT=/tmp/epoxyfsdata`
 
-sets the root to the `/tmp/fsdata` directory.
+sets the root to the `/tmp/epoxyfsdata` directory.
 
 **DANGER**: The `EpoxyFS::format()` method creates a blank file system. To
 achieve that, the method recursively removes all files and directories under the

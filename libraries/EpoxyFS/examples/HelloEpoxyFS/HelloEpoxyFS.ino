@@ -34,7 +34,7 @@ int removeFile(
 
 void removeFtw() {
   SERIAL_PORT_MONITOR.println("== FTW List '/'");
-  nftw("fsdata", removeFile, 5, FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
+  nftw("epoxyfsdata", removeFile, 5, FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
 }
 
 void listDir(FS& fileSystem) {

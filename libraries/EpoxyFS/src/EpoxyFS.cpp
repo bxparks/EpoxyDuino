@@ -57,7 +57,7 @@ const char* EpoxyFSImpl::getFSRoot() {
   if (envroot) {
     return envroot;
   } else {
-    return "fsdata";
+    return "epoxyfsdata";
   }
 }
 

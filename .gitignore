@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# Root directory of EpoxyFS
+epoxyfsdata

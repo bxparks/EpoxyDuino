@@ -7,4 +7,4 @@ MORE_CLEAN := more_clean
 include ../../../../EpoxyDuino.mk
 
 more_clean:
-	rm -rf fsdata
+	rm -rf epoxyfsdata
