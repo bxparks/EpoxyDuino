@@ -198,6 +198,39 @@ test(EpoxyFSImplTest, remove) {
 }
 
 //---------------------------------------------------------------------------
+// Tests for sflags() and rsflags()
+//---------------------------------------------------------------------------
+
+#if defined(EPOXY_DUINO)
+
+test(sflags_rsflags_round_trip) {
+  OpenMode omode;
+  AccessMode amode;
+
+  assertTrue(sflags("r", omode, amode));
+  assertEqual("r", rsflags(omode, amode));
+
+  assertTrue(sflags("w", omode, amode));
+  assertEqual("w", rsflags(omode, amode));
+
+  assertTrue(sflags("a", omode, amode));
+  assertEqual("a", rsflags(omode, amode));
+
+  assertTrue(sflags("r+", omode, amode));
+  assertEqual("r+", rsflags(omode, amode));
+
+  assertTrue(sflags("w+", omode, amode));
+  assertEqual("w+", rsflags(omode, amode));
+
+  assertTrue(sflags("a+", omode, amode));
+  assertEqual("a+", rsflags(omode, amode));
+
+  assertFalse(sflags("invalid", omode, amode));
+}
+
+#endif // defined(EPOXY_DUINO)
+
+//---------------------------------------------------------------------------
 
 bool setupStatus = true;
 

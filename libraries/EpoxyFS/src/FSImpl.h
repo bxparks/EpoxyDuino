@@ -71,6 +71,10 @@ enum AccessMode {
     AM_RW = AM_READ | AM_WRITE
 };
 
+// Moved from FS.cpp to here to allow unit testing. Could not move it to FS.h
+// due to cyclic dependency with OpenMode and AccesMode.
+bool sflags(const char* mode, OpenMode& om, AccessMode& am);
+
 class DirImpl {
 public:
     virtual ~DirImpl() { }

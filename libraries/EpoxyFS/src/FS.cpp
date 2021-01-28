@@ -25,8 +25,6 @@
 
 using namespace fs;
 
-static bool sflags(const char* mode, OpenMode& om, AccessMode& am);
-
 size_t File::write(uint8_t c) {
     if (!_p)
         return 0;
@@ -438,36 +436,6 @@ void FS::setTimeCallback(time_t (*cb)(void)) {
     if (!_impl)
         return;
     _impl->setTimeCallback(cb);
-}
-
-
-static bool sflags(const char* mode, OpenMode& om, AccessMode& am) {
-    switch (mode[0]) {
-        case 'r':
-            am = AM_READ;
-            om = OM_DEFAULT;
-            break;
-        case 'w':
-            am = AM_WRITE;
-            om = (OpenMode) (OM_CREATE | OM_TRUNCATE);
-            break;
-        case 'a':
-            am = AM_WRITE;
-            om = (OpenMode) (OM_CREATE | OM_APPEND);
-            break;
-        default:
-            return false;
-    }
-    switch(mode[1]) {
-        case '+':
-            am = (AccessMode) (AM_WRITE | AM_READ);
-            break;
-        case 0:
-            break;
-        default:
-            return false;
-    }
-    return true;
 }
 
 
