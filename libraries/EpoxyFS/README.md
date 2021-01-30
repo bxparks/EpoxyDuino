@@ -6,15 +6,25 @@ a Linux (and hopefully on a MacOS) machine using EpoxyDuino.
 
 ## Usage
 
+The `FS` class in EpoxyFS is compatible with the `FS` class on the ESP8266
+platform. Unfortunately, the `FS` class under the ESP32 is slightly different.
+This means that we cannot use `FS` as a common interface across platforms.
+Instead we use a `#define FILE_SYSTEM` to set the correct file system instance,
+and use `FILE_SYSTEM` everywhere where we would have used a `LittleFS`, or
+`LITTLEFS` or `fs::EpoxyFS` instance.
+
 ```C++
 #include <Arduino.h>
 
 #if defined(EPOXY_DUINO)
   #include <EpoxyFS.h>
-  FS& FILE_SYSTEM = fs::EpoxyFS;
+  #define FILE_SYSTEM fs::EpoxyFS
 #elif defined(ESP8266)
   #include <LittleFS.h>
-  FS& FILE_SYSTEM = fs::LittleFS;
+  #define FILE_SYSTEM LittleFS
+#elif defined(ESP32)
+  #include <LITTLEFS.h>
+  #define FILE_SYSTEM LITTLEFS
 #else
   #error Unsupported platform
 #endif

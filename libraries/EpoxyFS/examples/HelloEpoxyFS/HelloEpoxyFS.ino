@@ -1,16 +1,21 @@
 #include <stdio.h> // remove()
-#include <ftw.h> // nftw()
 #include <Arduino.h>
 
 #if defined(EPOXY_DUINO)
+  #include <ftw.h> // nftw()
   #include <EpoxyFS.h>
+  #define FILE_SYSTEM fs::EpoxyFS
 #elif defined(ESP8266)
   #include <LittleFS.h>
+  #define FILE_SYSTEM LittleFS
+#elif defined(ESP32)
+  #include <LITTLEFS.h>
+  #define FILE_SYSTEM LITTLEFS
 #else
   #error Unsupported platform
 #endif
 
-using fs::EpoxyFS;
+#if defined(EPOXY_DUINO)
 
 int removeFile(
     const char *fpath,
@@ -37,11 +42,13 @@ void removeFtw() {
   nftw("epoxyfsdata", removeFile, 5, FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
 }
 
-void listDir(FS& fileSystem) {
+#endif
+
+void listDir() {
   SERIAL_PORT_MONITOR.println("== Dir List '/'");
 
   // Open dir folder
-  Dir dir = fileSystem.openDir("/");
+  Dir dir = FILE_SYSTEM.openDir("/");
 
   int count = 1;
   // Cycle all the content
@@ -75,17 +82,17 @@ void listDir(FS& fileSystem) {
   }
 }
 
-void writeFile(FS& fileSystem) {
+void writeFile() {
   SERIAL_PORT_MONITOR.println("== Writing 'testfile.txt'");
 
-  File f = fileSystem.open("testfile.txt", "w");
+  File f = FILE_SYSTEM.open("testfile.txt", "w");
   f.println("This is a test");
   f.println(42);
   f.println(42.0);
   f.println(42, 16);
   f.close();
 
-  bool exists = fileSystem.exists("testfile.txt");
+  bool exists = FILE_SYSTEM.exists("testfile.txt");
   if (exists) {
     SERIAL_PORT_MONITOR.println("'testfile.txt' created");
   } else {
@@ -93,10 +100,10 @@ void writeFile(FS& fileSystem) {
   }
 }
 
-void readFile(FS& fileSystem) {
+void readFile() {
   SERIAL_PORT_MONITOR.println("== Reading '/testfile.txt'");
 
-  File f = fileSystem.open("/testfile.txt", "r");
+  File f = FILE_SYSTEM.open("/testfile.txt", "r");
   SERIAL_PORT_MONITOR.print("name(): ");
   SERIAL_PORT_MONITOR.println(f.name());
   SERIAL_PORT_MONITOR.print("fullName(): ");
@@ -120,18 +127,21 @@ void setup() {
 
 #if defined(EPOXY_DUINO)
   SERIAL_PORT_MONITOR.print(F("Inizializing EpoxyFS..."));
-  FS& fileSystem = EpoxyFS;
-#else
+#elif define(ESP8266)
   SERIAL_PORT_MONITOR.print(F("Inizializing LittleFS..."));
-  FS& fileSystem = LittleFS;
+#elif define(ESP32)
+  SERIAL_PORT_MONITOR.print(F("Inizializing LITTLEFS..."));
 #endif
 
-  if (fileSystem.begin()){
+  if (FILE_SYSTEM.begin()){
     SERIAL_PORT_MONITOR.println(F("done."));
-    listDir(fileSystem);
-    writeFile(fileSystem);
-    readFile(fileSystem);
+    listDir();
+
+#if defined(EPOXY_DUINO)
+    writeFile();
+    readFile();
     removeFtw();
+#endif
   } else {
     SERIAL_PORT_MONITOR.println(F("fail."));
   }

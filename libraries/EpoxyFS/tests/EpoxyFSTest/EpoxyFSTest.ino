@@ -6,8 +6,13 @@
 
 #if defined(EPOXY_DUINO)
   #include <EpoxyFS.h>
+  #define FILE_SYSTEM fs::EpoxyFS
 #elif defined(ESP8266)
   #include <LittleFS.h>
+  #define FILE_SYSTEM LittleFS
+#elif defined(ESP32)
+  #include <LITTLEFS.h>
+  #define FILE_SYSTEM LITTLEFS
 #else
   #error Unsupported platform
 #endif
@@ -17,14 +22,6 @@ using aunit::TestRunner;
 using namespace fs;
 
 //---------------------------------------------------------------------------
-
-#if defined(EPOXY_DUINO)
-  FS& FILE_SYSTEM = EpoxyFS;
-#elif defined(ESP8266)
-  FS& FILE_SYSTEM = LittleFS;
-#else
-  #error Unsupported platform
-#endif
 
 static const char FILE_NAME[] = "testfile.txt";
 static const char FILE_PATH[] = "/testfile.txt";
