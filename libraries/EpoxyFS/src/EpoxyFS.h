@@ -290,14 +290,24 @@ class EpoxyFSImpl: public FSImpl {
       return status == 0;
     }
 
+    // TODO: Does LittleFS recursivel create intermediate directories? If so
+    // emulate that behavior in EpoxyFS. See
+    // https://github.com/esp8266/Arduino/blob/master/libraries/LittleFS/src/LittleFS.cpp#L60
+    // and
+    // https://gist.github.com/JonathonReinhart/8c0d90191c38af2dcadb102c4e202950
+    // for example.
     bool mkdir(const char* path) override {
-      // TODO: Implement me
-      return false;
+      std::string unixPath = fileNameConcat(fsroot_, path);
+      int status = ::mkdir(unixPath.c_str(), 0700);
+      return status == 0;
     }
 
+    // TODO: Does LittleFS refuse to delete a non-empty directory, or does it
+    // force deletion of a non-empty directory?
     bool rmdir(const char* path) override {
-      // TODO: Implement me
-      return false;
+      std::string unixPath = fileNameConcat(fsroot_, path);
+      int status = ::rmdir(unixPath.c_str());
+      return status == 0;
     }
 
   private:

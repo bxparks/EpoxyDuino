@@ -32,6 +32,12 @@ static const char FILE_PATH2[] = "/testfile2.txt";
 static const char FILE_NAME_DOES_NOT_EXIST[] = "doesnotexist.txt";
 static const char FILE_PATH_DOES_NOT_EXIST[] = "/doesnotexist.txt";
 
+static const char DIR_NAME[] = "subdir";
+static const char DIR_PATH[] = "/subdir";
+
+static const char SUBFILE_NAME[] = "subfile";
+static const char SUBFILE_PATH []= "/subdir/subfile";
+
 static const char TEXT[] = "This is a test";
 
 static void writeFile(const char* filePath, const char* text) {
@@ -47,20 +53,22 @@ static void readFileInto(File& f, Print& printStr) {
   }
 }
 
+static int countDirEntries(const char* path) {
+  Dir dir = FILE_SYSTEM.openDir(path);
+  int count = 0;
+  while (dir.next()) {
+    count++;
+  }
+  return count;
+}
+
 //---------------------------------------------------------------------------
 // Tests for EpoxyDirImpl
 //---------------------------------------------------------------------------
 
 test(EpoxyDirImpl, next) {
   writeFile(FILE_PATH, TEXT);
-
-  Dir dir = FILE_SYSTEM.openDir("/");
-  int count = 0;
-  while (dir.next()) {
-    count++;
-  }
-
-  assertEqual(1, count);
+  assertEqual(1, countDirEntries("/"));
 
   // Clean up
   FILE_SYSTEM.remove(FILE_PATH);
@@ -192,6 +200,27 @@ test(EpoxyFSImplTest, remove) {
   assertTrue(FILE_SYSTEM.exists(FILE_PATH));
   FILE_SYSTEM.remove(FILE_PATH);
   assertFalse(FILE_SYSTEM.exists(FILE_PATH));
+}
+
+test(EpoxyFSImplTest, mkdir_rmdir) {
+  // Create directory at root level.
+  bool status = FILE_SYSTEM.mkdir(DIR_PATH);
+  assertTrue(status);
+  assertEqual(1, countDirEntries("/"));
+  assertEqual(0, countDirEntries(DIR_PATH));
+
+  // Create a file under the subdirectory and verify its creation.
+  writeFile(SUBFILE_PATH, TEXT);
+  assertTrue(FILE_SYSTEM.exists(SUBFILE_PATH));
+  assertEqual(1, countDirEntries("/"));  // root file count unchanged
+  assertEqual(1, countDirEntries(DIR_PATH)); // subdir has one more file
+
+  // Clean up
+  FILE_SYSTEM.remove(SUBFILE_PATH);
+  assertFalse(FILE_SYSTEM.exists(SUBFILE_PATH));
+  assertEqual(0, countDirEntries(DIR_PATH));
+  status = FILE_SYSTEM.rmdir(DIR_PATH);
+  assertTrue(status);
 }
 
 //---------------------------------------------------------------------------
