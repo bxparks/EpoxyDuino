@@ -74,3 +74,10 @@ you may remove a **lot** of files quickly and permanently. Be very careful!
 * A number of functions and methods are not yet implemented. See the `TODO`
   notes in `src/EpoxyFS.h`.
 * I have not tested all of the `FS::open()` modes: "r", "w", "a", "r+" etc.
+* The document for [ESP8266
+  Filesystem](https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html)
+  says that "Subdirectories are automatically created when you attempt to create
+  a file in a subdirectory, and when the last file in a subdirectory is removed
+  the subdirectory itself is automatically deleted. This is because there was no
+  mkdir() method in the existing SPIFFS filesystem."
+    * This has *not* been implemented in EpoxyFS.
