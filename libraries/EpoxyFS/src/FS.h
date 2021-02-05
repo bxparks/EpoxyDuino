@@ -52,7 +52,11 @@ enum SeekMode {
 class File : public Stream
 {
 public:
-    File(FileImplPtr p = FileImplPtr(), FS *baseFS = nullptr) : _p(p), _fakeDir(nullptr), _baseFS(baseFS) { }
+    File(FileImplPtr p = FileImplPtr(), FS *baseFS = nullptr) :
+        _p(p),
+        _fakeDir(nullptr),
+        _baseFS(baseFS)
+    {}
 
     // Print methods:
     size_t write(uint8_t) override;
@@ -125,7 +129,10 @@ protected:
 
 class Dir {
 public:
-    Dir(DirImplPtr impl = DirImplPtr(), FS *baseFS = nullptr): _impl(impl), _baseFS(baseFS) { }
+    Dir(DirImplPtr impl = DirImplPtr(), FS *baseFS = nullptr):
+        _impl(impl),
+        _baseFS(baseFS)
+    {}
 
     File openFile(const char* mode);
 
@@ -173,7 +180,10 @@ class FSConfig
 public:
     static constexpr uint32_t FSId = 0x00000000;
 
-    FSConfig(uint32_t type = FSId, bool autoFormat = true) : _type(type), _autoFormat(autoFormat) { }
+    FSConfig(uint32_t type = FSId, bool autoFormat = true) :
+        _type(type),
+        _autoFormat(autoFormat)
+    { }
 
     FSConfig setAutoFormat(bool val = true) {
         _autoFormat = val;
@@ -225,7 +235,9 @@ public:
 
     void setTimeCallback(time_t (*cb)(void));
 
-    friend class ::SDClass; // More of a frenemy, but SD needs internal implementation to get private FAT bits
+    // More of a frenemy, but SD needs internal implementation to get private
+    // FAT bits
+    friend class ::SDClass;
 protected:
     FSImplPtr _impl;
     FSImplPtr getImpl() { return _impl; }
