@@ -310,6 +310,9 @@ This library has been tested on:
 * MacOS 10.14.5
     * clang++ Apple LLVM version 10.0.1
     * GNU Make 3.81
+* MacOS 10.14.6
+    * Apple clang version 11.0.0 (clang-1100.0.33.17)
+    * GNU Make 3.81
 
 ## License
 

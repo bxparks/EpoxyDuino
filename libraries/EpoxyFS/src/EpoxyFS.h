@@ -1,6 +1,7 @@
 #ifndef EPOXY_FS_H
 #define EPOXY_FS_H
 
+#include <string> // std::string
 #include <stdio.h> // fopen(), ftell(), etc
 #include <sys/types.h>
 #include <dirent.h>
@@ -183,10 +184,12 @@ class EpoxyDirImpl: public DirImpl {
     // writable file as the FS is allowed to return either the time of the last
     // write() operation or the time present in the filesystem metadata (often
     // the last time the file was closed)
-    time_t fileTime() { return 0; } // By default, FS doesn't report file times
+    //
+    // By default, FS doesn't report file times
+    time_t fileTime() override { return 0; }
 
     // By default, FS doesn't report file times
-    time_t fileCreationTime() { return 0; }
+    time_t fileCreationTime() override { return 0; }
 
     bool isFile() const override {
       return dirEntry_->d_type == DT_REG;
