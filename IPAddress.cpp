@@ -2,6 +2,9 @@
   IPAddress.cpp - Base class that provides IPAddress
   Copyright (c) 2011 Adrian McEwen.  All right reserved.
 
+  Copied from Arduino AVR core 1.8.3 by Erik Tideman. Removed
+  unnecessary 'friend' declarations.
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
