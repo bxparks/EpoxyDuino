@@ -82,7 +82,7 @@
 
 extern "C" {
 
-void delayMicroseconds(unsigned long us);
+void delayMicroseconds(unsigned int us);
 void delay(unsigned long ms);
 void yield();
 unsigned long millis();

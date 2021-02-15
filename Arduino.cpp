@@ -21,7 +21,7 @@
 // Arduino methods emulated in Unix
 // -----------------------------------------------------------------------
 
-void delayMicroseconds(unsigned long us) {
+void delayMicroseconds(unsigned int us) {
   usleep(us);
 }
 
