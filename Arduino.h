@@ -9,6 +9,7 @@
 #ifndef EPOXY_DUINO_ARDUINO_H
 #define EPOXY_DUINO_ARDUINO_H
 
+#include <math.h>
 #include "Print.h"
 #include "StdioSerial.h"
 
