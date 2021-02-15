@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Brian T. Park
  * MIT License
- * 
+ *
  * Parts derived from the Arduino SDK
  * Copyright (c) 2005-2013 Arduino Team
  */
@@ -81,6 +81,7 @@
 
 extern "C" {
 
+void delayMicroseconds(unsigned long us);
 void delay(unsigned long ms);
 void yield();
 unsigned long millis();
