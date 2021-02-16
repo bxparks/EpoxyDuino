@@ -221,7 +221,7 @@ The following functions and features of the Arduino framework are implemented:
 
 * `Arduino.h`
     * `setup()`, `loop()`
-    * `delay()`, `yield()`
+    * `delay()`, `yield()`, `delayMicroSeconds()`
     * `millis()`, `micros()`
     * `digitalWrite()`, `digitalRead()`, `pinMode()` (empty stubs)
     * `analogRead()` (empty stub)
@@ -243,10 +243,9 @@ The following functions and features of the Arduino framework are implemented:
     * `strlen_P()`, `strcat_P()`, `strcpy_P()`, `strncpy_P()`, `strcmp_P()`,
       `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`
     * `PROGMEM`, `PGM_P`, `PGM_VOID_P`, `PSTR()`
-* `EEPROM.h`
-    * compile only
-* `Wire.h`
-    * compile only
+* `EEPROM.h` (stub implementation)
+* `Wire.h` (stub implementation)
+* `SPI.h` (stub implementation)
 
 See [Arduino.h](https://github.com/bxparks/EpoxyDuino/blob/develop/Arduino.h)
 for the latest list.
@@ -352,3 +351,6 @@ incorporate everything, but I will give your ideas serious consideration.
 * Created by Brian T. Park (brian@xparks.net).
 * Support for using as library, by making `main()` a weak reference, added
   by Max Prokhorov (prokhorov.max@outlook.com).
+* Add `delayMicroSeconds()`, `WCharacter.h`, and stub implementations of
+  `IPAddress.h`, `SPI.h`, by Erik Tideman (@ramboerik), see
+  [PR #18](https://github.com/bxparks/EpoxyDuino/pull/18).

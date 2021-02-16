@@ -2,8 +2,10 @@
 
 * Unreleased
     * Add `libraries/EpoxyFS`, an implementation of the ESP8266 `FS` file system
-      that runs on Linux machines (and hopefully MacOS, untested) through
-      EpoxyDuino.
+      that runs on Linux and MacOS.
+    * Add `delayMicroSeconds()`, `WCharacter.h`, and stub implementations of
+      `IPAddress.h`, `SPI.h`, by Erik Tideman (@ramboerik), see
+      [PR #18](https://github.com/bxparks/EpoxyDuino/pull/18).
 * 0.5 (2021-01-21)
     * **Breaking Change** Change project name to "EpoxyDuino". The
       `UNIX_HOST_DUINO` macro is replaced with `EPOXY_DUINO`, and the
