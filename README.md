@@ -47,6 +47,26 @@ for backwards compatibility. See
 [Issue #15](https://github.com/bxparks/EpoxyDuino/issues/15)
 for more details.
 
+## Table of Contents
+
+* [Installation](#Installation)
+* [Usage](#Usage)
+    * [Makefile](#Makefile)
+    * [Additional Arduino Libraries](#AdditionalLibraries)
+    * [Additional Arduino Library Locations](#AdditionalLibraryLocations)
+    * [Alternate C++ Compiler](#AlternateCompiler)
+    * [Difference from Arduino IDE](#DifferenceFromArduinoIDE)
+    * [Conditional Code](#ConditionalCode)
+    * [Continuous Integration](#ContinuousIntegration)
+* [Supported Arduino Features](#SupportedArduinoFeatures)
+    * [Arduino Functions](#ArduinoFunctions)
+    * [Serial Port Emulation](#SerialPortEmulation)
+* [System Requirements](#SystemRequirements)
+* [License](#License)
+* [Feedback](#Feedback)
+* [Authors](#Authors)
+
+<a name="Installation"></a>
 ## Installation
 
 You need to grab the sources directly from GitHub. This project is *not* an
@@ -65,7 +85,11 @@ $ git clone https://github.com/bxparks/EpoxyDuino.git
 This will create a directory called
 `{sketchbook_directory}/libraries/EpoxyDuino`.
 
+<a name="Usage"></a>
 ## Usage
+
+<a name="Makefile"></a>
+### Makefile
 
 The minimal `Makefile` has 3 lines:
 ```
@@ -99,6 +123,7 @@ board will be sent to the `STDOUT` of the Linux or MacOS terminal. The output
 should be identical to what would be shown on the serial port of the Arduino
 controller.
 
+<a name="AdditionalLibraries"></a>
 ### Additional Arduino Libraries
 
 If the Arduino program depends on additional Arduino libraries, they must be
@@ -124,6 +149,7 @@ for these additional libraries at the following locations:
 * under each of the additional directories listed in `ARDUINO_LIB_DIRS` (see
   below)
 
+<a name="AdditionalLibraryLocations"></a>
 ### Additional Arduino Library Locations
 
 As explained above, EpoxyDuino normally assumes that the additional libraries
@@ -149,7 +175,8 @@ each of the 3 directories given in the `ARDUINO_LIB_DIRS`. (The
 `arduino_ide_dir` is a convenience temporary variable. It has no significance to
 `EpoxyDuino.mk`)
 
-### Using an Alternate C++ Compiler
+<a name="AlternateCompiler"></a>
+### Alternate C++ Compiler
 
 Normally the C++ compiler on Linux is `g++`. If you have `clang++` installed
 you can use that instead by specifying the `CXX` environment variable:
@@ -160,6 +187,7 @@ $ CXX=clang++ make
 the `make` command, which causes `make` to set its internal `CXX` variable,
 which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
 
+<a name="DifferenceFromArduinoIDE"></a>
 ### Difference from Arduino IDE
 
 There are a number of differences compared to the programming environment
@@ -191,6 +219,7 @@ start using `ARDUINO_LIB_DIRS`, you will often run into third party libraries
 using features which are not supported by the EpoxyDuino framework emulation
 layer.
 
+<a name="ConditionalCode"></a>
 ### Conditional Code
 
 If you want to add code that takes effect only on EpoxyDuino, you can use
@@ -215,7 +244,29 @@ and the following works for MacOS:
 #endif
 ```
 
+<a name="ContinuousIntegration"></a>
+### Continuous Integration
+
+You can use EpoxyDuino to run continuous integration tests or
+validations on the [GitHub Actions](https://github.com/features/actions)
+infrastructure. The basic `ubuntu-18.04` docker image already contains the C++
+compiler and `make` binary, other than this project and any additional Arduino
+libraries that you use. In particular, you don't need to install the Arduion IDE
+or the Arduion CLI.
+
+Take a look at some of my GitHub Actions YAML config files:
+
+* https://github.com/bxparks/AceButton/tree/develop/.github/workflows
+* https://github.com/bxparks/AceCRC/tree/develop/.github/workflows
+* https://github.com/bxparks/AceCommon/tree/develop/.github/workflows
+* https://github.com/bxparks/AceRoutine/tree/develop/.github/workflows
+* https://github.com/bxparks/AceTime/tree/develop/.github/workflows
+
+<a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
+
+<a name="ArduinoFunctions"></a>
+### Arduino Functions
 
 The following functions and features of the Arduino framework are implemented:
 
@@ -256,6 +307,7 @@ controllers). It is implemented here for convenience. The size of the internal
 buffer is `250` characters, which can be changed by changing the
 `PRINTF_BUFFER_SIZE` parameter if needed.
 
+<a name="SerialPortEmulation"></a>
 ### Serial Port Emulation
 
 The `Serial` object is an instance of the `StdioSerial` class which emulates the
@@ -292,6 +344,7 @@ the program. But this convenience means that the Arduino program running under
 `Serial.read()` function. The advantages of having normal Unix signals seemed
 worth the trade-off.
 
+<a name="SystemRequirements"></a>
 ## System Requirements
 
 This library has been tested on:
@@ -313,10 +366,12 @@ This library has been tested on:
     * Apple clang version 11.0.0 (clang-1100.0.33.17)
     * GNU Make 3.81
 
+<a name="License"></a>
 ## License
 
 [MIT License](https://opensource.org/licenses/MIT)
 
+<a name="Bugs"></a>
 ## Bugs and Limitations
 
 If the executable (e.g. `SampleTest.out`) is piped to the `less(1)` or `more(1)`
@@ -333,6 +388,7 @@ $ ./SampleTest.out | less # hangs
 $ ./SampleTest.out < /dev/null | less # works
 ```
 
+<a name="Feedback"></a>
 ## Feedback and Support
 
 If you find this library useful, consider starring this project on GitHub. The
@@ -346,6 +402,7 @@ other people ask similar questions later.) I'd love to hear about how this
 software and its documentation can be improved. I can't promise that I will
 incorporate everything, but I will give your ideas serious consideration.
 
+<a name="Authors"></a>
 ## Authors
 
 * Created by Brian T. Park (brian@xparks.net).
