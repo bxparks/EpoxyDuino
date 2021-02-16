@@ -3,7 +3,7 @@
  * Copyright (c) 2014 by Paul Stoffregen <paul@pjrc.com> (Transaction API)
  * Copyright (c) 2014 by Matthijs Kooijman <matthijs@stdin.nl> (SPISettings AVR)
  * Copyright (c) 2014 by Andrew J. Kroll <xxxajk@gmail.com> (atomicity fixes)
- * Copyright (c) 2021 by Erik Tideman (Replaced actual implementations with stubs.)
+ * Copyright (c) 2021 by Erik Tideman (Replaced implementations with stubs.)
  * SPI Master library for arduino.
  *
  * This file is free software; you can redistribute it and/or modify
@@ -97,10 +97,8 @@ public:
   inline static void beginTransaction(SPISettings settings) { }
 
   // Write to the SPI bus (MOSI pin) and also receive (MISO pin)
-  inline static uint8_t transfer(uint8_t data) { }
-  inline static uint16_t transfer16(uint16_t data) {
-   return 0;
-  }
+  inline static uint8_t transfer(uint8_t data) { return 0; }
+  inline static uint16_t transfer16(uint16_t data) { return 0; }
   inline static void transfer(void *buf, size_t count) { }
   // After performing a group of transfers and releasing the chip select
   // signal, this function allows others to access the SPI bus
