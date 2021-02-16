@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Brian T. Park
  * MIT License
- * 
+ *
  * Parts derived from the Arduino SDK
  * Copyright (c) 2005-2013 Arduino Team
  */
@@ -9,6 +9,7 @@
 #ifndef EPOXY_DUINO_ARDUINO_H
 #define EPOXY_DUINO_ARDUINO_H
 
+#include <math.h>
 #include "Print.h"
 #include "StdioSerial.h"
 
@@ -81,6 +82,7 @@
 
 extern "C" {
 
+void delayMicroseconds(unsigned int us);
 void delay(unsigned long ms);
 void yield();
 unsigned long millis();
