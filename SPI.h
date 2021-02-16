@@ -75,7 +75,7 @@ private:
 class SPIClass {
 public:
   // Initialize the SPI library
-  static void begin();
+  static void begin() { }
 
   // If SPI is used from within an interrupt, this function registers
   // that interrupt with the SPI library, so beginTransaction() can
