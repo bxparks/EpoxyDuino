@@ -299,7 +299,12 @@ The following functions and features of the Arduino framework are implemented:
 * `SPI.h` (stub implementation)
 
 See [Arduino.h](https://github.com/bxparks/EpoxyDuino/blob/develop/Arduino.h)
-for the latest list.
+for the latest list. Most of the header files included by this `Arduino.h`
+file were copied and modified from the [arduino:avr
+core](https://github.com/arduino/ArduinoCore-avr/tree/master/cores/arduino),
+versions 1.8.2 (if I recall) or 1.8.3. A number of tweaks have been made to
+support slight variations in the API of other platforms, particularly the
+ESP8266 and ESP32 cores.
 
 The `Print.printf()` function is an extension to the `Print` class that is
 provided by many Arduino-compatible microcontrollers (but not the AVR
