@@ -14,6 +14,8 @@
 
 #include "SPI.h"
 
+SPIClass SPI;
+
 void SPIClass::end() { }
 
 void SPIClass::usingInterrupt(uint8_t interruptNumber) { }
