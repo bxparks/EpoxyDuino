@@ -15,15 +15,22 @@ jobs:
         cd ..
         git clone https://github.com/bxparks/AUnit
         git clone https://github.com/bxparks/AceCommon
+        git clone https://github.com/bxparks/AceCRC
+        git clone https://github.com/bxparks/AceUtils
+        git clone https://github.com/bxparks/AceRoutine
 
     - name: Verify examples
       run: |
         make -C examples
-        cd libraries/EpoxyFS/
-        make -C examples
+        make -C libraries/EpoxyFS/examples
+        make -C libraries/EpoxyPromEsp/examples
+        make -C libraries/EpoxyPromAvr/examples
 
     - name: Verify tests
       run: |
-        cd libraries/EpoxyFS/
-        make -C tests
-        make -C tests runtests
+        make -C libraries/EpoxyFS/tests
+        make -C libraries/EpoxyFS/tests runtests
+        make -C libraries/EpoxyPromEsp/tests
+        make -C libraries/EpoxyPromEsp/tests runtests
+        make -C libraries/EpoxyPromAvr/tests
+        make -C libraries/EpoxyPromAvr/tests runtests
