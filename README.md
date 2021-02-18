@@ -295,7 +295,6 @@ The following functions and features of the Arduino framework are implemented:
     * `strlen_P()`, `strcat_P()`, `strcpy_P()`, `strncpy_P()`, `strcmp_P()`,
       `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`
     * `PROGMEM`, `PGM_P`, `PGM_VOID_P`, `PSTR()`
-* `EEPROM.h` (stub implementation)
 * `Wire.h` (stub implementation)
 * `SPI.h` (stub implementation)
 
