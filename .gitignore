@@ -33,3 +33,6 @@
 
 # Root directory of EpoxyFS
 epoxyfsdata
+
+# Root file of EpoxyPROM
+epoxypromdata
