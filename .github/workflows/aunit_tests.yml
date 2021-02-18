@@ -28,6 +28,9 @@ jobs:
 
     - name: Verify tests
       run: |
+        make -C libraries/EpoxyFS/tests
         make -C libraries/EpoxyFS/tests runtests
+        make -C libraries/EpoxyPromEsp/tests
         make -C libraries/EpoxyPromEsp/tests runtests
+        make -C libraries/EpoxyPromAvr/tests
         make -C libraries/EpoxyPromAvr/tests runtests
