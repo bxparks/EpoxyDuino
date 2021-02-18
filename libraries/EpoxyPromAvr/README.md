@@ -4,13 +4,37 @@ An implementation of `EEPROM` that runs on Linux (or other POSIX-like system)
 using EpoxyDuino (https://github.com/bxparks/EpoxyDuino). There are two (maybe
 more) versions of the `EEPROM` API:
 
-    * ESP8266 and ESP32,
-    * AVR, STM32 and others
+* ESP8266 and ESP32,
+* AVR, STM32 and others
 
-This library implements the EEPROM API from the AVR and STM32 Arduino Cores.
-See [EpoxyPromEsp](../EpoxyPromEsp/) for the ESP8266/ESP32 version.
+This library implements the EEPROM API from the Arduino Cores for AVR (and
+potentially others, e.g. STM32). See [EpoxyPromEsp](../EpoxyPromEsp/) for the
+ESP8266/ESP32 version.
+
+The EEPROM contents are directly saved to a file called `epoxypromdata` in the
+current directory.
 
 ## Usage
+
+### EEPROM API
+
+This library provides most of the functions listed in
+[EEPROM.h](https://github.com/arduino/ArduinoCore-avr/blob/master/libraries/EEPROM/src/EEPROM.h)
+in the Arduino AVR Core.
+
+### Makefile
+
+When using the EpoxyDuino Makefile, the `EpoxyPromAvr` library must be added to
+the `ARDUINO_LIBS` parameter, like this:
+
+```
+APP_NAME := EpoxyPromAvrTest
+ARDUINO_LIBS := EpoxyPromAvr ...
+MORE_CLEAN := more_clean
+include ../../../../EpoxyDuino.mk
+```
+
+### Sample Code
 
 ```C++
 #include <EEPROM.h> // global 'EEPROM' object defined
@@ -86,18 +110,6 @@ is stored in memory until
 EEPROM.commit();
 ```
 is executed.
-
-## Makefile
-
-When using the EpoxyDuino Makefile, the `EpoxyPromAvr` library must be added to
-the `ARDUINO_LIBS` parameter, like this:
-
-```
-APP_NAME := EpoxyPromAvrTest
-ARDUINO_LIBS := EpoxyPromAvr ...
-MORE_CLEAN := more_clean
-include ../../../../EpoxyDuino.mk
-```
 
 ## Environment Variable
 

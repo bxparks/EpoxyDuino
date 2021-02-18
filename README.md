@@ -60,6 +60,7 @@ for more details.
     * [Continuous Integration](#ContinuousIntegration)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
+    * [Built-in Libraries](#BuiltInLibraries)
     * [Serial Port Emulation](#SerialPortEmulation)
 * [System Requirements](#SystemRequirements)
 * [License](#License)
@@ -311,6 +312,26 @@ provided by many Arduino-compatible microcontrollers (but not the AVR
 controllers). It is implemented here for convenience. The size of the internal
 buffer is `250` characters, which can be changed by changing the
 `PRINTF_BUFFER_SIZE` parameter if needed.
+
+<a name="BuiltInLibraries"></a>
+### Built-in Libraries
+
+The following libraries are built-in to the EpoxyDuino project as substitutes
+for the equivalent libraries on various Cores:
+
+* [libraries/EpoxyFS](libraries/EpoxyFS)
+    * An implementation of a file system compatible with
+      [ESP8266 LittleFS](https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html)
+      and [ESP32 LITTLEFS](https://github.com/lorol/LITTLEFS).
+* Two EEPROM implementations:
+    * [libraries/EpoxyPromAvr](libraries/EpoxyPromAvr)
+        * API compatible with
+          [EEPROM on AVR](https://github.com/arduino/ArduinoCore-avr/tree/master/libraries/EEPROM)
+    * [libraries/EpoxyPromEsp](libraries/EpoxyPromEsp)
+        * API compatible with
+          [EEPROM on ESP8266](https://github.com/esp8266/Arduino/tree/master/libraries/EEPROM)
+          and
+          [EEPROM on ESP32](https://github.com/espressif/arduino-esp32/tree/master/libraries/EEPROM)
 
 <a name="SerialPortEmulation"></a>
 ### Serial Port Emulation
