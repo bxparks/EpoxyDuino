@@ -24,6 +24,9 @@
 
 #include <inttypes.h>
 
+/** Use this macro to distinguish between EpoxyPromEsp or EpoxyPromAvr. */
+#define EPOXY_DUINO_EPOXY_PROM_AVR 1
+
 /***
     EERef class.
 

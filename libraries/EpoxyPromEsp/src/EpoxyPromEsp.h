@@ -22,8 +22,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef EPOXY_DUINO_EPOXY_PROM_ESP_H
-#define EPOXY_DUINO_EPOXY_PROM_ESP_H
+#ifndef EPOXY_PROM_ESP_H
+#define EPOXY_PROM_ESP_H
 
 #include <stdint.h>
 #include <string.h> // memcpy()
