@@ -96,7 +96,9 @@ The `EEPROM.begin()` and `EEPROM.end()` methods return iterators, which allows
 looping for the content of the EEPROM like this:
 
 ```C++
-for (EEPtr p = EEPROM.begin(); p != EEPROM.end(); p++) {
+for (EEPtr p = EEPROM.begin(); p != EEPROM.end(); ++p) {
+  ...
+  uint8_t c = *p;
   ...
 }
 ```
