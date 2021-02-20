@@ -1,18 +1,21 @@
 # EpoxyPromAvr
 
 An implementation of `EEPROM` that runs on Linux (or other POSIX-like system)
-using EpoxyDuino (https://github.com/bxparks/EpoxyDuino). There are two (maybe
-more) versions of the `EEPROM` API:
+using EpoxyDuino (https://github.com/bxparks/EpoxyDuino). There are at least two
+versions of the `EEPROM` API:
 
-* ESP8266 and ESP32,
-* AVR, STM32 and others
+* AVR flavor: AVR, STM32, Teensy, and potentially others
+    * https://github.com/arduino/ArduinoCore-avr/blob/master/libraries/EEPROM/src/EEPROM.h
+* ESP flavor: ESP8266 and ESP32,
+    * https://github.com/esp8266/Arduino/blob/master/libraries/EEPROM/EEPROM.h
 
-This library implements the EEPROM API from the Arduino Cores for AVR (and
-potentially others, e.g. STM32). See [EpoxyPromEsp](../EpoxyPromEsp/) for the
-ESP8266/ESP32 version.
+This library implements the **AVR** flavor of the EEPROM API. The EEPROM
+contents are directly saved to a file called `epoxypromdata` in the current
+directory. The AVR version of `EEPROM` does not provide a mechanism to set the
+size of the EEPROM, since it is determined by the hardware. This library
+hardcodes the size of its EEPROM emulation to 1024 bytes.
 
-The EEPROM contents are directly saved to a file called `epoxypromdata` in the
-current directory.
+See [EpoxyPromEsp](../EpoxyPromEsp/) for the ESP version.
 
 ## Usage
 
@@ -61,14 +64,6 @@ void read() {
 }
 
 void detectAPI() {
-  #if EPOXY_DUINO_EPOXY_PROM_ESP
-    #warning Using EpoxyPromEsp version of EEPROM
-    EEPROM.begin(...);
-    EEPROM.write(...);
-    EEPROM.commit(...);
-    EEPROM.read(...);
-  #endif
-
   #if EPOXY_DUINO_EPOXY_PROM_AVR
     #warning Using EpoxyPromAvr version of EEPROM
     EEPROM.write(...);
@@ -86,28 +81,46 @@ void loop() {
 
 ## Difference between ESP and AVR APIs
 
-The AVR version of `EEPROM` provides 2 write functions:
+### AVR Flavor
+
+The AVR version provides 2 write functions:
+
 ```C++
 EEPROM.write(address, value);
 EEPROM.update(address, value);
 ```
-where the `update()` only writes if the new value is different than the old
-value stored in the EEPROM.
+where the `update()` only writes to the EEPROM if the new value is different
+than the old value stored in the EEPROM. This saves wear on the EEPROM.
 
-The ESP8266, ESP32 and EpoxyDuino version of `EEPROM` provides only the
-`write()` function:
+The `EEPROM.begin()` and `EEPROM.end()` methods return iterators, which allows
+looping for the content of the EEPROM like this:
+
+```C++
+for (EEPtr p = EEPROM.begin(); p != EEPROM.end(); p++) {
+  ...
+}
+```
+
+### ESP Flavor
+
+The ESP8266 and ESP32 versions provide only the `write()` function:
+
 ```C++
 EEPROM.write(address, value)
 ```
 
-Just like the ESP8266 version, the `EpoxyPromEsp` library requires:
+The `begin()` and `end()` methods mean completely different things on the ESP
+processors:
+
 ```C++
 EEPROM.begin(size);
 ```
-to initialize the EEPROM storage space. And the content of the EEPROM
-is stored in memory until
+initializes the EEPROM storage space. The data written to the EEPROM using
+the `write()` method is buffered in memory until one of:
+
 ```C++
 EEPROM.commit();
+EEPROM.end();
 ```
 is executed.
 
