@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 Brian T. Park
  * MIT License
- * 
+ *
  * Parts derived from the Arduino SDK
  * Copyright (c) 2005-2013 Arduino Team
  */
@@ -9,12 +9,13 @@
 #ifndef EPOXY_DUINO_ARDUINO_H
 #define EPOXY_DUINO_ARDUINO_H
 
+#include <math.h>
 #include "Print.h"
 #include "StdioSerial.h"
 
 // xx.yy.zz => xxyyzz (without leading 0)
-#define EPOXY_DUINO_VERSION 500
-#define EPOXY_DUINO_VERSION_STRING "0.5"
+#define EPOXY_DUINO_VERSION 600
+#define EPOXY_DUINO_VERSION_STRING "0.6"
 
 // Used by digitalRead() and digitalWrite()
 #define HIGH 0x1
@@ -81,6 +82,7 @@
 
 extern "C" {
 
+void delayMicroseconds(unsigned int us);
 void delay(unsigned long ms);
 void yield();
 unsigned long millis();

@@ -11,7 +11,7 @@
 
 /**
  * A version of Serial that reads from STDIN and sends output to STDOUT on
- * Linux or MacOS (untested).
+ * Linux or MacOS.
  */
 class StdioSerial: public Stream {
   public:

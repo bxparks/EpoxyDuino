@@ -1,5 +1,7 @@
 # EpoxyDuino
 
+![AUnit Tests](https://github.com/bxparks/EpoxyDuino/workflows/AUnit%20Tests/badge.svg)
+
 This project contains a small (but often effective) implementation of the
 Arduino programming framework for Linux, MacOS and potentially other POSIX-like
 systems. Originally, it was created to
@@ -35,16 +37,37 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 0.5 (2021-01-21)
+**Version**: 0.6 (2021-02-19)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
 **Breaking Change**: Prior to v0.5, this project was known as "UnixHostDuino".
 The old `UNIX_HOST_DUINO` macro and `UnixHostDuino.mk` include file still exist
 for backwards compatibility. See
-[Issue #15](https://github.com/bxparks/UnixHostDuino/issues/15)
+[Issue #15](https://github.com/bxparks/EpoxyDuino/issues/15)
 for more details.
 
+## Table of Contents
+
+* [Installation](#Installation)
+* [Usage](#Usage)
+    * [Makefile](#Makefile)
+    * [Additional Arduino Libraries](#AdditionalLibraries)
+    * [Additional Arduino Library Locations](#AdditionalLibraryLocations)
+    * [Alternate C++ Compiler](#AlternateCompiler)
+    * [Difference from Arduino IDE](#DifferenceFromArduinoIDE)
+    * [Conditional Code](#ConditionalCode)
+    * [Continuous Integration](#ContinuousIntegration)
+* [Supported Arduino Features](#SupportedArduinoFeatures)
+    * [Arduino Functions](#ArduinoFunctions)
+    * [Built-in Libraries](#BuiltInLibraries)
+    * [Serial Port Emulation](#SerialPortEmulation)
+* [System Requirements](#SystemRequirements)
+* [License](#License)
+* [Feedback](#Feedback)
+* [Authors](#Authors)
+
+<a name="Installation"></a>
 ## Installation
 
 You need to grab the sources directly from GitHub. This project is *not* an
@@ -63,7 +86,11 @@ $ git clone https://github.com/bxparks/EpoxyDuino.git
 This will create a directory called
 `{sketchbook_directory}/libraries/EpoxyDuino`.
 
+<a name="Usage"></a>
 ## Usage
+
+<a name="Makefile"></a>
+### Makefile
 
 The minimal `Makefile` has 3 lines:
 ```
@@ -97,17 +124,7 @@ board will be sent to the `STDOUT` of the Linux or MacOS terminal. The output
 should be identical to what would be shown on the serial port of the Arduino
 controller.
 
-### Using an Alternate C++ Compiler
-
-Normally the C++ compiler on Linux is `g++`. If you have `clang++` installed
-you can use that instead by specifying the `CXX` environment variable:
-```
-$ CXX=clang++ make
-```
-(This sets the `CXX` shell environment variable temporarily, for the duration of
-the `make` command, which causes `make` to set its internal `CXX` variable,
-which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
-
+<a name="AdditionalLibraries"></a>
 ### Additional Arduino Libraries
 
 If the Arduino program depends on additional Arduino libraries, they must be
@@ -122,33 +139,56 @@ include ../../EpoxyDuino/EpoxyDuino.mk
 ```
 
 The libraries are referred to by their base directory name (e.g. `AceButton`,
-or `AceTime`) not the full path. The `EpoxyDuino.mk` file will look for
-these additional libraries at the same level as the `EpoxyDuino` directory
-itself.
+or `AceTime`) not the full path. By default, the `EpoxyDuino.mk` file will look
+for these additional libraries at the following locations:
 
+* `EPOXY_DUINO_DIR/..` - in other words, siblings to the `EpoxyDuino` install
+  directory (this assumes that EpoxyDuino was installed in the Arduino
+  `libraries` directory as recommended above)
+* `EPOXY_DUINO_DIR/libraries/` - additional libraries provided by the EpoxyDuino
+  project itself
+* under each of the additional directories listed in `ARDUINO_LIB_DIRS` (see
+  below)
+
+<a name="AdditionalLibraryLocations"></a>
 ### Additional Arduino Library Locations
 
-By default, EpoxyDuino assumes that the additional libraries are siblings to
-the`EpoxyDuino/` library. Unfortunately, Arduino libraries tend to be
-scattered among many locations. These additional locations can be specified
-using the `ARDUINO_LIB_DIRS` variable. For example,
+As explained above, EpoxyDuino normally assumes that the additional libraries
+are siblings to the`EpoxyDuino/` directory or under the `EpoxyDuino/libraries/`
+directory. If you need to import additional Arduino libraries, you need to tell
+`EpoxyDuino` where they are because Arduino libraries tend to be scattered among
+many different locations. These additional locations can be specified using the
+`ARDUINO_LIB_DIRS` variable. For example,
 
 ```
 APP_NAME := SampleTest
-ARDUINO_IDE_DIR := ../../arduino-1.8.9
+arduino_ide_dir := ../../arduino-1.8.9
 ARDUINO_LIBS := AUnit AceButton AceTime
 ARDUINO_LIB_DIRS := \
-	$(ARDUINO_IDE_DIR)/portable/packages/arduino/hardware/avr/1.8.2/libraries \
-	$(ARDUINO_IDE_DIR)/libraries \
-	$(ARDUINO_IDE_DIR)/hardware/arduino/avr/libraries
+	$(arduino_ide_dir)/portable/packages/arduino/hardware/avr/1.8.2/libraries \
+	$(arduino_ide_dir)/libraries \
+	$(arduino_ide_dir)/hardware/arduino/avr/libraries
 include ../../EpoxyDuino/EpoxyDuino.mk
 ```
 
 Each of the `AUnit`, `AceButton` and `AceTime` libraries will be searched in
 each of the 3 directories given in the `ARDUINO_LIB_DIRS`. (The
-`ARDUINO_IDE_DIR` is a convenience temporary variable. It has no significance to
+`arduino_ide_dir` is a convenience temporary variable. It has no significance to
 `EpoxyDuino.mk`)
 
+<a name="AlternateCompiler"></a>
+### Alternate C++ Compiler
+
+Normally the C++ compiler on Linux is `g++`. If you have `clang++` installed
+you can use that instead by specifying the `CXX` environment variable:
+```
+$ CXX=clang++ make
+```
+(This sets the `CXX` shell environment variable temporarily, for the duration of
+the `make` command, which causes `make` to set its internal `CXX` variable,
+which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
+
+<a name="DifferenceFromArduinoIDE"></a>
 ### Difference from Arduino IDE
 
 There are a number of differences compared to the programming environment
@@ -180,6 +220,7 @@ start using `ARDUINO_LIB_DIRS`, you will often run into third party libraries
 using features which are not supported by the EpoxyDuino framework emulation
 layer.
 
+<a name="ConditionalCode"></a>
 ### Conditional Code
 
 If you want to add code that takes effect only on EpoxyDuino, you can use
@@ -204,13 +245,35 @@ and the following works for MacOS:
 #endif
 ```
 
+<a name="ContinuousIntegration"></a>
+### Continuous Integration
+
+You can use EpoxyDuino to run continuous integration tests or
+validations on the [GitHub Actions](https://github.com/features/actions)
+infrastructure. The basic `ubuntu-18.04` docker image already contains the C++
+compiler and `make` binary, other than this project and any additional Arduino
+libraries that you use. In particular, you don't need to install the Arduion IDE
+or the Arduion CLI.
+
+Take a look at some of my GitHub Actions YAML config files:
+
+* https://github.com/bxparks/AceButton/tree/develop/.github/workflows
+* https://github.com/bxparks/AceCRC/tree/develop/.github/workflows
+* https://github.com/bxparks/AceCommon/tree/develop/.github/workflows
+* https://github.com/bxparks/AceRoutine/tree/develop/.github/workflows
+* https://github.com/bxparks/AceTime/tree/develop/.github/workflows
+
+<a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
+
+<a name="ArduinoFunctions"></a>
+### Arduino Functions
 
 The following functions and features of the Arduino framework are implemented:
 
 * `Arduino.h`
     * `setup()`, `loop()`
-    * `delay()`, `yield()`
+    * `delay()`, `yield()`, `delayMicroSeconds()`
     * `millis()`, `micros()`
     * `digitalWrite()`, `digitalRead()`, `pinMode()` (empty stubs)
     * `analogRead()` (empty stub)
@@ -232,13 +295,16 @@ The following functions and features of the Arduino framework are implemented:
     * `strlen_P()`, `strcat_P()`, `strcpy_P()`, `strncpy_P()`, `strcmp_P()`,
       `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`
     * `PROGMEM`, `PGM_P`, `PGM_VOID_P`, `PSTR()`
-* `EEPROM.h`
-    * compile only
-* `Wire.h`
-    * compile only
+* `Wire.h` (stub implementation)
+* `SPI.h` (stub implementation)
 
 See [Arduino.h](https://github.com/bxparks/EpoxyDuino/blob/develop/Arduino.h)
-for the latest list.
+for the latest list. Most of the header files included by this `Arduino.h`
+file were copied and modified from the [arduino:avr
+core](https://github.com/arduino/ArduinoCore-avr/tree/master/cores/arduino),
+versions 1.8.2 (if I recall) or 1.8.3. A number of tweaks have been made to
+support slight variations in the API of other platforms, particularly the
+ESP8266 and ESP32 cores.
 
 The `Print.printf()` function is an extension to the `Print` class that is
 provided by many Arduino-compatible microcontrollers (but not the AVR
@@ -246,6 +312,27 @@ controllers). It is implemented here for convenience. The size of the internal
 buffer is `250` characters, which can be changed by changing the
 `PRINTF_BUFFER_SIZE` parameter if needed.
 
+<a name="BuiltInLibraries"></a>
+### Built-in Libraries
+
+The following libraries are built-in to the EpoxyDuino project as substitutes
+for the equivalent libraries on various Cores:
+
+* [libraries/EpoxyFS](libraries/EpoxyFS)
+    * An implementation of a file system compatible with
+      [ESP8266 LittleFS](https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html)
+      and [ESP32 LITTLEFS](https://github.com/lorol/LITTLEFS).
+* Two EEPROM implementations:
+    * [libraries/EpoxyPromAvr](libraries/EpoxyPromAvr)
+        * API compatible with
+          [EEPROM on AVR](https://github.com/arduino/ArduinoCore-avr/tree/master/libraries/EEPROM)
+    * [libraries/EpoxyPromEsp](libraries/EpoxyPromEsp)
+        * API compatible with
+          [EEPROM on ESP8266](https://github.com/esp8266/Arduino/tree/master/libraries/EEPROM)
+          and
+          [EEPROM on ESP32](https://github.com/espressif/arduino-esp32/tree/master/libraries/EEPROM)
+
+<a name="SerialPortEmulation"></a>
 ### Serial Port Emulation
 
 The `Serial` object is an instance of the `StdioSerial` class which emulates the
@@ -282,6 +369,7 @@ the program. But this convenience means that the Arduino program running under
 `Serial.read()` function. The advantages of having normal Unix signals seemed
 worth the trade-off.
 
+<a name="SystemRequirements"></a>
 ## System Requirements
 
 This library has been tested on:
@@ -299,11 +387,16 @@ This library has been tested on:
 * MacOS 10.14.5
     * clang++ Apple LLVM version 10.0.1
     * GNU Make 3.81
+* MacOS 10.14.6
+    * Apple clang version 11.0.0 (clang-1100.0.33.17)
+    * GNU Make 3.81
 
+<a name="License"></a>
 ## License
 
 [MIT License](https://opensource.org/licenses/MIT)
 
+<a name="Bugs"></a>
 ## Bugs and Limitations
 
 If the executable (e.g. `SampleTest.out`) is piped to the `less(1)` or `more(1)`
@@ -320,7 +413,12 @@ $ ./SampleTest.out | less # hangs
 $ ./SampleTest.out < /dev/null | less # works
 ```
 
+<a name="Feedback"></a>
 ## Feedback and Support
+
+If you find this library useful, consider starring this project on GitHub. The
+stars will let me prioritize the more popular libraries over the less popular
+ones.
 
 If you have any questions, comments, bug reports, or feature requests, please
 file a GitHub ticket instead of emailing me unless the content is sensitive.
@@ -329,8 +427,12 @@ other people ask similar questions later.) I'd love to hear about how this
 software and its documentation can be improved. I can't promise that I will
 incorporate everything, but I will give your ideas serious consideration.
 
+<a name="Authors"></a>
 ## Authors
 
 * Created by Brian T. Park (brian@xparks.net).
 * Support for using as library, by making `main()` a weak reference, added
   by Max Prokhorov (prokhorov.max@outlook.com).
+* Add `delayMicroSeconds()`, `WCharacter.h`, and stub implementations of
+  `IPAddress.h`, `SPI.h`, by Erik Tideman (@ramboerik), see
+  [PR #18](https://github.com/bxparks/EpoxyDuino/pull/18).
