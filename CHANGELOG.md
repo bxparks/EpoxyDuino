@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+    * Add support for FreeBSD 12.2.
 * 0.6 (2021-02-19)
     * Add `libraries/EpoxyFS`, an implementation of the ESP8266 `FS` file system
       that runs on Linux and MacOS.

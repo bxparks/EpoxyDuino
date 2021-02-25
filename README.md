@@ -3,13 +3,12 @@
 ![AUnit Tests](https://github.com/bxparks/EpoxyDuino/workflows/AUnit%20Tests/badge.svg)
 
 This project contains a small (but often effective) implementation of the
-Arduino programming framework for Linux, MacOS and potentially other POSIX-like
-systems. Originally, it was created to
-allow [AUnit](https://github.com/bxparks/AUnit) unit tests to be compiled and
-run on a Linux or MacOS machine, instead of running on the embedded
-microcontroller. As more Arduino functionality was added, it became useful for
-other Arduino programs, particularly ones that relied on just the `Serial`
-interface.
+Arduino programming framework for Linux, MacOS, FreeBSD (experimental) and
+potentially other POSIX-like systems. Originally, it was created to allow
+[AUnit](https://github.com/bxparks/AUnit) unit tests to be compiled and run on a
+desktop class machine, instead of running on the embedded microcontroller. As
+more Arduino functionality was added, it became useful for other Arduino
+programs, particularly ones that relied on just the `Serial` interface.
 
 The build process uses [GNU Make](https://www.gnu.org/software/make/manual/).
 A `Makefile` needs to be created inside the sketch folder. For example, if the
@@ -22,7 +21,8 @@ be supported by EpoxyDuino. However, if your program has limited hardware
 dependencies so that it is conceptually portable to a vanilla Unix environment,
 EpoxyDuino may work.
 
-Running an Arduino program natively on Linux or MacOS has some advantages:
+Running an Arduino program natively on a desktop-class machine has some
+advantages:
 
 * The development cycle can be lot faster because the compilers on the the
   desktop machines are a lot faster, and we also avoid the upload and flash
@@ -120,9 +120,9 @@ $ ./BlinkSOS.out
 ```
 
 The output that would normally be printed on the `Serial` on an Arduino
-board will be sent to the `STDOUT` of the Linux or MacOS terminal. The output
-should be identical to what would be shown on the serial port of the Arduino
-controller.
+board will be sent to the `STDOUT` of the Linux, MacOS, or FreeBSD terminal. The
+output should be identical to what would be shown on the serial port of the
+Arduino controller.
 
 <a name="AdditionalLibraries"></a>
 ### Additional Arduino Libraries
@@ -231,16 +231,25 @@ the following macro:
 #endif
 ```
 
-If you need to target Linux or MacOS specifically, I have found that the
-following works for Linux:
+If you need to target a particular desktop OS, you can use the following:
+
+**Linux**:
 ```C++
 #if defined(__linux__)
   ...
 #endif
 ```
-and the following works for MacOS:
+
+**MacOS**:
 ```C++
 #if defined(__APPLE__)
+  ...
+#endif
+```
+
+**FreeBSD**:
+```C++
+#if defined(__FreeBSD__)
   ...
 #endif
 ```
@@ -376,7 +385,6 @@ This library has been tested on:
 
 * Ubuntu 18.04
     * g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
-    * g++ 7.4.0
     * clang++ 8.0.0-3~ubuntu18.04.2
     * clang++ 6.0.0-1ubuntu2
     * GNU Make 4.1
@@ -384,12 +392,19 @@ This library has been tested on:
     * g++ (Ubuntu 9.3.0-10ubuntu2) 9.3.0
     * clang++ version 10.0.0-4ubuntu1
     * GNU Make 4.2.1
-* MacOS 10.14.5
+* MacOS 10.14.5 (Mojave)
     * clang++ Apple LLVM version 10.0.1
     * GNU Make 3.81
-* MacOS 10.14.6
+* MacOS 10.14.6 (Mojave)
     * Apple clang version 11.0.0 (clang-1100.0.33.17)
     * GNU Make 3.81
+* FreeBSD 12.2 (Experimental)
+    * c++: FreeBSD clang version 10.0.1
+    * gmake: GNU Make 4.3
+        * Install using `$ pkg install gmake`
+        * You can type `gmake` instead of `make`, or
+        * Create a shell alias, or
+        * Create a symlink in `~/bin`.
 
 <a name="License"></a>
 ## License
