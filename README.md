@@ -86,6 +86,24 @@ $ git clone https://github.com/bxparks/EpoxyDuino.git
 This will create a directory called
 `{sketchbook_directory}/libraries/EpoxyDuino`.
 
+### Dependencies
+
+The core of EpoxyDuino depends on:
+
+* a C++ compiler (`g++` or `clang++`)
+* GNU Make (usually `make` but sometimes `gmake`)
+
+These are normally installed on the host OS by default.
+
+The example and test code under `./tests/`, `./examples/`,
+`./libraries/*/tests/`, and `./libraries/*/examples/` depend on:
+
+* AUnit (https://github.com/bxparks/AUnit)
+* AceCRC (https://github.com/bxparks/AceCRC)
+* AceCommon (https://github.com/bxparks/AceCommon)
+* AceRoutine (https://github.com/bxparks/AceRoutine)
+* AceUtils (https://github.com/bxparks/AceUtils)
+
 <a name="Usage"></a>
 ## Usage
 
@@ -391,6 +409,10 @@ This library has been tested on:
 * Ubuntu 20.04
     * g++ (Ubuntu 9.3.0-10ubuntu2) 9.3.0
     * clang++ version 10.0.0-4ubuntu1
+    * GNU Make 4.2.1
+* Raspbian GNU/Linux 10 (buster)
+    * On Raspberry Pi Model 3B
+    * g++ (Raspbian 8.3.0-6+rpi1) 8.3.0
     * GNU Make 4.2.1
 * MacOS 10.14.5 (Mojave)
     * clang++ Apple LLVM version 10.0.1
