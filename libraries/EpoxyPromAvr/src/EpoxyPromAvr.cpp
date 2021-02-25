@@ -20,6 +20,7 @@
 
 #include <stdlib.h> // getenv()
 #include <sys/types.h> // open()
+#include <sys/stat.h> // S_IRUSR, S_IWUSR, ...
 #include <unistd.h> // pread(), pwrite()
 #include <fcntl.h> // O_CREAT, etc (I think)
 #include "EpoxyPromAvr.h"
