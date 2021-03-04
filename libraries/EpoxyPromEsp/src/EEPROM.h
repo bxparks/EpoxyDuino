@@ -2,5 +2,6 @@
 
 #include "EpoxyPromEsp.h"
 #define EEPROM EPOXY_PROM_ESP
+#define EEPROMClass EpoxyPromEsp
 
 #endif

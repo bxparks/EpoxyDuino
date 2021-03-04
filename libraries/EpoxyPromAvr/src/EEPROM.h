@@ -2,5 +2,6 @@
 
 #include "EpoxyPromAvr.h"
 #define EEPROM EPOXY_PROM_AVR
+#define EEPROMClass EpoxyPromAvr
 
 #endif
