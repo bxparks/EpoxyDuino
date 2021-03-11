@@ -278,9 +278,12 @@ If you need to target a particular desktop OS, you can use the following:
 You can use EpoxyDuino to run continuous integration tests or
 validations on the [GitHub Actions](https://github.com/features/actions)
 infrastructure. The basic `ubuntu-18.04` docker image already contains the C++
-compiler and `make` binary, other than this project and any additional Arduino
-libraries that you use. In particular, you don't need to install the Arduion IDE
-or the Arduion CLI.
+compiler and `make` binary. You don't need to install the Arduion IDE or the
+Arduion CLI. You need:
+
+* EpoxyDuino,
+* your project that you want to test,
+* any additional Arduino libraries that you use.
 
 Take a look at some of my GitHub Actions YAML config files:
 
