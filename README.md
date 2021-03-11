@@ -303,7 +303,8 @@ The following functions and features of the Arduino framework are implemented:
     * `delay()`, `yield()`, `delayMicroSeconds()`
     * `millis()`, `micros()`
     * `digitalWrite()`, `digitalRead()`, `pinMode()` (empty stubs)
-    * `analogRead()` (empty stub)
+    * `analogRead()`, `analogWrite()` (empty stubs)
+    * `pulseIn()`, `pulseInLonga()`, `shiftIn()`, `shiftOut()` (empty stubs)
     * `HIGH`, `LOW`, `INPUT`, `OUTPUT`, `INPUT_PULLUP`
 * `StdioSerial.h`
     * `Serial.print()`, `Serial.println()`, `Serial.write()`
