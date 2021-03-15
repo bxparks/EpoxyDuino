@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2019 Brian T. Park
- * 
+ *
  * Parts derived from the Arduino SDK
  * Copyright (c) 2005-2013 Arduino Team
- * 
+ *
  * Parts inspired by [Entering raw
  * mode](https://viewsourcecode.org/snaptoken/kilo/02.enteringRawMode.html).
  *
@@ -21,17 +21,19 @@
 // Arduino methods emulated in Unix
 // -----------------------------------------------------------------------
 
-void delayMicroseconds(unsigned int us) {
-  usleep(us);
-}
-
-void delay(unsigned long ms) {
-  usleep(ms * 1000);
-}
-
 void yield() {
   usleep(1000); // prevents program from consuming 100% CPU
 }
+
+void pinMode(uint8_t pin, uint8_t mode) {}
+
+void digitalWrite(uint8_t pin, uint8_t val) {}
+
+int digitalRead(uint8_t pin) { return 0; }
+
+int analogRead(uint8_t pin) { return 0; }
+
+void analogWrite(uint8_t pin, int val) {}
 
 unsigned long millis() {
   struct timespec spec;
@@ -47,10 +49,25 @@ unsigned long micros() {
   return us;
 }
 
-void digitalWrite(uint8_t pin, uint8_t val) {}
+void delay(unsigned long ms) {
+  usleep(ms * 1000);
+}
 
-int digitalRead(uint8_t pin) { return 0; }
+void delayMicroseconds(unsigned int us) {
+  usleep(us);
+}
 
-void pinMode(uint8_t pin, uint8_t mode) {}
+unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout) {
+  return 0;
+}
 
-int analogRead(uint8_t pin) { return 0; }
+unsigned long pulseInLong(uint8_t pin, uint8_t state, unsigned long timeout) {
+  return 0;
+}
+
+void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder,
+    uint8_t val) {}
+
+uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder) {
+  return 0;
+}

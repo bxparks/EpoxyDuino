@@ -1,6 +1,10 @@
 # Changelog
 
 * Unreleased
+* 0.6.2 (2021-03-15)
+    * Add more stubs for Arduino API functions: `pulseIn()`, `pulseInLong()`,
+      `shiftOut()`, `shiftIn()`, I2C and SPI pins (SS, MOSI, MISO, SCK, SDA,
+      SCL), `analogWrite()`, typedefs for `boolean`, `byte`, `word`.
 * 0.6.1 (2021-02-25)
     * Add experimental support for FreeBSD 12.2.
 * 0.6 (2021-02-19)

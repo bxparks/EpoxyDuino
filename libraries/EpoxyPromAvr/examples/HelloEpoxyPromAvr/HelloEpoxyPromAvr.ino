@@ -26,13 +26,15 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <AceUtilsCrcEeprom.h>
+using ace_utils::crc_eeprom::AvrEepromAdapter;
 using ace_utils::crc_eeprom::CrcEeprom;
 
 #ifndef SERIAL_PORT_MONITOR
 #define SERIAL_PORT_MONITOR Serial
 #endif
 
-CrcEeprom crcEeprom;
+AvrEepromAdapter<EEPROMClass> eepromAdapter(EEPROM);
+CrcEeprom crcEeprom(eepromAdapter);
 
 void writeAndReadEeprom() {
   // Write at address=0
@@ -58,13 +60,13 @@ void writeAndReadEeprom() {
 
 void writeAndReadCrcEeprom() {
   const int address = 512;
-  crcEeprom.begin(1024);
+  eepromAdapter.begin(1024);
 
   // Reading will fail the first time because the CRC won't match. Running this
   // program a second should succeed because the correct CRC will be written
   // by writeWithCrc() below.
   uint32_t temp;
-  bool status = crcEeprom.readWithCrc(address, &temp, sizeof(temp));
+  bool status = crcEeprom.readWithCrc(address, temp);
   if (status) {
     SERIAL_PORT_MONITOR.println("readWithCrc() success!");
     SERIAL_PORT_MONITOR.print("temp=");
@@ -74,7 +76,7 @@ void writeAndReadCrcEeprom() {
   }
 
   temp = 42;
-  crcEeprom.writeWithCrc(address, &temp, sizeof(temp));
+  crcEeprom.writeWithCrc(address, temp);
 }
 
 void setup() {

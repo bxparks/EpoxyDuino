@@ -182,7 +182,7 @@ class EpoxyPromAvr{
 };
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_EEPROM)
-extern EpoxyPromAvr EEPROM;
+extern EpoxyPromAvr EPOXY_PROM_AVR;
 #endif
 
 #endif

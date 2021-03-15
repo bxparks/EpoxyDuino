@@ -66,5 +66,5 @@ EERef& EERef::operator=(uint8_t in) {
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_EEPROM)
-EpoxyPromAvr EEPROM;
+EpoxyPromAvr EPOXY_PROM_AVR;
 #endif

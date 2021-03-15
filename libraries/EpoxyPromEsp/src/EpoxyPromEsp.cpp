@@ -66,5 +66,5 @@ const char* EpoxyPromEsp::getDataPath() {
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_EEPROM)
-EpoxyPromEsp EEPROM;
+EpoxyPromEsp EPOXY_PROM_ESP;
 #endif

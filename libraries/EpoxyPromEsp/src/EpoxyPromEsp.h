@@ -108,7 +108,7 @@ class EpoxyPromEsp {
 };
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_EEPROM)
-extern EpoxyPromEsp EEPROM;
+extern EpoxyPromEsp EPOXY_PROM_ESP;
 #endif
 
 #endif

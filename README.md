@@ -1,6 +1,6 @@
 # EpoxyDuino
 
-![AUnit Tests](https://github.com/bxparks/EpoxyDuino/workflows/AUnit%20Tests/badge.svg)
+[![AUnit Tests](https://github.com/bxparks/EpoxyDuino/actions/workflows/aunit_tests.yml/badge.svg)](https://github.com/bxparks/EpoxyDuino/actions/workflows/aunit_tests.yml)
 
 This project contains a small (but often effective) implementation of the
 Arduino programming framework for Linux, MacOS, FreeBSD (experimental) and
@@ -37,7 +37,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 0.6.1 (2021-02-25)
+**Version**: 0.6.2 (2021-03-15)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -85,6 +85,24 @@ $ git clone https://github.com/bxparks/EpoxyDuino.git
 
 This will create a directory called
 `{sketchbook_directory}/libraries/EpoxyDuino`.
+
+### Dependencies
+
+The core of EpoxyDuino depends on:
+
+* a C++ compiler (`g++` or `clang++`)
+* GNU Make (usually `make` but sometimes `gmake`)
+
+These are normally installed on the host OS by default.
+
+The example and test code under `./tests/`, `./examples/`,
+`./libraries/*/tests/`, and `./libraries/*/examples/` depend on:
+
+* AUnit (https://github.com/bxparks/AUnit)
+* AceCRC (https://github.com/bxparks/AceCRC)
+* AceCommon (https://github.com/bxparks/AceCommon)
+* AceRoutine (https://github.com/bxparks/AceRoutine)
+* AceUtils (https://github.com/bxparks/AceUtils)
 
 <a name="Usage"></a>
 ## Usage
@@ -260,9 +278,12 @@ If you need to target a particular desktop OS, you can use the following:
 You can use EpoxyDuino to run continuous integration tests or
 validations on the [GitHub Actions](https://github.com/features/actions)
 infrastructure. The basic `ubuntu-18.04` docker image already contains the C++
-compiler and `make` binary, other than this project and any additional Arduino
-libraries that you use. In particular, you don't need to install the Arduion IDE
-or the Arduion CLI.
+compiler and `make` binary. You don't need to install the Arduion IDE or the
+Arduion CLI. You need:
+
+* EpoxyDuino,
+* your project that you want to test,
+* any additional Arduino libraries that you use.
 
 Take a look at some of my GitHub Actions YAML config files:
 
@@ -285,8 +306,11 @@ The following functions and features of the Arduino framework are implemented:
     * `delay()`, `yield()`, `delayMicroSeconds()`
     * `millis()`, `micros()`
     * `digitalWrite()`, `digitalRead()`, `pinMode()` (empty stubs)
-    * `analogRead()` (empty stub)
+    * `analogRead()`, `analogWrite()` (empty stubs)
+    * `pulseIn()`, `pulseInLong()`, `shiftIn()`, `shiftOut()` (empty stubs)
     * `HIGH`, `LOW`, `INPUT`, `OUTPUT`, `INPUT_PULLUP`
+    * I2C and SPI pins: SS, MOSI, MISO, SCK, SDA, SCL
+    * typedefs: `boolean`, `byte`, `word`
 * `StdioSerial.h`
     * `Serial.print()`, `Serial.println()`, `Serial.write()`
     * `Serial.read()`, `Serial.peek()`, `Serial.available()`
@@ -391,6 +415,10 @@ This library has been tested on:
 * Ubuntu 20.04
     * g++ (Ubuntu 9.3.0-10ubuntu2) 9.3.0
     * clang++ version 10.0.0-4ubuntu1
+    * GNU Make 4.2.1
+* Raspbian GNU/Linux 10 (buster)
+    * On Raspberry Pi Model 3B
+    * g++ (Raspbian 8.3.0-6+rpi1) 8.3.0
     * GNU Make 4.2.1
 * MacOS 10.14.5 (Mojave)
     * clang++ Apple LLVM version 10.0.1

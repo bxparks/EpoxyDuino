@@ -14,8 +14,8 @@
 #include "StdioSerial.h"
 
 // xx.yy.zz => xxyyzz (without leading 0)
-#define EPOXY_DUINO_VERSION 601
-#define EPOXY_DUINO_VERSION_STRING "0.6.1"
+#define EPOXY_DUINO_VERSION 602
+#define EPOXY_DUINO_VERSION_STRING "0.6.2"
 
 // Used by digitalRead() and digitalWrite()
 #define HIGH 0x1
@@ -80,17 +80,41 @@
 #define A8 8
 #define A9 9
 
+// Define pins used by I2C and SPI.
+static const uint8_t SS   = 1;
+static const uint8_t MOSI = 2;
+static const uint8_t MISO = 3;
+static const uint8_t SCK  = 4;
+static const uint8_t SDA = 5;
+static const uint8_t SCL = 6;
+
+// Stub implementations
+#define interrupts()
+#define noInterrupts()
+
 extern "C" {
 
-void delayMicroseconds(unsigned int us);
-void delay(unsigned long ms);
+typedef bool boolean;
+typedef uint8_t byte;
+typedef unsigned int word;
+
 void yield();
-unsigned long millis();
-unsigned long micros();
+
+void pinMode(uint8_t pin, uint8_t mode);
 void digitalWrite(uint8_t pin, uint8_t val);
 int digitalRead(uint8_t pin);
-void pinMode(uint8_t pin, uint8_t mode);
 int analogRead(uint8_t pin);
+void analogWrite(uint8_t pin, int val);
+
+unsigned long millis();
+unsigned long micros();
+void delay(unsigned long ms);
+void delayMicroseconds(unsigned int us);
+
+unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout);
+unsigned long pulseInLong(uint8_t pin, uint8_t state, unsigned long timeout);
+void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);
+uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);
 
 /** Provided in the client code's *.ino file. */
 void setup();
