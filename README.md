@@ -307,8 +307,10 @@ The following functions and features of the Arduino framework are implemented:
     * `millis()`, `micros()`
     * `digitalWrite()`, `digitalRead()`, `pinMode()` (empty stubs)
     * `analogRead()`, `analogWrite()` (empty stubs)
-    * `pulseIn()`, `pulseInLonga()`, `shiftIn()`, `shiftOut()` (empty stubs)
+    * `pulseIn()`, `pulseInLong()`, `shiftIn()`, `shiftOut()` (empty stubs)
     * `HIGH`, `LOW`, `INPUT`, `OUTPUT`, `INPUT_PULLUP`
+    * I2C and SPI pins: SS, MOSI, MISO, SCK, SDA, SCL
+    * typedefs: `boolean`, `byte`, `word`
 * `StdioSerial.h`
     * `Serial.print()`, `Serial.println()`, `Serial.write()`
     * `Serial.read()`, `Serial.peek()`, `Serial.available()`
