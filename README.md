@@ -7,19 +7,31 @@ Arduino programming framework for Linux, MacOS, FreeBSD (experimental) and
 potentially other POSIX-like systems. Originally, it was created to allow
 [AUnit](https://github.com/bxparks/AUnit) unit tests to be compiled and run on a
 desktop class machine, instead of running on the embedded microcontroller. As
-more Arduino functionality was added, it became useful for other Arduino
-programs, particularly ones that relied on just the `Serial` interface.
+more Arduino functionality was added, I found it to be also useful for doing
+certain types of application development on my Linux laptop, especially the
+parts that were more algorithmic instead of hardware dependent. EpoxyDuino can
+be effectively used in Continuous Integration (CI) pipeline (like [GitHub
+Actions](https://github.com/features/actions) for automatically validating that
+a library or application compiles without errors.
 
 The build process uses [GNU Make](https://www.gnu.org/software/make/manual/).
-A `Makefile` needs to be created inside the sketch folder. For example, if the
-sketch is `SampleTest/SampleTest.ino`, then the makefile should be
+A simple `Makefile` needs to be created inside the sketch folder. For example,
+if the sketch is `SampleTest/SampleTest.ino`, then the makefile should be
 `SampleTest/Makefile`. The sketch is compiled with just a `make` command. It
 produces an executable with a `.out` extension, for example, `SampleTest.out`.
 
-To be clear, most Arduino programs have hardware dependencies which will *not*
-be supported by EpoxyDuino. However, if your program has limited hardware
-dependencies so that it is conceptually portable to a vanilla Unix environment,
-EpoxyDuino may work.
+Most hardware dependent functions are stubbed out (defined but don't do
+anything) to allow the Arduino programs to compile. This may be sufficient for a
+CI pipeline. For actual application development, I have started to build
+a set of libraries within EpoxyDuino which emulate the versions that run the
+actual hardware:
+
+* EpoxyFS: emulation of the ESP8266 LittleFS or ESP32 LITTLEFS
+* EpoxyPromAvr: emulation of AVR-flavored `EEPROM`
+* EpoxyPromEsp: emulation of ESP-flavored `EEPROM`
+
+If your program has limited hardware dependencies so that it is conceptually
+portable to a vanilla Unix environment, EpoxyDuino may work well for you.
 
 Running an Arduino program natively on a desktop-class machine has some
 advantages:
@@ -215,7 +227,7 @@ provided by the Arduino IDE:
 * The `*.ino` file is treated like a normal `*.cpp` file. So it must have
   an `#include <Arduino.h>` include line at the top of the file. This is
   compatible with the Arduino IDE which automatically includes `<Arduino.h>`.
-* The Arduion IDE supports multiple `ino` files in the same directory. (I
+* The Arduino IDE supports multiple `ino` files in the same directory. (I
   believe it simply concontenates them all into a single file.) EpoxyDuino
   supports only one `ino` file in a given directory.
 * The Arduino IDE automatically generates forward declarations for functions
@@ -278,8 +290,8 @@ If you need to target a particular desktop OS, you can use the following:
 You can use EpoxyDuino to run continuous integration tests or
 validations on the [GitHub Actions](https://github.com/features/actions)
 infrastructure. The basic `ubuntu-18.04` docker image already contains the C++
-compiler and `make` binary. You don't need to install the Arduion IDE or the
-Arduion CLI. You need:
+compiler and `make` binary. You don't need to install the Arduino IDE or the
+Arduino CLI. You need:
 
 * EpoxyDuino,
 * your project that you want to test,
@@ -364,6 +376,10 @@ for the equivalent libraries on various Cores:
           [EEPROM on ESP8266](https://github.com/esp8266/Arduino/tree/master/libraries/EEPROM)
           and
           [EEPROM on ESP32](https://github.com/espressif/arduino-esp32/tree/master/libraries/EEPROM)
+
+I hope to create additional emulations of various network libraries (HTTP
+client, HTTP Server, MQTT client, etc) so that even more of the Arduino
+development can be done on the Linux/MacOS host.
 
 <a name="SerialPortEmulation"></a>
 ### Serial Port Emulation
