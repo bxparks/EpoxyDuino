@@ -7,12 +7,12 @@ Arduino programming framework for Linux, MacOS, FreeBSD (experimental) and
 potentially other POSIX-like systems. Originally, it was created to allow
 [AUnit](https://github.com/bxparks/AUnit) unit tests to be compiled and run on a
 desktop class machine, instead of running on the embedded microcontroller. As
-more Arduino functionality was added, I found it to be also useful for doing
-certain types of application development on my Linux laptop, especially the
-parts that were more algorithmic instead of hardware dependent. EpoxyDuino can
-be effectively used in Continuous Integration (CI) pipeline (like [GitHub
-Actions](https://github.com/features/actions) for automatically validating that
-a library or application compiles without errors.
+more Arduino functionality was added, I found it useful for doing certain types
+of application development on my Linux laptop, especially the parts that were
+more algorithmic instead of hardware dependent. EpoxyDuino can be effectively
+used in Continuous Integration (CI) pipeline (like
+[GitHub Actions](https://github.com/features/actions)) for automatically
+validating that a library or application compiles without errors.
 
 The build process uses [GNU Make](https://www.gnu.org/software/make/manual/).
 A simple `Makefile` needs to be created inside the sketch folder. For example,
@@ -41,10 +41,14 @@ advantages:
   process to the microcontroller.
 * The desktop machine can run unit tests which require too much flash or too
   much memory to fit inside an embedded microcontroller.
+* It may help you write platform-independent code, because if it runs under
+  EpoxyDuino, it has a good chance of running on most Arduino-compatible
+  platforms.
 
 The disadvantages are:
 
-* Only a limited set of Arduino functions are supported (see below).
+* Only a subset of Arduino functions are supported (see below).
+* Many 3rd party libraries will not compile under EpoxyDuino.
 * There may be compiler differences between the desktop and the embedded
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
