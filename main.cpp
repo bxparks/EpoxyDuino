@@ -23,6 +23,7 @@
 #include <stdlib.h> // exit()
 #include <stdio.h> // perror()
 #include <unistd.h> // read()
+#include <fcntl.h>
 #include <termios.h>
 
 // -----------------------------------------------------------------------
@@ -31,6 +32,7 @@
 // -----------------------------------------------------------------------
 
 static struct termios orig_termios;
+static int orig_stdin_flags;
 static bool inRawMode = false;
 
 static void die(const char* s) {
@@ -44,6 +46,10 @@ static void disableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1) {
     inRawMode = false; // prevent exit(1) from being called twice
     die("disableRawMode(): tcsetattr() failure");
+  }
+
+  if (fcntl(STDIN_FILENO, F_SETFL, orig_stdin_flags) == -1) {
+    die("enableRawMode(): fcntl() failure");
   }
 }
 
@@ -72,6 +78,12 @@ static void enableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) {
     die("enableRawMode(): tcsetattr() failure");
   }
+
+  orig_stdin_flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+  if (fcntl(STDIN_FILENO, F_SETFL, orig_stdin_flags | O_NONBLOCK) == -1) {
+    die("enableRawMode(): fcntl() failure");
+  }
+
   inRawMode = true;
 }
 
