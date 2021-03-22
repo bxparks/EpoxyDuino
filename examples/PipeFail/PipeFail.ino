@@ -13,8 +13,12 @@
 
 #include <Arduino.h>
 
-// Fails for NUM_LINES >= 274 on Ubuntu 20.04.
-const int NUM_LINES = 1000;
+// The number of lines needed to fail seem to depend on the OS:
+//
+// * Ubuntu 20.04: 300-1000
+// * MacOS 10.13: ~1000
+// * FreeBSD 12: 1000-2000
+const int NUM_LINES = 2000;
 const char LINE[] = "Reproduce https://github.com/bxparks/EpoxyDuino/issues/2";
 
 void setup() {
