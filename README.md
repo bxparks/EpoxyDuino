@@ -599,20 +599,21 @@ stubs of the target library. These libraries are useful to verify that a program
 compiles, but they do not allow us to actually verify that the library works as
 intended. This limitation may be sufficient for Continous Integration purposes.
 
-* `SPI.h`
-    * This header file is provided automatically by the `<Arduino.h>`
-      file in EpoxyDuino without adding any additional libraries in
-      `ARDUINO_LIBS`.
-    * This was added very early in the development of EpoxyDuino so that I could
-      compile certain programs. I don't think I realized at the time that `SPI`
-      is a separate (but built-in) library.
-    * In retrospect, it may have been better to split this file into a separate
-      mock library.
-* `Wire.h`
-    * Similary to `SPI.h`, this header file is provided automatically by the
-      `<Arduino.h>` file in EpoxyDuino.
+* Wire
+    * The `Wire.h` header file is provided automatically by the `<Arduino.h>`
+      file in EpoxyDuino. No additional library needs to be added to the
+      `ARDUINO_LIBS` variable in the `Makefile`.
     * It provides only mock functions of the actualy `Wire` library that
       is provided by real Arduino frameworks.
+    * This was added very early in the development of EpoxyDuino so that I could
+      compile some of my programs. I don't think I realized at the time that
+      `Wire` is a separate (but built-in) library. In retrospect, it may have
+      been better to split this file into a separate mock library.
+* SPI
+    * The `SPI.h` header file was contributed recently (see #18 and #19) and
+      is included automatically by the `<Arduino.h>` file in EpoxyDuino.
+    * It follows the same pattern as `Wire`, the header file provides only mock
+      functions of the actual `SPI` library.
 * EspMock (https://github.com/hsaturn/EspMock)
     * This is a separate project that provides various mocks for functions and
       libraries included with the ESP8266 and the ESP32 processors.
