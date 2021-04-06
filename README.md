@@ -81,8 +81,11 @@ for more details.
     * [Continuous Integration](#ContinuousIntegration)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
-    * [Built-in Libraries](#BuiltInLibraries)
     * [Serial Port Emulation](#SerialPortEmulation)
+* [Libraries and Mocks](#LibrariesAndMocks)
+    * [Inherently Compatible Libraries](#InherentlyCompatibleLibraries)
+    * [Emulation Libraries](#EmulationLibraries)
+    * [Mock Libraries](#MockLibraries)
 * [System Requirements](#SystemRequirements)
 * [License](#License)
 * [Feedback and Support](#FeedbackAndSupport)
@@ -330,7 +333,7 @@ The following functions and features of the Arduino framework are implemented:
     * `analogRead()`, `analogWrite()` (empty stubs)
     * `pulseIn()`, `pulseInLong()`, `shiftIn()`, `shiftOut()` (empty stubs)
     * `HIGH`, `LOW`, `INPUT`, `OUTPUT`, `INPUT_PULLUP`
-    * I2C and SPI pins: SS, MOSI, MISO, SCK, SDA, SCL
+    * I2C and SPI pins: `SS`, `MOSI`, `MISO`, `SCK`, `SDA`, `SCL`
     * typedefs: `boolean`, `byte`, `word`
 * `StdioSerial.h`
     * `Serial.print()`, `Serial.println()`, `Serial.write()`
@@ -365,30 +368,6 @@ provided by many Arduino-compatible microcontrollers (but not the AVR
 controllers). It is implemented here for convenience. The size of the internal
 buffer is `250` characters, which can be changed by changing the
 `PRINTF_BUFFER_SIZE` parameter if needed.
-
-<a name="BuiltInLibraries"></a>
-### Built-in Libraries
-
-The following libraries are built-in to the EpoxyDuino project as substitutes
-for the equivalent libraries on various Cores:
-
-* [libraries/EpoxyFS](libraries/EpoxyFS)
-    * An implementation of a file system compatible with
-      [ESP8266 LittleFS](https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html)
-      and [ESP32 LITTLEFS](https://github.com/lorol/LITTLEFS).
-* Two EEPROM implementations:
-    * [libraries/EpoxyPromAvr](libraries/EpoxyPromAvr)
-        * API compatible with
-          [EEPROM on AVR](https://github.com/arduino/ArduinoCore-avr/tree/master/libraries/EEPROM)
-    * [libraries/EpoxyPromEsp](libraries/EpoxyPromEsp)
-        * API compatible with
-          [EEPROM on ESP8266](https://github.com/esp8266/Arduino/tree/master/libraries/EEPROM)
-          and
-          [EEPROM on ESP32](https://github.com/espressif/arduino-esp32/tree/master/libraries/EEPROM)
-
-I hope to create additional emulations of various network libraries (HTTP
-client, HTTP Server, MQTT client, etc) so that even more of the Arduino
-development can be done on the Linux/MacOS host.
 
 <a name="SerialPortEmulation"></a>
 ### Serial Port Emulation
@@ -427,6 +406,110 @@ the program. But this convenience means that the Arduino program running under
 `Serial.read()` function. The advantages of having normal Unix signals seemed
 worth the trade-off.
 
+<a name="LibrariesAndMocks"></a>
+## Libraries and Mocks
+
+The Arduino ecosystem provides thousands of libraries that can be used to extend
+the functionality of an Arduino application. Some of these libraries will
+work perfectly fine with EpoxyDuino, some will not. It is difficult to
+categorize these libraries in a sensible way in the context of EpoxyDuino, but
+here is my current attempt:
+
+* **Inherently Compatible Libraries**:
+    * Mostly algorithmic or have limited dependency on low-level Arduino API
+      (e.g. `millis()`, `micros()`, `delay()`, `F()`).
+    * If these have been written to be cross-platform across different Arduino
+      hardware, then these should also automatically work under EpoxyDuino
+      without much (or any) modifications.
+* **Emulation Libraries**.
+    * Libraries for EpoxyDuino written specifically to emulate the
+      functionality of an Arduino library, for example, using the filesystem or
+      network layer.
+    * These are useful
+* **Mock or Stub Libraries**
+    * Libraries which implement the API of the target library, but don't
+      implement the functionality of the library.
+    * These are useful for Continuous Integration workflows to verify that a
+      program or library compiles with EpoxyDuino.
+    * The assumption is that if something compiles under EpoxyDuino, it probably
+      compiles under an actual Arduino environment.
+
+<a name="InherentlyCompatibleLibraries"></a>
+### Inherently Compatible Libraries
+
+Almost all libraries that I write will be inherently compatible with EpoxyDuino
+because EpoxyDuino is what I use to my libraries.
+
+* AUnit (https://github.com/bxparks/AUnit)
+* AceButton (https://github.com/bxparks/AceButton)
+* AceCRC (https://github.com/bxparks/AceCRC)
+* AceCommon (https://github.com/bxparks/AceCommon)
+* AceRoutine (https://github.com/bxparks/AceRoutine)
+* AceTime (https://github.com/bxparks/AceTime)
+* AceUtils (https://github.com/bxparks/AceUtils), mostly
+
+There are probably many other 3rd party libraries which are inherently
+compatible with EpoxyDuino but we won't know until we try to compile them under
+EpoxyDuino. If there are compile-time problems, it may be possible that only a
+small set of tweaks are required to make it work. Often, the fixes are similar
+to the changes needed to make the library cross-compatible with other Arduino
+platforms.
+
+<a name="EmulationLibraries"></a>
+### Emulation Libraries
+
+These libraries are designed partially or fully emulate the functionality a
+particular Arduino library in the Unix-like desktop environment using
+EpoxyDuino. I have provide provide 3 such libraries within the EpoxyDuino
+project:
+
+* [libraries/EpoxyFS](libraries/EpoxyFS)
+    * An implementation of a file system compatible with
+      [ESP8266 LittleFS](https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html)
+      and [ESP32 LITTLEFS](https://github.com/lorol/LITTLEFS).
+* Two EEPROM implementations:
+    * [libraries/EpoxyPromAvr](libraries/EpoxyPromAvr)
+        * API compatible with
+          [EEPROM on AVR](https://github.com/arduino/ArduinoCore-avr/tree/master/libraries/EEPROM)
+    * [libraries/EpoxyPromEsp](libraries/EpoxyPromEsp)
+        * API compatible with
+          [EEPROM on ESP8266](https://github.com/esp8266/Arduino/tree/master/libraries/EEPROM)
+          and
+          [EEPROM on ESP32](https://github.com/espressif/arduino-esp32/tree/master/libraries/EEPROM)
+
+Since the desktop environment already has a working network stack, I hope to
+make create additional network libraries (HTTP client, HTTP Server, MQTT client,
+etc) for EpoxyDuino, so that even more of the Arduino development can be done on
+the Linux/MacOS host.
+
+<a name="MockLibraries"></a>
+### Mock Libraries
+
+Mock libraries are designed to run under EpoxyDuino and provide non-working API
+stubs of the target library. These libraries are useful to verify that a program
+compiles, but they do not allow us to actually verify that the library works as
+intended. This limitation may be sufficient for Continous Integration purposes.
+
+* `SPI.h`
+    * This header file is provided automatically by the `<Arduino.h>`
+      file in EpoxyDuino without adding any additional libraries in
+      `ARDUINO_LIBS`.
+    * This was added very early in the development of EpoxyDuino so that I could
+      compile certain programs. I don't think I realized at the time that `SPI`
+      is a separate (but built-in) library.
+    * In retrospect, it may have been better to split this file into a separate
+      mock library.
+* `Wire.h`
+    * Similary to `SPI.h`, this header file is provided automatically by the
+      `<Arduino.h>` file in EpoxyDuino.
+    * It provides only mock functions of the actualy `Wire` library that
+      is provided by real Arduino frameworks.
+* EspMock (https://github.com/hsaturn/EspMock)
+    * This is a separate project that provides various mocks for functions and
+      libraries included with the ESP8266 and the ESP32 processors.
+    * It is not an Arduino library, so it needs to be installed using a manual
+      `git clone`.
+
 <a name="SystemRequirements"></a>
 ## System Requirements
 
@@ -451,7 +534,7 @@ This library has been tested on:
 * MacOS 10.14.6 (Mojave)
     * Apple clang version 11.0.0 (clang-1100.0.33.17)
     * GNU Make 3.81
-* FreeBSD 12.2 (Experimental)
+* FreeBSD 12.2
     * c++: FreeBSD clang version 10.0.1
     * gmake: GNU Make 4.3
         * Install using `$ pkg install gmake`
