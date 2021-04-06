@@ -78,6 +78,7 @@ for more details.
     * [Alternate C++ Compiler](#AlternateCompiler)
     * [Difference from Arduino IDE](#DifferenceFromArduinoIDE)
     * [Conditional Code](#ConditionalCode)
+    * [Managing Multiple Makefiles](#ManagingMultipleMakefiles)
     * [Continuous Integration](#ContinuousIntegration)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
@@ -295,6 +296,108 @@ If you need to target a particular desktop OS, you can use the following:
   ...
 #endif
 ```
+
+<a name="ManagingMultipleMakefiles"></a>
+### Managing Multiple Makefiles
+
+Most of my libraries have the following directory structure:
+
+```
+FooLibrary
+|-- LICENSE
+|-- README.md
+|-- examples
+|   |-- ExampleA
+|   |   |-- ExampleA.ino
+|   |   `-- Makefile
+|   |-- ExampleB
+|   |   |-- ExampleB.ino
+|   |   `-- Makefile
+|   |-- ...
+|   |-- ExampleN
+|   |   |-- ExampleN.ino
+|   |   `-- Makefile
+|   `-- Makefile
+|-- library.properties
+|-- src
+|   |-- FooLibrary.h
+|   |-- foolib
+|   |   |-- file.h
+|   |   `-- file.cpp
+`-- tests
+    |-- AxxTest
+    |   |-- AxxTest.ino
+    |   `-- Makefile
+    |-- BxxTest
+    |   |-- BxxTest.ino
+    |   `-- Makefile
+    |-- ...
+    |-- MxxTest
+    |   |-- MxxTest.ino
+    |   `-- Makefile
+    `-- Makefile
+```
+
+It is convenient to be able to compile **all** of the examples , and run **all**
+the unit tests with a single command. There are multiple ways to do this, but
+the technique that I use is to create a parent `Makefile` in the `examples/` and
+`tests/` directories that recursively runs the targets of the subdirectories.
+
+In `examples/Makefile`, I create the following:
+
+```make
+all:
+	set -e; \
+	for i in */Makefile; do \
+		echo '==== Making:' $$(dirname $$i); \
+		$(MAKE) -C $$(dirname $$i) -j; \
+	done
+
+clean:
+	set -e; \
+	for i in */Makefile; do \
+		echo '==== Cleaning:' $$(dirname $$i); \
+		$(MAKE) -C $$(dirname $$i) clean; \
+	done
+```
+
+In `tests/Makefile`, I create the following:
+
+```make
+tests:
+	set -e; \
+	for i in *Test/Makefile; do \
+		echo '==== Making:' $$(dirname $$i); \
+		$(MAKE) -C $$(dirname $$i) -j; \
+	done
+
+runtests:
+	set -e; \
+	for i in *Test/Makefile; do \
+		echo '==== Running:' $$(dirname $$i); \
+		$$(dirname $$i)/$$(dirname $$i).out; \
+	done
+
+clean:
+	set -e; \
+	for i in *Test/Makefile; do \
+		echo '==== Cleaning:' $$(dirname $$i); \
+		$(MAKE) -C $$(dirname $$i) clean; \
+	done
+```
+
+To compile and run all the examples and unit tests, I do the following:
+
+```bash
+$ make -C examples clean
+$ make -C tests clean
+
+$ make -C examples all
+$ make -C tests tests
+$ make -C tests runtests | grep failed
+```
+
+These parent Makefiles can be used in Continuous Integration, as shown below.
 
 <a name="ContinuousIntegration"></a>
 ### Continuous Integration
