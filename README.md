@@ -528,7 +528,6 @@ here is my current attempt:
     * Libraries for EpoxyDuino written specifically to emulate the
       functionality of an Arduino library, for example, using the filesystem or
       network layer.
-    * These are useful
 * **Mock or Stub Libraries**
     * Libraries which implement the API of the target library, but don't
       implement the functionality of the library.
@@ -536,6 +535,8 @@ here is my current attempt:
       program or library compiles with EpoxyDuino.
     * The assumption is that if something compiles under EpoxyDuino, it probably
       compiles under an actual Arduino environment.
+
+These 3 types are described in more detail below.
 
 <a name="InherentlyCompatibleLibraries"></a>
 ### Inherently Compatible Libraries
