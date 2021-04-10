@@ -44,31 +44,46 @@ EPOXY_DUINO_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 # Look for libraries under ./EpoxyDuino/libraries/
 EPOXY_DUINO_LIB_DIR := $(abspath $(EPOXY_DUINO_DIR)/libraries)
 # Look for libraries which are siblings to ./EpoxyDuino/
-EPOXY_DUINO_SIBLING_DIR := $(abspath $(EPOXY_DUINO_DIR)/..)
+EPOXY_DUINO_PARENT_DIR := $(abspath $(EPOXY_DUINO_DIR)/..)
 
 # List of Arduino IDE library folders, both built-in to the Arduino IDE
 # and those downloaded later, e.g. in the portable/ directory or .arduino15/
 # directory.
 ARDUINO_LIB_DIRS ?=
 
-# Default modules which are automatically linked in: EpoxyDuino/
-DEFAULT_MODULES := $(EPOXY_DUINO_DIR)
+# Define the module that contains <Arduino.h> and other core API files. By
+# default, the "epoxy" core is used which is based on the AVR core, with some
+# extensions. The <Arduion.h> file lives in $(EPOXY_DUINO_DIR/cores/epoxy.
+#
+# Currently, only "epoxy" Core has been implemented. If additional predefined
+# cores become supported in EpoxyDuino in $(EPOXY_DUINO_DIR)/cores/, then
+# end-user can override EPOXY_CORE with another predefined core. For example,
+# if I decide to implement a version of the Core that tries to emulate the
+# ESP8266 and create the implementation files under
+# $(EPOXY_DUINO_DIR)/cores/esp8266, then this variable could be set to
+# "esp8266".
+EPOXY_CORE ?= epoxy
 
-# Look for libraries under EPOXY_DUINO_LIB_DIR, EPOXY_DUINO_SIBLING_DIR, and
-# each of the directories listed in ARDUINO_LIB_DIRS.
-APP_MODULES := $(foreach lib,$(ARDUINO_LIBS),${EPOXY_DUINO_LIB_DIR}/${lib})
-APP_MODULES += $(foreach lib,$(ARDUINO_LIBS),${EPOXY_DUINO_SIBLING_DIR}/${lib})
-APP_MODULES += \
+# This variable provides a big hammer that can override the Arduino Core
+# supplied by EpoxyDuino with an externally provided Core that compatible with
+# EpoxyDuino (e.g. EPOXY_CORE_PATH =
+# $(EPOXY_DUINO_DIR)/../EspMock/cores/esp8266).
+EPOXY_CORE_PATH ?= $(EPOXY_DUINO_DIR)/cores/$(EPOXY_CORE)
+
+# Find the directory paths of the libraries listed in ARDUINO_LIBS by looking
+# under directory given by EPOXY_DUINO_LIB_DIR, the directory given by
+# EPOXY_DUINO_PARENT_DIR to look for siblings, and each directory listed in
+# ARDUINO_LIB_DIRS.
+EPOXY_MODULES := $(foreach lib,$(ARDUINO_LIBS),${EPOXY_DUINO_LIB_DIR}/${lib})
+EPOXY_MODULES += $(foreach lib,$(ARDUINO_LIBS),${EPOXY_DUINO_PARENT_DIR}/${lib})
+EPOXY_MODULES += \
 	$(foreach lib_dir,$(ARDUINO_LIB_DIRS),\
 		$(foreach lib,$(ARDUINO_LIBS),\
 			${lib_dir}/${lib}\
 		)\
 	)
 
-# All dependent modules.
-ALL_MODULES := $(DEFAULT_MODULES) $(APP_MODULES)
-
-# Compiler and settings
+# Compiler settings that depend on the OS (Linux, MacOS, TODO: Add FreeBSD).
 ifeq ($(UNAME), Linux)
 CXX ?= g++
 CXXFLAGS ?= -Wall -std=gnu++11 -fno-exceptions -fno-threadsafe-statics -flto
@@ -77,39 +92,55 @@ CXX ?= clang++
 CXXFLAGS ?= -std=c++11 -stdlib=libc++ # -Weverything
 endif
 
-# pre-processor (-I, -D, etc)
-CPPFLAGS_EXPANSION = -I$(module) -I$(module)/src
+# Pre-processor flags (-I, -D, etc), mostly for header files.
 CPPFLAGS ?=
-CPPFLAGS += $(foreach module,$(ALL_MODULES),$(CPPFLAGS_EXPANSION))
-
 # Define a macro to indicate that EpoxyDuino is being used. Defined here
 # instead of Arduino.h so that files like 'compat.h' can determine the
 # compile-time environment without having to include <Arduino.h>.
 # Also define UNIX_HOST_DUINO for backwards compatibility.
-CPPFLAGS += -DUNIX_HOST_DUINO -DEPOXY_DUINO
+CPPFLAGS += -D UNIX_HOST_DUINO -D EPOXY_DUINO
+# Add the header files for the Core files.
+CPPFLAGS += -I$(EPOXY_CORE_PATH)
+# Add the header files for libraries. Old Arduino libraries place the header
+# and source files right at the top. New Arduino libraries tend to use the
+# ./src/ subdirectory. We need to support both.
+CPPFLAGS_EXPANSION = -I$(module) -I$(module)/src
+CPPFLAGS += $(foreach module,$(EPOXY_MODULES),$(CPPFLAGS_EXPANSION))
 
-# linker settings (e.g. -lm)
+# Linker settings (e.g. -lm).
 LDFLAGS ?=
 
-# C++ srcs. Old Arduino libraries place the source files at the top level.
-# Later Arduino libraries put the source files under the src/ directory.
-# Support subdirectory expansions up to 3 levels below 'src/'.
-# (There might be a better way to do this using GNU Make but I can't find a
-# mechanism that doesn't barf when the 'src/' directory doesn't exist.)
-SRCS_EXPANSION = $(wildcard $(module)/*.cpp) \
+# Generate list of C++ srcs to compile.
+#
+# 1) Add the source files in the Core directory. Support subdirectory
+# expansions up to 3 levels below the given target. (There might be a better
+# way to do this using GNU Make but I can't find a mechanism that doesn't barf
+# when the 'src/' directory doesn't exist.)
+EPOXY_SRCS := $(wildcard $(EPOXY_CORE_PATH)/*.cpp) \
+	$(wildcard $(EPOXY_CORE_PATH)/*/*.cpp) \
+	$(wildcard $(EPOXY_CORE_PATH)/*/*/*.cpp) \
+	$(wildcard $(EPOXY_CORE_PATH)/*/*/*/*.cpp)
+# 2) Add the source files of the libraries. Old Arduino libraries place the
+# source files at the top level. Later Arduino libraries put the source files
+# under the src/ directory. Also support 3 levels of subdirectories.
+MODULE_EXPANSION = $(wildcard $(module)/*.cpp) \
 	$(wildcard $(module)/src/*.cpp) \
 	$(wildcard $(module)/src/*/*.cpp) \
 	$(wildcard $(module)/src/*/*/*.cpp) \
 	$(wildcard $(module)/src/*/*/*/*.cpp)
-SRCS := $(foreach module,$(ALL_MODULES),$(SRCS_EXPANSION))
-SRCS := ${SRCS} $(wildcard *.cpp) $(wildcard */*.cpp)
+EPOXY_SRCS += $(foreach module,$(EPOXY_MODULES),$(MODULE_EXPANSION))
+# 3) Add the source files in the application directory, also 3 levels down.
+EPOXY_SRCS += $(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*/*.cpp) \
+	$(wildcard */*/*/*.cpp)
 
 # Objects including *.o from *.ino
-OBJS += $(SRCS:%.cpp=%.o) $(APP_NAME).o
+OBJS += $(EPOXY_SRCS:%.cpp=%.o) $(APP_NAME).o
 
+# Finally, the rule to generate the binary for the application.
 $(APP_NAME).out: $(OBJS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
+# We need to add a rule to treat .ino file as just a  normal .cpp.
 $(APP_NAME).o: $(APP_NAME).ino
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -x c++ -c $<
 

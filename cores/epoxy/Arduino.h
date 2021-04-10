@@ -6,8 +6,8 @@
  * Copyright (c) 2005-2013 Arduino Team
  */
 
-#ifndef EPOXY_DUINO_ARDUINO_H
-#define EPOXY_DUINO_ARDUINO_H
+#ifndef EPOXY_DUINO_EPOXY_ARDUINO_H
+#define EPOXY_DUINO_EPOXY_ARDUINO_H
 
 #include <math.h>
 #include "Print.h"
