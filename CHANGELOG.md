@@ -1,6 +1,10 @@
 # Changelog
 
 * Unreleased
+    * Add `EpoxyMockDigitalWriteFast`, a simple mock library for
+      `digitalWriteFast` (https://github.com/NicksonYap/digitalWriteFast) to
+      allow code using these functions (e.g. `digitalWriteFast()`) to compile
+      under EpoxyDuino.
 * 0.6.2 (2021-03-15)
     * Add more stubs for Arduino API functions: `pulseIn()`, `pulseInLong()`,
       `shiftOut()`, `shiftIn()`, I2C and SPI pins (SS, MOSI, MISO, SCK, SDA,

@@ -614,6 +614,10 @@ intended. This limitation may be sufficient for Continous Integration purposes.
       is included automatically by the `<Arduino.h>` file in EpoxyDuino.
     * It follows the same pattern as `Wire`, the header file provides only mock
       functions of the actual `SPI` library.
+* [libaries/EpoxyMockDigitalWriteFast](libraries/EpoxyMockDigitalWriteFast)
+    * A simple mock for the `digitalWriteFast` library
+      (https://github.com/NicksonYap/digitalWriteFast) to allow code written
+      against it to compile under EpoxyDuino.
 * EspMock (https://github.com/hsaturn/EspMock)
     * This is a separate project that provides various mocks for functions and
       libraries included with the ESP8266 and the ESP32 processors.
