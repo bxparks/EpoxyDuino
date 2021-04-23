@@ -22,15 +22,9 @@ jobs:
     - name: Verify examples
       run: |
         make -C examples
-        make -C libraries/EpoxyFS/examples
-        make -C libraries/EpoxyPromEsp/examples
-        make -C libraries/EpoxyPromAvr/examples
+        make -C libraries
 
     - name: Verify tests
       run: |
-        make -C libraries/EpoxyFS/tests
-        make -C libraries/EpoxyFS/tests runtests
-        make -C libraries/EpoxyPromEsp/tests
-        make -C libraries/EpoxyPromEsp/tests runtests
-        make -C libraries/EpoxyPromAvr/tests
-        make -C libraries/EpoxyPromAvr/tests runtests
+        make -C libraries tests
+        make -C libraries runtests
