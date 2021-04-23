@@ -1,4 +1,4 @@
-# EpoxyPromAvr
+# EpoxyEepromAvr
 
 An implementation of `EEPROM` that runs on Linux (or other POSIX-like system)
 using EpoxyDuino (https://github.com/bxparks/EpoxyDuino). There are at least two
@@ -10,12 +10,12 @@ versions of the `EEPROM` API:
     * https://github.com/esp8266/Arduino/blob/master/libraries/EEPROM/EEPROM.h
 
 This library implements the **AVR** flavor of the EEPROM API. The EEPROM
-contents are directly saved to a file called `epoxypromdata` in the current
+contents are directly saved to a file called `epoxyeepromdata` in the current
 directory. The AVR version of `EEPROM` does not provide a mechanism to set the
 size of the EEPROM, since it is determined by the hardware. This library
 hardcodes the size of its EEPROM emulation to 1024 bytes.
 
-See [EpoxyPromEsp](../EpoxyPromEsp/) for the ESP version.
+See [EpoxyEepromEsp](../EpoxyEepromEsp/) for the ESP version.
 
 ## Usage
 
@@ -27,12 +27,12 @@ in the Arduino AVR Core.
 
 ### Makefile
 
-When using the EpoxyDuino Makefile, the `EpoxyPromAvr` library must be added to
+When using the EpoxyDuino Makefile, the `EpoxyEepromAvr` library must be added to
 the `ARDUINO_LIBS` parameter, like this:
 
 ```
-APP_NAME := EpoxyPromAvrTest
-ARDUINO_LIBS := EpoxyPromAvr ...
+APP_NAME := EpoxyEepromAvrTest
+ARDUINO_LIBS := EpoxyEepromAvr ...
 MORE_CLEAN := more_clean
 include ../../../../EpoxyDuino.mk
 ```
@@ -40,7 +40,8 @@ include ../../../../EpoxyDuino.mk
 ### Sample Code
 
 ```C++
-#include <EEPROM.h> // global 'EEPROM' object defined
+#include <EpoxyEepromAvr.h>
+#define EEPROM EpoxyEepromAvrInstance
 
 void write() {
   int address = 0;
@@ -64,8 +65,8 @@ void read() {
 }
 
 void detectAPI() {
-  #if EPOXY_DUINO_EPOXY_PROM_AVR
-    #warning Using EpoxyPromAvr version of EEPROM
+  #if EPOXY_DUINO_EPOXY_EEPROM_AVR
+    #warning Using EpoxyEepromAvr version of EEPROM
     EEPROM.write(...);
     EEPROM.update(...);
     EEPROM.read(...);
@@ -129,9 +130,9 @@ is executed.
 ## Environment Variable
 
 By default, the content of the `EEPROM` is saved to a file named
-`epoxypromdata` in the current directory. You can change this by setting the
-`EPOXY_PROM_DATA` environment variable:
+`epoxyeepromdata` in the current directory. You can change this by setting the
+`EPOXY_EEPROM_DATA` environment variable:
 
 ```
-$ export EPOXY_PROM_DATA=/tmp/epoxypromdata
+$ export EPOXY_EEPROM_DATA=/tmp/epoxyeepromdata
 ```

@@ -24,9 +24,9 @@
 
 #include <stdlib.h> // getenv()
 #include <stdio.h> // FILE, fopen(), fwrite(), fread()
-#include "EpoxyPromEsp.h"
+#include "EpoxyEepromEsp.h"
 
-void EpoxyPromEsp::begin(size_t size) {
+void EpoxyEepromEsp::begin(size_t size) {
   // round up to nearest 4-byte alignment
   size = (size + 3) & (~3);
 
@@ -47,7 +47,7 @@ void EpoxyPromEsp::begin(size_t size) {
   }
 }
 
-bool EpoxyPromEsp::commit() {
+bool EpoxyEepromEsp::commit() {
   if (!size_ || !dirty_ || !data_) return true;
   const char* dataPath = getDataPath();
   FILE* fp = fopen(dataPath, "wb");
@@ -57,14 +57,14 @@ bool EpoxyPromEsp::commit() {
   return true;
 }
 
-const char* EpoxyPromEsp::getDataPath() {
-  const char* dataPath = getenv("EPOXY_PROM_DATA");
+const char* EpoxyEepromEsp::getDataPath() {
+  const char* dataPath = getenv("EPOXY_EEPROM_DATA");
   if (!dataPath) {
-    dataPath = "epoxypromdata";
+    dataPath = "epoxyeepromdata";
   }
   return dataPath;
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_EEPROM)
-EpoxyPromEsp EPOXY_PROM_ESP;
+EpoxyEepromEsp EpoxyEepromEspInstance;
 #endif

@@ -19,13 +19,13 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef EPOXY_PROM_AVR_H
-#define EPOXY_PROM_AVR_H
+#ifndef EPOXY_EEPROM_AVR_H
+#define EPOXY_EEPROM_AVR_H
 
 #include <inttypes.h>
 
-/** Use this macro to distinguish between EpoxyPromEsp or EpoxyPromAvr. */
-#define EPOXY_DUINO_EPOXY_PROM_AVR 1
+/** Use this macro to distinguish between EpoxyEepromEsp or EpoxyEepromAvr. */
+#define EPOXY_DUINO_EPOXY_EEPROM_AVR 1
 
 /***
     EERef class.
@@ -122,7 +122,7 @@ class EEPtr{
 };
 
 /***
-    EpoxyPromAvr class.
+    EpoxyEepromAvr class.
 
     This object represents the entire EEPROM space.
     It wraps the functionality of EEPtr and EERef into a basic interface.
@@ -130,10 +130,10 @@ class EEPtr{
     releases.
 ***/
 
-class EpoxyPromAvr{
+class EpoxyEepromAvr{
   public:
-    EpoxyPromAvr();
-    ~EpoxyPromAvr();
+    EpoxyEepromAvr();
+    ~EpoxyEepromAvr();
 
     //Basic user access methods.
     EERef operator[](int idx) const { return EERef(idx, fd); }
@@ -151,7 +151,7 @@ class EpoxyPromAvr{
     //returned pointer is invalid.
     EEPtr end() const { return EEPtr(length(), fd); }
 
-    uint16_t length() const { return kEpoxyPromSize; }
+    uint16_t length() const { return kEpoxyEepromSize; }
 
     //Functionality to 'get' and 'put' objects to and from EEPROM.
     template <typename T>
@@ -176,13 +176,13 @@ class EpoxyPromAvr{
 
   private:
     static const char* getDataPath();
-    static const uint16_t kEpoxyPromSize = 1024;
+    static const uint16_t kEpoxyEepromSize = 1024;
 
     int fd;
 };
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_EEPROM)
-extern EpoxyPromAvr EPOXY_PROM_AVR;
+extern EpoxyEepromAvr EpoxyEepromAvrInstance;
 #endif
 
 #endif

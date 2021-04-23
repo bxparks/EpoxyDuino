@@ -1,4 +1,4 @@
-# EpoxyPromEsp
+# EpoxyEepromEsp
 
 An implementation of `EEPROM` that runs on Linux (or other POSIX-like system)
 using EpoxyDuino (https://github.com/bxparks/EpoxyDuino). There are at least two
@@ -10,10 +10,10 @@ versions of the `EEPROM` API:
     * https://github.com/esp8266/Arduino/blob/master/libraries/EEPROM/EEPROM.h
 
 This library implements the **ESP** flavor of the EEPROM API. The EEPROM
-contents are buffered in memory, then saved to a file called `epoxypromdata` in
-the current directory upon the `EEPROM.commit()` or `EEPROM.end()` methods.
+contents are buffered in memory, then saved to a file called `epoxyeepromdata`
+in the current directory upon the `EEPROM.commit()` or `EEPROM.end()` methods.
 
-See [EpoxyPromAvr](../EpoxyPromAvr/) for the AVR version.
+See [EpoxyEepromAvr](../EpoxyEepromAvr/) for the AVR version.
 
 ## Usage
 
@@ -25,12 +25,12 @@ in the Arduino ESP8226 Core.
 
 ### Makefile
 
-When using the EpoxyDuino Makefile, the `EpoxyPromEsp` library must be added to
+When using the EpoxyDuino Makefile, the `EpoxyEepromEsp` library must be added to
 the `ARDUINO_LIBS` parameter, like this:
 
 ```
-APP_NAME := EpoxyPromEspTest
-ARDUINO_LIBS := EpoxyPromEsp ...
+APP_NAME := EpoxyEepromEspTest
+ARDUINO_LIBS := EpoxyEepromEsp ...
 MORE_CLEAN := more_clean
 include ../../../../EpoxyDuino.mk
 ```
@@ -38,7 +38,8 @@ include ../../../../EpoxyDuino.mk
 ### Sample Code
 
 ```C++
-#include <EEPROM.h> // global 'EEPROM' object defined
+#include <EpoxyEepromEsp.h>
+#define EEPROM EpoxyEepromEspInstance
 
 void write() {
   int address = 0;
@@ -65,8 +66,8 @@ void read() {
 }
 
 void detectAPI() {
-  #if EPOXY_DUINO_EPOXY_PROM_ESP
-    #warning Using EpoxyPromEsp version of EEPROM
+  #if EPOXY_DUINO_EPOXY_EEPROM_ESP
+    #warning Using EpoxyEepromEsp version of EEPROM
     EEPROM.begin(...);
     EEPROM.write(...);
     EEPROM.commit(...);
@@ -133,9 +134,9 @@ is executed.
 ## Environment Variable
 
 By default, the content of the `EEPROM` is saved to a file named
-`epoxypromdata` in the current directory. You can change this by setting the
-`EPOXY_PROM_DATA` environment variable:
+`epoxyeepromdata` in the current directory. You can change this by setting the
+`EPOXY_EEPROM_DATA` environment variable:
 
 ```
-$ export EPOXY_PROM_DATA=/tmp/epoxypromdata
+$ export EPOXY_EEPROM_DATA=/tmp/epoxyeepromdata
 ```

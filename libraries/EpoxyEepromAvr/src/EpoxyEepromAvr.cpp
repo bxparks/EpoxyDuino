@@ -23,9 +23,9 @@
 #include <sys/stat.h> // S_IRUSR, S_IWUSR, ...
 #include <unistd.h> // pread(), pwrite()
 #include <fcntl.h> // O_CREAT, etc (I think)
-#include "EpoxyPromAvr.h"
+#include "EpoxyEepromAvr.h"
 
-EpoxyPromAvr::EpoxyPromAvr() {
+EpoxyEepromAvr::EpoxyEepromAvr() {
   const char* dataPath = getDataPath();
   fd = open(
       dataPath,
@@ -40,14 +40,14 @@ EpoxyPromAvr::EpoxyPromAvr() {
   }
 }
 
-EpoxyPromAvr::~EpoxyPromAvr() {
+EpoxyEepromAvr::~EpoxyEepromAvr() {
   if (fd != -1) close(fd);
 }
 
-const char* EpoxyPromAvr::getDataPath() {
-  const char* dataPath = getenv("EPOXY_PROM_DATA");
+const char* EpoxyEepromAvr::getDataPath() {
+  const char* dataPath = getenv("EPOXY_EEPROM_DATA");
   if (!dataPath) {
-    dataPath = "epoxypromdata";
+    dataPath = "epoxyeepromdata";
   }
   return dataPath;
 }
@@ -66,5 +66,5 @@ EERef& EERef::operator=(uint8_t in) {
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_EEPROM)
-EpoxyPromAvr EPOXY_PROM_AVR;
+EpoxyEepromAvr EpoxyEepromAvrInstance;
 #endif

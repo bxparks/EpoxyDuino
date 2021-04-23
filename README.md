@@ -32,8 +32,8 @@ a set of libraries within EpoxyDuino which emulate the versions that run the
 actual hardware:
 
 * EpoxyFS: emulation of the ESP8266 LittleFS or ESP32 LITTLEFS
-* EpoxyPromAvr: emulation of AVR-flavored `EEPROM`
-* EpoxyPromEsp: emulation of ESP-flavored `EEPROM`
+* EpoxyEepromAvr: emulation of AVR-flavored `EEPROM`
+* EpoxyEepromEsp: emulation of ESP-flavored `EEPROM`
 
 If your program has limited hardware dependencies so that it is conceptually
 portable to a vanilla Unix environment, EpoxyDuino may work well for you.
@@ -577,10 +577,10 @@ project:
       [ESP8266 LittleFS](https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html)
       and [ESP32 LITTLEFS](https://github.com/lorol/LITTLEFS).
 * Two EEPROM implementations:
-    * [libraries/EpoxyPromAvr](libraries/EpoxyPromAvr)
+    * [libraries/EpoxyEepromAvr](libraries/EpoxyEepromAvr)
         * API compatible with
           [EEPROM on AVR](https://github.com/arduino/ArduinoCore-avr/tree/master/libraries/EEPROM)
-    * [libraries/EpoxyPromEsp](libraries/EpoxyPromEsp)
+    * [libraries/EpoxyEepromEsp](libraries/EpoxyEepromEsp)
         * API compatible with
           [EEPROM on ESP8266](https://github.com/esp8266/Arduino/tree/master/libraries/EEPROM)
           and

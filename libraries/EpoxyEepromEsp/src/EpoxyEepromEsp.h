@@ -22,22 +22,22 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef EPOXY_PROM_ESP_H
-#define EPOXY_PROM_ESP_H
+#ifndef EPOXY_EEPROM_ESP_H
+#define EPOXY_EEPROM_ESP_H
 
 #include <stdint.h>
 #include <string.h> // memcpy()
 
-/** Use this macro to distinguish between EpoxyPromEsp or EpoxyPromAvr. */
-#define EPOXY_DUINO_EPOXY_PROM_ESP 1
+/** Use this macro to distinguish between EpoxyEepromEsp or EpoxyEepromAvr. */
+#define EPOXY_DUINO_EPOXY_EEPROM_ESP 1
 
 /**
  * A EEPROM library that works on POSIX-like systems using EpoxyDuino. This
  * version implements the EEPROM API found on ESP8266 and ESP32 Arduino Cores.
  */
-class EpoxyPromEsp {
+class EpoxyEepromEsp {
   public:
-    EpoxyPromEsp() = default;
+    EpoxyEepromEsp() = default;
 
     void begin(size_t size);
 
@@ -108,7 +108,7 @@ class EpoxyPromEsp {
 };
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_EEPROM)
-extern EpoxyPromEsp EPOXY_PROM_ESP;
+extern EpoxyEepromEsp EpoxyEepromEspInstance;
 #endif
 
 #endif
