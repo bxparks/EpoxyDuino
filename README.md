@@ -58,7 +58,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 0.6.2+ (2021-04-28)
+**Version**: 0.7 (2021-04-28)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -556,6 +556,7 @@ The following functions and features of the Arduino framework are implemented:
       `pgm_read_float()`, `pgm_read_ptr()`
     * `strlen_P()`, `strcat_P()`, `strcpy_P()`, `strncpy_P()`, `strcmp_P()`,
       `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`
+    * `memcpy_P()`, `vsnprintf_P()`
     * `PROGMEM`, `PGM_P`, `PGM_VOID_P`, `PSTR()`
 * `IPAddress.h`
     * `IPAddress` class
