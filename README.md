@@ -58,7 +58,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 0.6.2 (2021-03-15)
+**Version**: 0.6.2+ (2021-04-28)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -75,11 +75,15 @@ for more details.
     * [Makefile](#Makefile)
     * [Additional Arduino Libraries](#AdditionalLibraries)
     * [Additional Arduino Library Locations](#AdditionalLibraryLocations)
-    * [Alternate C++ Compiler](#AlternateCompiler)
     * [Difference from Arduino IDE](#DifferenceFromArduinoIDE)
     * [Conditional Code](#ConditionalCode)
     * [Managing Multiple Makefiles](#ManagingMultipleMakefiles)
     * [Continuous Integration](#ContinuousIntegration)
+* [Advanced Usage](#AdvancedUsage)
+    * [Alternate C++ Compiler](#AlternateCompiler)
+    * [Generated Source Code](#GeneratedSourceCode)
+    * [Additional Clean Up](#AdditionalCleanUp)
+    * [Alternate Arduino Core](#AlternateArduinoCore)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
@@ -219,50 +223,6 @@ each of the 3 directories given in the `ARDUINO_LIB_DIRS`. (The
 `arduino_ide_dir` is a convenience temporary variable. It has no significance to
 `EpoxyDuino.mk`)
 
-<a name="AlternateCompiler"></a>
-### Alternate C++ Compiler
-
-Normally the C++ compiler on Linux is `g++`. If you have `clang++` installed
-you can use that instead by specifying the `CXX` environment variable:
-```
-$ CXX=clang++ make
-```
-(This sets the `CXX` shell environment variable temporarily, for the duration of
-the `make` command, which causes `make` to set its internal `CXX` variable,
-which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
-
-<a name="DifferenceFromArduinoIDE"></a>
-### Difference from Arduino IDE
-
-There are a number of differences compared to the programming environment
-provided by the Arduino IDE:
-
-* The `*.ino` file is treated like a normal `*.cpp` file. So it must have
-  an `#include <Arduino.h>` include line at the top of the file. This is
-  compatible with the Arduino IDE which automatically includes `<Arduino.h>`.
-* The Arduino IDE supports multiple `ino` files in the same directory. (I
-  believe it simply concontenates them all into a single file.) EpoxyDuino
-  supports only one `ino` file in a given directory.
-* The Arduino IDE automatically generates forward declarations for functions
-  that appear *after* the global `setup()` and `loop()` methods. In a normal
-  C++ file, these forward declarations must be created by hand. The other
-  alternative is to move `loop()` and `setup()` functions to the end of the
-  `ino` file.
-
-Fortunately, the changes required to make an `ino` file compatible with
-EpoxyDuino are backwards compatible with the Arduino IDE. In other words, a
-program that compiles with EpoxyDuino will also compile under Ardunio IDE.
-
-There are other substantial differences. The Arduino IDE supports multiple
-microcontroller board types, each using its own set of compiler tools and
-library locations. There is a complicated set of files and rules that determine
-how to find and use those tools and libraries. The EpoxyDuino tool does *not*
-use any of the configuration files used by the Arduino IDE. Sometimes, you can
-use the `ARDUINO_LIB_DIRS` to get around this limitations. However, when you
-start using `ARDUINO_LIB_DIRS`, you will often run into third party libraries
-using features which are not supported by the EpoxyDuino framework emulation
-layer.
-
 <a name="ConditionalCode"></a>
 ### Conditional Code
 
@@ -300,7 +260,9 @@ If you need to target a particular desktop OS, you can use the following:
 <a name="ManagingMultipleMakefiles"></a>
 ### Managing Multiple Makefiles
 
-Most of my libraries have the following directory structure:
+It is often convenient to create a parent Makefile that runs multiple targets in
+the Makefiles under the subdirectories. For example, most of my libraries have
+the following directory structure:
 
 ```
 FooLibrary
@@ -338,12 +300,11 @@ FooLibrary
     `-- Makefile
 ```
 
-It is convenient to be able to compile **all** of the examples , and run **all**
-the unit tests with a single command. There are multiple ways to do this, but
-the technique that I use is to create a parent `Makefile` in the `examples/` and
-`tests/` directories that recursively runs the targets of the subdirectories.
-
-In `examples/Makefile`, I create the following:
+I often want to compile **all** of the examples , and run **all** the unit tests
+with a single command. There are multiple ways to do this, but the technique
+that I use is to create a parent `Makefile` in the `examples/` and `tests/`
+directories that recursively runs the targets of the subdirectories. In
+`examples/Makefile`, I create the following:
 
 ```make
 all:
@@ -419,6 +380,147 @@ Take a look at some of my GitHub Actions YAML config files:
 * https://github.com/bxparks/AceCommon/tree/develop/.github/workflows
 * https://github.com/bxparks/AceRoutine/tree/develop/.github/workflows
 * https://github.com/bxparks/AceTime/tree/develop/.github/workflows
+
+<a name="AdvancedUsage"></a>
+## Advanced Usage
+
+<a name="AlternateCompiler"></a>
+### Alternate C++ Compiler
+
+Normally the C++ compiler on Linux is `g++`. If you have `clang++` installed
+you can use that instead by specifying the `CXX` environment variable:
+```
+$ CXX=clang++ make
+```
+(This sets the `CXX` shell environment variable temporarily, for the duration of
+the `make` command, which causes `make` to set its internal `CXX` variable,
+which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
+
+<a name="DifferenceFromArduinoIDE"></a>
+### Difference from Arduino IDE
+
+There are a number of differences compared to the programming environment
+provided by the Arduino IDE:
+
+* The `*.ino` file is treated like a normal `*.cpp` file. So it must have
+  an `#include <Arduino.h>` include line at the top of the file. This is
+  compatible with the Arduino IDE which automatically includes `<Arduino.h>`.
+* The Arduino IDE supports multiple `ino` files in the same directory. (I
+  believe it simply concontenates them all into a single file.) EpoxyDuino
+  supports only one `ino` file in a given directory.
+* The Arduino IDE automatically generates forward declarations for functions
+  that appear *after* the global `setup()` and `loop()` methods. In a normal
+  C++ file, these forward declarations must be created by hand. The other
+  alternative is to move `loop()` and `setup()` functions to the end of the
+  `ino` file.
+
+Fortunately, the changes required to make an `ino` file compatible with
+EpoxyDuino are backwards compatible with the Arduino IDE. In other words, a
+program that compiles with EpoxyDuino will also compile under Ardunio IDE.
+
+There are other substantial differences. The Arduino IDE supports multiple
+microcontroller board types, each using its own set of compiler tools and
+library locations. There is a complicated set of files and rules that determine
+how to find and use those tools and libraries. The EpoxyDuino tool does *not*
+use any of the configuration files used by the Arduino IDE. Sometimes, you can
+use the `ARDUINO_LIB_DIRS` to get around this limitations. However, when you
+start using `ARDUINO_LIB_DIRS`, you will often run into third party libraries
+using features which are not supported by the EpoxyDuino framework emulation
+layer.
+
+<a name="GeneratedSourceCode"></a>
+### Generated Source Code
+
+If a source file is generated dynamically through a code generation script,
+and the source file is *not* checked into the repository because it is too
+dynamic, then you can include the generated files using the `GENERATED`
+and the `OBJS` variables.
+
+First add the list of generated files `*.cpp` or `*.c` to the `GENERATED`
+variable. Then add the corresponding `*.o` files to the `OBJS` variable, like
+this:
+
+```
+GENERATED := foo.cpp bar.cpp
+OBJS := foo.o bar.o
+APP_NAME := {name of project}
+ARDUINO_LIBS := {list of dependent Arduino libraries}
+include {path/to/EpoxyDuino.mk}
+
+foo.cpp: foo.h generate_foo.sh
+    ./generate_foo.sh # creates 'foo.cpp'
+
+bar.cpp: bar.h generate_bar.sh
+    ./generate_bar.sh # creates 'bar.cpp'
+
+...
+```
+
+The `*.o` files in `OJBS` are passed to the linker when the `app.out` binary
+file is created.
+
+The `GENERATED` is not absolutely required, since the default rules already know
+how to compile the `*.o` files from the `*.cpp` or `*.c` files. The primary
+effect of `GENERATED` currently is to cause the generated files to be removed
+when `make clean` is called.
+
+<a name="AdditionalCleanUp"></a>
+### Additional Clean Up
+
+The `make clean` rule is predefined to remove all of the intermediate `*.o`
+files and `GENERATED` files that the `EpoxyDuino.mk` file knows about.
+Sometimes, we want to do additional clean up. For example, the EEPROM emulation
+libraries ([EpoxyEepromAvr](libraries/EpoxyEepromAvr) or
+(EpoxyEepromEsp)[libraries/EpoxyEepromEsp]) will create a file in the current
+directory named `epoxyeepromdata` which stores the content of the emulated
+`EEPROM`. To remove such extra files, we can create a new `Makefile` target that
+performs the clean up, and add the name of the target to `MORE_CLEAN`.
+
+For example, we create a target named `more_clean` to perform the extra clean
+up, and tell the `clean` target to depend on `more_clean` target using the
+`MORE_CLEAN` variable:
+
+```
+MORE_CLEAN := more_clean
+APP_NAME := {name of project}
+ARDUINO_LIBS := {list of dependent Arduino libraries}
+include {path/to/EpoxyDuino.mk}
+
+more_clean:
+    rm -f epoxyeepromdata
+```
+
+<a name="AlternateArduinoCore"></a>
+### Alternate Arduino Core
+
+This is very advanced. The Arduino ecosystem supports different hardware
+processors, architectures, and platforms. The software environment for a
+specific hardware environment is called a Core. The environment provided by
+EpoxyDuino resembles the AVR Core most closely because a lot of the API
+emulation code was borrowed from the AVR Core. However, EpoxyDuino does not
+provide an exact emulation of the AVR Core. In fact, I consider EpoxyDuino to be
+its own unique version of the Arduino API.
+
+There may be situations where an Arduino program is specifically meant to run
+under a hardware platform other than an AVR processor. If we want to use
+EpoxyDuino to compile that program under Linux/MacOS/FreeBSD, we must provide a
+different Arduino Core API. For example, if your program is meant to run on an
+ESP8266 or ESP32 using its WiFi network capabilities, you may need special APIs
+to compile that program under EpoxyDuino.
+
+EpoxyDuino provides the ability substitute a different Arduino API Core through
+2 Makefile variables:
+
+* `EPOXY_CORE`
+    * Use the core defined in the subdirectory under
+      `$(EPOXY_DUINO_DIR)/cores/`.
+    * By default, this variable defined to be `epoxy`, so
+      the core files are searched under `$(EPOXY_DUINO_DIR)/cores/epoxy/`.
+    * Currently `epoxy` is the only Core provided by the EpoxyDuino package.
+* `EPOXY_CORE_PATH`
+    * Defines the full-path to the Arduino Core API files.
+    * If not overridden by the provided Makefile, this is set to
+      `$(EPOXY_DUINO_DIR)/cores/$(EPOXY_CORE)`.
 
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
