@@ -29,6 +29,9 @@ const char* rsflags(OpenMode openMode, AccessMode accessMode) {
     } else {
       mode = "a+";
     }
+  } else {
+    // Should never reach here unless AccessMode is modified.
+    mode = "";
   }
   return mode;
 }
