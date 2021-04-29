@@ -86,14 +86,48 @@ EPOXY_MODULES += \
 		)\
 	)
 
-# Compiler settings that depend on the OS (Linux, MacOS, TODO: Add FreeBSD).
+# Compiler settings that depend on the OS (Linux, MacOS, FreeBSD). I'm not 100%
+# sure that these flags are correct, but they seem to work. Previously, I was
+# using just -Wall to catch the warnings, but some Arduino compilers seem to
+# enable -Wextra when "enable warnings" is enabled. So let's add -Wextra in
+# EpoxyDuino to help catch warnings on desktop machines as well.
+#
+# The difference between -stdlib=libstdc++ and -stdlib=libc++ seems to be that
+# libstdc++ was created by the GNU team and libc++ was created by the LLVM
+# team. Apple no longer distributes the latest version of the libstdc++, so we
+# are forced to use libc++ on Macs.
+#
+# The Linux g++ flags came from looking at the verbose compiler output of the
+# Arduino IDE. The g++ compiler automatically uses -stdlib=libstdc++. I copied
+# the -fno-exceptions, -fno-threadsafe-statics, and -flto flags from the
+# Arduino compiler output. But I'm not entirely sure that those flags are
+# actually doing the right without linking to a version of the libstdc++ that
+# was also compiled with the same flag. I don't know, things seem to work for
+# now.
+#
+# The Mac clang++ flags came from... I can't remember. Some trial and error,
+# and maybe this StackOverflow https://stackoverflow.com/questions/19774778).
+# It looks like the clang++ compiler supports the -std=gnu++11 flag, but I
+# suspect that it requires using the latest libstdc++ library, which isn't
+# available on Macs. So I'll be conservative and use just -std=c++11.
+#
+# The FreeBSD clang++ flags came from copying the Mac version, since it seems
+# like c++ on FreeBSD is actualy clang++. It's possible that FreeBSD has the
+# latest GNU version of libstdc++, but I'm not sure.
+#
+# I added EXTRA_CXXFLAGS to allow end-user Makefiles to specify additional
+# CXXFLAGs.
 ifeq ($(UNAME), Linux)
 CXX ?= g++
-CXXFLAGS ?= -Wall -std=gnu++11 -fno-exceptions -fno-threadsafe-statics -flto
+CXXFLAGS ?= -Wextra -Wall -std=gnu++11 -fno-exceptions -fno-threadsafe-statics -flto
 else ifeq ($(UNAME), Darwin)
 CXX ?= clang++
-CXXFLAGS ?= -std=c++11 -stdlib=libc++ # -Weverything
+CXXFLAGS ?= -Wextra -Wall -std=c++11 -stdlib=libc++
+else ifeq ($(UNAME), FreeBSD)
+CXX ?= clang++
+CXXFLAGS ?= -Wextra -Wall -std=c++11 -stdlib=libc++
 endif
+CXXFLAGS += $(EXTRA_CXXFLAGS)
 
 # Pre-processor flags (-I, -D, etc), mostly for header files.
 CPPFLAGS ?=
