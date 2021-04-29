@@ -223,6 +223,38 @@ each of the 3 directories given in the `ARDUINO_LIB_DIRS`. (The
 `arduino_ide_dir` is a convenience temporary variable. It has no significance to
 `EpoxyDuino.mk`)
 
+<a name="DifferenceFromArduinoIDE"></a>
+### Difference from Arduino IDE
+
+There are a number of differences compared to the programming environment
+provided by the Arduino IDE:
+
+* The `*.ino` file is treated like a normal `*.cpp` file. So it must have
+  an `#include <Arduino.h>` include line at the top of the file. This is
+  compatible with the Arduino IDE which automatically includes `<Arduino.h>`.
+* The Arduino IDE supports multiple `ino` files in the same directory. (I
+  believe it simply concontenates them all into a single file.) EpoxyDuino
+  supports only one `ino` file in a given directory.
+* The Arduino IDE automatically generates forward declarations for functions
+  that appear *after* the global `setup()` and `loop()` methods. In a normal
+  C++ file, these forward declarations must be created by hand. The other
+  alternative is to move `loop()` and `setup()` functions to the end of the
+  `ino` file.
+
+Fortunately, the changes required to make an `ino` file compatible with
+EpoxyDuino are backwards compatible with the Arduino IDE. In other words, a
+program that compiles with EpoxyDuino will also compile under Ardunio IDE.
+
+There are other substantial differences. The Arduino IDE supports multiple
+microcontroller board types, each using its own set of compiler tools and
+library locations. There is a complicated set of files and rules that determine
+how to find and use those tools and libraries. The EpoxyDuino tool does *not*
+use any of the configuration files used by the Arduino IDE. Sometimes, you can
+use the `ARDUINO_LIB_DIRS` to get around this limitations. However, when you
+start using `ARDUINO_LIB_DIRS`, you will often run into third party libraries
+using features which are not supported by the EpoxyDuino framework emulation
+layer.
+
 <a name="ConditionalCode"></a>
 ### Conditional Code
 
@@ -395,38 +427,6 @@ $ CXX=clang++ make
 (This sets the `CXX` shell environment variable temporarily, for the duration of
 the `make` command, which causes `make` to set its internal `CXX` variable,
 which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
-
-<a name="DifferenceFromArduinoIDE"></a>
-### Difference from Arduino IDE
-
-There are a number of differences compared to the programming environment
-provided by the Arduino IDE:
-
-* The `*.ino` file is treated like a normal `*.cpp` file. So it must have
-  an `#include <Arduino.h>` include line at the top of the file. This is
-  compatible with the Arduino IDE which automatically includes `<Arduino.h>`.
-* The Arduino IDE supports multiple `ino` files in the same directory. (I
-  believe it simply concontenates them all into a single file.) EpoxyDuino
-  supports only one `ino` file in a given directory.
-* The Arduino IDE automatically generates forward declarations for functions
-  that appear *after* the global `setup()` and `loop()` methods. In a normal
-  C++ file, these forward declarations must be created by hand. The other
-  alternative is to move `loop()` and `setup()` functions to the end of the
-  `ino` file.
-
-Fortunately, the changes required to make an `ino` file compatible with
-EpoxyDuino are backwards compatible with the Arduino IDE. In other words, a
-program that compiles with EpoxyDuino will also compile under Ardunio IDE.
-
-There are other substantial differences. The Arduino IDE supports multiple
-microcontroller board types, each using its own set of compiler tools and
-library locations. There is a complicated set of files and rules that determine
-how to find and use those tools and libraries. The EpoxyDuino tool does *not*
-use any of the configuration files used by the Arduino IDE. Sometimes, you can
-use the `ARDUINO_LIB_DIRS` to get around this limitations. However, when you
-start using `ARDUINO_LIB_DIRS`, you will often run into third party libraries
-using features which are not supported by the EpoxyDuino framework emulation
-layer.
 
 <a name="GeneratedSourceCode"></a>
 ### Generated Source Code
