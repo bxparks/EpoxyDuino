@@ -26,16 +26,16 @@ using namespace fs;
 static const char FILE_NAME[] = "testfile.txt";
 static const char FILE_PATH[] = "/testfile.txt";
 
-static const char FILE_NAME2[] = "testfile2.txt";
+//static const char FILE_NAME2[] = "testfile2.txt";
 static const char FILE_PATH2[] = "/testfile2.txt";
 
-static const char FILE_NAME_DOES_NOT_EXIST[] = "doesnotexist.txt";
+//static const char FILE_NAME_DOES_NOT_EXIST[] = "doesnotexist.txt";
 static const char FILE_PATH_DOES_NOT_EXIST[] = "/doesnotexist.txt";
 
-static const char DIR_NAME[] = "subdir";
+//static const char DIR_NAME[] = "subdir";
 static const char DIR_PATH[] = "/subdir";
 
-static const char SUBFILE_NAME[] = "subfile";
+//static const char SUBFILE_NAME[] = "subfile";
 static const char SUBFILE_PATH []= "/subdir/subfile";
 
 static const char TEXT[] = "This is a test";

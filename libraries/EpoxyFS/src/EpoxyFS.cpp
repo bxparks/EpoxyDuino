@@ -29,6 +29,9 @@ const char* rsflags(OpenMode openMode, AccessMode accessMode) {
     } else {
       mode = "a+";
     }
+  } else {
+    // Should never reach here unless AccessMode is modified.
+    mode = "";
   }
   return mode;
 }
@@ -80,8 +83,8 @@ bool EpoxyFSImpl::begin() {
 
 static int removeFileOrDir(
     const char *fpath,
-    const struct stat *sb,
-    int typeflag,
+    const struct stat * /*sb*/,
+    int /*typeflag*/,
     struct FTW *ftwbuf)
 {
   /*

@@ -35,4 +35,4 @@
 epoxyfsdata
 
 # Root file of EpoxyPromAvr and EpoxyPromEsp
-epoxypromdata
+epoxyeepromdata
