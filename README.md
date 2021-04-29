@@ -810,3 +810,5 @@ people ask similar questions later.
 * Add `delayMicroSeconds()`, `WCharacter.h`, and stub implementations of
   `IPAddress.h`, `SPI.h`, by Erik Tideman (@ramboerik), see
   [PR #18](https://github.com/bxparks/EpoxyDuino/pull/18).
+* Add `memcpy_P()` and `vsnprintf_P()` by @pmp-p, 
+  [PR #28](https://github.com/bxparks/EpoxyDuino/pull/28).
