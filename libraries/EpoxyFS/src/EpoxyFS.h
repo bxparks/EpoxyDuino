@@ -232,7 +232,7 @@ class EpoxyFSImpl: public FSImpl {
   public:
     ~EpoxyFSImpl() override { }
 
-    bool setConfig(const FSConfig &cfg) override {
+    bool setConfig(const FSConfig &/*cfg*/) override {
       // TODO: Implement me
       return true;
     }
@@ -244,12 +244,12 @@ class EpoxyFSImpl: public FSImpl {
 
     bool format() override;
 
-    bool info(FSInfo& info) override {
+    bool info(FSInfo& /*info*/) override {
       // TODO: Implement me
       return true;
     }
 
-    bool info64(FSInfo64& info) override {
+    bool info64(FSInfo64& /*info*/) override {
       // TODO: Implement me
       return true;
     }

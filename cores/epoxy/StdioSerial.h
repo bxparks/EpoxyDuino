@@ -15,7 +15,7 @@
  */
 class StdioSerial: public Stream {
   public:
-    void begin(unsigned long baud) { }
+    void begin(unsigned long /*baud*/) { }
 
     size_t write(uint8_t c) override;
 

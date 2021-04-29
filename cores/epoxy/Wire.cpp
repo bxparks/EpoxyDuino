@@ -68,7 +68,7 @@ void TwoWire::begin(void)
   */
 }
 
-void TwoWire::begin(uint8_t address)
+void TwoWire::begin(uint8_t /*address*/)
 {
   /*
   begin();
@@ -88,14 +88,19 @@ void TwoWire::end(void)
   */
 }
 
-void TwoWire::setClock(uint32_t clock)
+void TwoWire::setClock(uint32_t /*clock*/)
 {
   /*
   twi_setFrequency(clock);
   */
 }
 
-uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint32_t iaddress, uint8_t isize, uint8_t sendStop)
+uint8_t TwoWire::requestFrom(
+  uint8_t /*address*/,
+  uint8_t /*quantity*/,
+  uint32_t /*iaddress*/,
+  uint8_t /*isize*/,
+  uint8_t /*sendStop*/)
 {
   /*
   if (isize > 0) {
@@ -179,7 +184,7 @@ void TwoWire::beginTransmission(int address)
 //	no call to endTransmission(true) is made. Some I2C
 //	devices will behave oddly if they do not see a STOP.
 //
-uint8_t TwoWire::endTransmission(uint8_t sendStop)
+uint8_t TwoWire::endTransmission(uint8_t /*sendStop*/)
 {
   /*
   // transmit buffer (blocking)
@@ -205,7 +210,7 @@ uint8_t TwoWire::endTransmission(void)
 // must be called in:
 // slave tx event callback
 // or after beginTransmission(address)
-size_t TwoWire::write(uint8_t data)
+size_t TwoWire::write(uint8_t /*data*/)
 {
   /*
   if(transmitting){
@@ -232,7 +237,7 @@ size_t TwoWire::write(uint8_t data)
 // must be called in:
 // slave tx event callback
 // or after beginTransmission(address)
-size_t TwoWire::write(const uint8_t *data, size_t quantity)
+size_t TwoWire::write(const uint8_t * /*data*/, size_t /*quantity*/)
 {
   /*
   if(transmitting){

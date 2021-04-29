@@ -80,8 +80,8 @@ bool EpoxyFSImpl::begin() {
 
 static int removeFileOrDir(
     const char *fpath,
-    const struct stat *sb,
-    int typeflag,
+    const struct stat * /*sb*/,
+    int /*typeflag*/,
     struct FTW *ftwbuf)
 {
   /*

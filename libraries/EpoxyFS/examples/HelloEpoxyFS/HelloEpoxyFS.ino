@@ -19,7 +19,7 @@
 
 int removeFile(
     const char *fpath,
-    const struct stat *sb,
+    const struct stat * /*sb*/,
     int typeflag,
     struct FTW *ftwbuf)
 {

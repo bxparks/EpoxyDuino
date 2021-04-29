@@ -106,7 +106,7 @@ static void handleControlC(int /*sig*/) {
 
 extern "C" {
 
-int unixhostduino_main(int argc, char** argv) {
+int unixhostduino_main(int /*argc*/, char** /*argv*/) {
   signal(SIGINT, handleControlC);
   atexit(disableRawMode);
   enableRawMode();
