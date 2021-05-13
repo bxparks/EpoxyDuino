@@ -14,10 +14,10 @@
 
 #include <stdint.h> // uint8_t
 
-inline void digitalWriteFast(uint8_t pin, uint8_t value) {}
+inline void digitalWriteFast(uint8_t /*pin*/, uint8_t /*value*/) {}
 
-inline void pinModeFast(uint8_t pin, uint8_t value) {}
+inline void pinModeFast(uint8_t /*pin*/, uint8_t /*value*/) {}
 
-inline uint8_t digitalReadFast(uint8_t pin) { return 0; }
+inline uint8_t digitalReadFast(uint8_t /*pin*/) { return 0; }
 
 #endif
