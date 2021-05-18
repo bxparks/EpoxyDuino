@@ -1,6 +1,8 @@
 # Changelog
 
 * Unreleased
+    * Add `EpoxyMockTimerOne` mock library for `TimerOne`
+      (https://github.com/PaulStoffregen/TimerOne).
 * 0.7 (2021-04-28)
     * Add `libraries/EpoxyMockDigitalWriteFast`, a simple mock library for
       `digitalWriteFast` (https://github.com/NicksonYap/digitalWriteFast) to
