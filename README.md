@@ -86,6 +86,7 @@ for more details.
     * [Generated Source Code](#GeneratedSourceCode)
     * [Additional Clean Up](#AdditionalCleanUp)
     * [Alternate Arduino Core](#AlternateArduinoCore)
+    * [PlatformIO](#PlatformIO)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
@@ -528,6 +529,15 @@ EpoxyDuino provides the ability substitute a different Arduino API Core through
     * Defines the full-path to the Arduino Core API files.
     * If not overridden by the provided Makefile, this is set to
       `$(EPOXY_DUINO_DIR)/cores/$(EPOXY_CORE)`.
+
+<a name="PlatformIO"></a>
+### PlatformIO
+
+The `library.json` file supports [PlaformIO in Native
+mode](https://docs.platformio.org/en/latest/platforms/native.html). It was added
+in [Issue #31](https://github.com/bxparks/EpoxyDuino/pull/31) (thanks
+https://github.com/lopsided98). However, this functionality is *unsupported*. If
+it becomes broken in the future, please send me a PR to fix it.
 
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features

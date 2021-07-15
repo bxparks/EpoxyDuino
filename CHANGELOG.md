@@ -3,6 +3,14 @@
 * Unreleased
     * Add `EpoxyMockTimerOne` mock library for `TimerOne`
       (https://github.com/PaulStoffregen/TimerOne).
+    * Add `library.json` to support
+      [PlaformIO in Native
+      mode](https://docs.platformio.org/en/latest/platforms/native.html). (See
+      [PR #31](https://github.com/bxparks/EpoxyDuino/pull/31) by
+      https://github.com/lopsided98).
+    * Move code that pumps the `Serial` object from `unixhostduino_main()`
+      to `yield()`. Fix bug to allow correct handling of `NUL` byte in the
+      serial stream. (See [PR #32] by https://github.com/lopsided98).
 * 0.7 (2021-04-28)
     * Add `libraries/EpoxyMockDigitalWriteFast`, a simple mock library for
       `digitalWriteFast` (https://github.com/NicksonYap/digitalWriteFast) to
