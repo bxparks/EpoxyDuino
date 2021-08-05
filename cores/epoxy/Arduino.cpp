@@ -63,7 +63,7 @@ void delayMicroseconds(unsigned int us) {
 }
 
 unsigned long pulseIn(
-    uint8_t /*pin*/, uint8_t /*state*/,unsigned long /*timeout*/) {
+    uint8_t /*pin*/, uint8_t /*state*/, unsigned long /*timeout*/) {
   return 0;
 }
 

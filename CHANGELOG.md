@@ -11,6 +11,14 @@
     * Move code that pumps the `Serial` object from `unixhostduino_main()`
       to `yield()`. Fix bug to allow correct handling of `NUL` byte in the
       serial stream. (See [PR #32] by https://github.com/lopsided98).
+    * Repurpose the `EPOXY_CORE` make variable to be the name of the macro that
+      defines the target architecture. Currently, the valid options are:
+        * `EPOXY_CORE_AVR` (default)
+        * `EPOXY_CORE_ESP8266`
+        * Merge ESP8266-specific changes from
+          https://github.com/hsaturn/EspMock/cores/esp8266 into
+          EpoxyDuino/cores/epoxy, guarded by `EPOXY_CORE_ESP8266` macro.
+    * Add `map()`, `makeWord()` functions to `WMath.cpp`.
 * 0.7 (2021-04-28)
     * Add `libraries/EpoxyMockDigitalWriteFast`, a simple mock library for
       `digitalWriteFast` (https://github.com/NicksonYap/digitalWriteFast) to

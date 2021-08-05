@@ -503,32 +503,55 @@ more_clean:
 
 This is very advanced. The Arduino ecosystem supports different hardware
 processors, architectures, and platforms. The software environment for a
-specific hardware environment is called a "Core". The environment provided by
-EpoxyDuino resembles the AVR Core most closely because a lot of the API
-emulation code was borrowed from the AVR Core. However, EpoxyDuino does not
-provide an exact emulation of the AVR Core. In fact, I consider EpoxyDuino to be
-its own unique version of the Arduino API.
+specific hardware environment is called a "Core". By default, the environment
+provided by EpoxyDuino resembles the AVR Core most closely because a lot of the
+API emulation code was borrowed from the AVR Core.
 
 There may be situations where an Arduino program is specifically meant to run
-under a hardware platform other than an AVR processor. If we want to use
-EpoxyDuino to compile that program under Linux/MacOS/FreeBSD, we must provide a
-different Arduino Core API. For example, if your program is meant to run on an
-ESP8266 or ESP32 using its WiFi network capabilities, you may need special APIs
-to compile that program under EpoxyDuino.
-
-EpoxyDuino provides the ability substitute a different Arduino API Core through
-2 Makefile variables:
+under a hardware platform other than an AVR processor, for example, the ESP8266
+Core. EpoxyDuino provides the ability substitute a different Arduino API Core
+through 2 Makefile variables:
 
 * `EPOXY_CORE`
-    * Use the core defined in the subdirectory under
-      `$(EPOXY_DUINO_DIR)/cores/`.
-    * By default, this variable defined to be `epoxy`, so
-      the core files are searched under `$(EPOXY_DUINO_DIR)/cores/epoxy/`.
-    * Currently `epoxy` is the only Core provided by the EpoxyDuino package.
+    * This Makefile variable defines the C-preprocessor macro which will be
+      defined through the `-D` flag through `-D $(EPOXY_CORE)`.
+
+There are currently 2 valid options for this Makefile variable:
+
+* `EPOXY_CORE_AVR` (default)
+    * Causes `Arduino.h` to emulate the Arduino AVR core.
+* `EPOXY_CORE_ESP8266`
+    * Causes `Arduino.h` to emulate the ESP8266 Core.
+
+For example, setting the following in the `Makefile`:
+
+```
+EPOXY_CORE := EPOXY_CORE_ESP8266
+```
+
+causes the `make` command to pass the `-D EPOXY_CORE_ESP8266` flag to the
+compiler, which will activate any code that is guarded by:
+
+```C++
+#if defined(EPOXY_CORE_ESP8266)
+  ...
+#endif
+```
+
+If the `EPOXY_CORE` make variable is insufficient (because the appropriate
+changes have not been incorporated into `$(EPOXY_DUINO_DIR)/cores/epoxy/`, then
+there is an even bigger hammer with the following make variable:
+
 * `EPOXY_CORE_PATH`
     * Defines the full-path to the Arduino Core API files.
-    * If not overridden by the provided Makefile, this is set to
-      `$(EPOXY_DUINO_DIR)/cores/$(EPOXY_CORE)`.
+
+By default, this is set to `$(EPOXY_DUINO_DIR)/cores/epoxy`. You can create your
+own set of Arduino API files in a directory of your choosing, and set this
+make variable to point to these custom files:
+
+```
+EPOXY_CORE_PATH := {my_own_directory}/cores/mycore
+```
 
 <a name="PlatformIO"></a>
 ### PlatformIO
