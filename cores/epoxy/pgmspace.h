@@ -37,6 +37,7 @@
 #define strchr_P strchr
 #define strrchr_P strrchr
 #define memcpy_P memcpy
+#define snprintf_P snprintf
 #define vsnprintf_P vsnprintf
 
 #endif
