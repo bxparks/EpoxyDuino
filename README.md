@@ -538,8 +538,8 @@ compiler, which will activate any code that is guarded by:
 #endif
 ```
 
-If the `EPOXY_CORE` make variable is insufficient (because the appropriate
-changes have not been incorporated into `$(EPOXY_DUINO_DIR)/cores/epoxy/`, then
+If the `EPOXY_CORE` make variable is insufficient (e.g. because the appropriate
+changes have not been incorporated into `$(EPOXY_DUINO_DIR)/cores/epoxy/`), then
 there is an even bigger hammer with the following make variable:
 
 * `EPOXY_CORE_PATH`
