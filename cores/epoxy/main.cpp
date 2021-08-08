@@ -22,7 +22,7 @@
 #include <signal.h> // SIGINT
 #include <stdlib.h> // exit()
 #include <stdio.h> // perror()
-#include <unistd.h> // read()
+#include <unistd.h> // isatty(), STDIN_FILENO
 #include <fcntl.h>
 #include <termios.h>
 
@@ -113,9 +113,6 @@ int unixhostduino_main(int /*argc*/, char** /*argv*/) {
 
   setup();
   while (true) {
-    char c = '\0';
-    read(STDIN_FILENO, &c, 1);
-    if (c) Serial.insertChar(c);
     loop();
     yield();
   }

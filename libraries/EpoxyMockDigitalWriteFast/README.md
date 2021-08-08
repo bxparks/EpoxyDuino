@@ -45,11 +45,11 @@ To fix that problem, change the code to look like this:
 ...
 ```
 
-Then add `EpoxyDigitalWriteFastMock` to the `ARDUINO_LIBS` in the EpoxyDuino
+Then add `EpoxyMockDigitalWriteFast` to the `ARDUINO_LIBS` in the EpoxyDuino
 `Makefile`:
 
 ```make
 APP_NAME := MyApp
-ARDUINO_LIBS := EpoxyDigitalWriteFastMock ...
+ARDUINO_LIBS := EpoxyMockDigitalWriteFast ...
 include ../../../../EpoxyDuino.mk
 ```

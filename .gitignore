@@ -34,5 +34,5 @@
 # Root directory of EpoxyFS
 epoxyfsdata
 
-# Root file of EpoxyPromAvr and EpoxyPromEsp
+# Root file of EpoxyEeromAvr and EpoxyEeromEsp
 epoxyeepromdata

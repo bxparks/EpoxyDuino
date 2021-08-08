@@ -25,11 +25,13 @@ if the sketch is `SampleTest/SampleTest.ino`, then the makefile should be
 `SampleTest/Makefile`. The sketch is compiled with just a `make` command. It
 produces an executable with a `.out` extension, for example, `SampleTest.out`.
 
-Most hardware dependent functions are stubbed out (defined but don't do
-anything) to allow the Arduino programs to compile. This may be sufficient for a
-CI pipeline. For actual application development, I have started to build
-a set of libraries within EpoxyDuino which emulate the versions that run the
-actual hardware:
+The `Serial` port object sends the output to the `STDOUT` and reads from the
+`STDIN` of the Unix host environment. Most other hardware dependent
+features (e.g. I2C, SPI, GPIO) are stubbed out (defined but don't do anything)
+to allow the Arduino programs to compile. This may be sufficient for a CI
+pipeline. For actual application development, I have started to build a set of
+libraries within EpoxyDuino which emulate the versions that run the actual
+hardware:
 
 * EpoxyFS: emulation of the ESP8266 LittleFS or ESP32 LITTLEFS
 * EpoxyEepromAvr: emulation of AVR-flavored `EEPROM`
@@ -58,7 +60,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 0.7 (2021-04-28)
+**Version**: 0.8 (2021-08-08)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -84,6 +86,7 @@ for more details.
     * [Generated Source Code](#GeneratedSourceCode)
     * [Additional Clean Up](#AdditionalCleanUp)
     * [Alternate Arduino Core](#AlternateArduinoCore)
+    * [PlatformIO](#PlatformIO)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
@@ -176,8 +179,10 @@ Arduino controller.
 
 If the Arduino program depends on additional Arduino libraries, they must be
 specified in the `Makefile` using the `ARDUINO_LIBS` parameter. For example,
-this includes the [AUnit](https://github.com/bxparks/AUnit) library if it is at
-the same level as EpoxyDuino:
+the following includes the [AUnit](https://github.com/bxparks/AUnit),
+[AceButton](https://github.com/bxparks/AceButton), and
+[AceTime](https://github.com/bxparks/AceTime) libraries if they are installed at
+the same directory level as EpoxyDuino:
 
 ```
 APP_NAME := SampleTest
@@ -185,11 +190,11 @@ ARDUINO_LIBS := AUnit AceButton AceTime
 include ../../EpoxyDuino/EpoxyDuino.mk
 ```
 
-The libraries are referred to by their base directory name (e.g. `AceButton`,
-or `AceTime`) not the full path. By default, the `EpoxyDuino.mk` file will look
+The libraries are referred to using their base directory name (e.g. `AceButton`,
+or `AceTime`) not their full path. By default, the `EpoxyDuino.mk` file will look
 for these additional libraries at the following locations:
 
-* `EPOXY_DUINO_DIR/..` - in other words, siblings to the `EpoxyDuino` install
+* `EPOXY_DUINO_DIR/../` - in other words, siblings to the `EpoxyDuino` install
   directory (this assumes that EpoxyDuino was installed in the Arduino
   `libraries` directory as recommended above)
 * `EPOXY_DUINO_DIR/libraries/` - additional libraries provided by the EpoxyDuino
@@ -428,6 +433,9 @@ $ CXX=clang++ make
 the `make` command, which causes `make` to set its internal `CXX` variable,
 which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
 
+The `clang++` compiler will sometimes catch a different set of programming
+errors.
+
 <a name="GeneratedSourceCode"></a>
 ### Generated Source Code
 
@@ -459,7 +467,7 @@ bar.cpp: bar.h generate_bar.sh
 The `*.o` files in `OJBS` are passed to the linker when the `app.out` binary
 file is created.
 
-The `GENERATED` is not absolutely required, since the default rules already know
+The `GENERATED` is not strictly required, since the default rules already know
 how to compile the `*.o` files from the `*.cpp` or `*.c` files. The primary
 effect of `GENERATED` currently is to cause the generated files to be removed
 when `make clean` is called.
@@ -471,7 +479,7 @@ The `make clean` rule is predefined to remove all of the intermediate `*.o`
 files and `GENERATED` files that the `EpoxyDuino.mk` file knows about.
 Sometimes, we want to do additional clean up. For example, the EEPROM emulation
 libraries ([EpoxyEepromAvr](libraries/EpoxyEepromAvr) or
-(EpoxyEepromEsp)[libraries/EpoxyEepromEsp]) will create a file in the current
+[EpoxyEepromEsp](libraries/EpoxyEepromEsp)) will create a file in the current
 directory named `epoxyeepromdata` which stores the content of the emulated
 `EEPROM`. To remove such extra files, we can create a new `Makefile` target that
 performs the clean up, and add the name of the target to `MORE_CLEAN`.
@@ -495,32 +503,64 @@ more_clean:
 
 This is very advanced. The Arduino ecosystem supports different hardware
 processors, architectures, and platforms. The software environment for a
-specific hardware environment is called a Core. The environment provided by
-EpoxyDuino resembles the AVR Core most closely because a lot of the API
-emulation code was borrowed from the AVR Core. However, EpoxyDuino does not
-provide an exact emulation of the AVR Core. In fact, I consider EpoxyDuino to be
-its own unique version of the Arduino API.
+specific hardware environment is called a "Core". By default, the environment
+provided by EpoxyDuino resembles the AVR Core most closely because a lot of the
+API emulation code was borrowed from the AVR Core.
 
 There may be situations where an Arduino program is specifically meant to run
-under a hardware platform other than an AVR processor. If we want to use
-EpoxyDuino to compile that program under Linux/MacOS/FreeBSD, we must provide a
-different Arduino Core API. For example, if your program is meant to run on an
-ESP8266 or ESP32 using its WiFi network capabilities, you may need special APIs
-to compile that program under EpoxyDuino.
-
-EpoxyDuino provides the ability substitute a different Arduino API Core through
-2 Makefile variables:
+under a hardware platform other than an AVR processor, for example, the ESP8266
+Core. EpoxyDuino provides the ability substitute a different Arduino API Core
+through 2 Makefile variables:
 
 * `EPOXY_CORE`
-    * Use the core defined in the subdirectory under
-      `$(EPOXY_DUINO_DIR)/cores/`.
-    * By default, this variable defined to be `epoxy`, so
-      the core files are searched under `$(EPOXY_DUINO_DIR)/cores/epoxy/`.
-    * Currently `epoxy` is the only Core provided by the EpoxyDuino package.
+    * This Makefile variable defines the C-preprocessor macro which will be
+      defined through the `-D` flag through `-D $(EPOXY_CORE)`.
+
+There are currently 2 valid options for this Makefile variable:
+
+* `EPOXY_CORE_AVR` (default)
+    * Causes `Arduino.h` to emulate the Arduino AVR core.
+* `EPOXY_CORE_ESP8266`
+    * Causes `Arduino.h` to emulate the ESP8266 Core.
+
+For example, setting the following in the `Makefile`:
+
+```
+EPOXY_CORE := EPOXY_CORE_ESP8266
+```
+
+causes the `make` command to pass the `-D EPOXY_CORE_ESP8266` flag to the
+compiler, which will activate any code that is guarded by:
+
+```C++
+#if defined(EPOXY_CORE_ESP8266)
+  ...
+#endif
+```
+
+If the `EPOXY_CORE` make variable is insufficient (e.g. because the appropriate
+changes have not been incorporated into `$(EPOXY_DUINO_DIR)/cores/epoxy/`), then
+there is an even bigger hammer with the following make variable:
+
 * `EPOXY_CORE_PATH`
     * Defines the full-path to the Arduino Core API files.
-    * If not overridden by the provided Makefile, this is set to
-      `$(EPOXY_DUINO_DIR)/cores/$(EPOXY_CORE)`.
+
+By default, this is set to `$(EPOXY_DUINO_DIR)/cores/epoxy`. You can create your
+own set of Arduino API files in a directory of your choosing, and set this
+make variable to point to these custom files:
+
+```
+EPOXY_CORE_PATH := {my_own_directory}/cores/mycore
+```
+
+<a name="PlatformIO"></a>
+### PlatformIO
+
+The `library.json` file supports [PlaformIO in Native
+mode](https://docs.platformio.org/en/latest/platforms/native.html). It was added
+in [Issue #31](https://github.com/bxparks/EpoxyDuino/pull/31) (thanks
+https://github.com/lopsided98). However, this functionality is *unsupported*. If
+it becomes broken in the future, please send me a PR to fix it.
 
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
@@ -627,11 +667,11 @@ categorize these libraries in a sensible way in the context of EpoxyDuino, but
 here is my current attempt:
 
 * **Inherently Compatible Libraries**:
-    * Mostly algorithmic or have limited dependency on low-level Arduino API
-      (e.g. `millis()`, `micros()`, `delay()`, `F()`).
+    * Libraries that are mostly algorithmic often have limited dependency on
+      low-level Arduino API (e.g. `millis()`, `micros()`, `delay()`, `F()`).
     * If these have been written to be cross-platform across different Arduino
       hardware, then these should also automatically work under EpoxyDuino
-      without much (or any) modifications.
+      with little or no modifications.
 * **Emulation Libraries**.
     * Libraries for EpoxyDuino written specifically to emulate the
       functionality of an Arduino library, for example, using the filesystem or
@@ -672,8 +712,7 @@ platforms.
 
 These libraries are designed partially or fully emulate the functionality a
 particular Arduino library in the Unix-like desktop environment using
-EpoxyDuino. I have provide provide 3 such libraries within the EpoxyDuino
-project:
+EpoxyDuino. I have provided 3 such libraries within the EpoxyDuino project:
 
 * [libraries/EpoxyFS](libraries/EpoxyFS)
     * An implementation of a file system compatible with
@@ -717,10 +756,13 @@ intended. This limitation may be sufficient for Continous Integration purposes.
       is included automatically by the `<Arduino.h>` file in EpoxyDuino.
     * It follows the same pattern as `Wire`, the header file provides only mock
       functions of the actual `SPI` library.
-* [libaries/EpoxyMockDigitalWriteFast](libraries/EpoxyMockDigitalWriteFast)
-    * A simple mock for the `digitalWriteFast` library
-      (https://github.com/NicksonYap/digitalWriteFast) to allow code written
+* [EpoxyMockDigitalWriteFast](libraries/EpoxyMockDigitalWriteFast)
+    * A simple mock of one of the `digitalWriteFast` libraries (e.g.
+      https://github.com/NicksonYap/digitalWriteFast) to allow code written
       against it to compile under EpoxyDuino.
+* [EpoxyMockTimerOne](libraries/EpoxyMockTimerOne)
+    * A simple mock of the TimerOne (https://github.com/PaulStoffregen/TimerOne)
+      library.
 * EspMock (https://github.com/hsaturn/EspMock)
     * This is a separate project that provides various mocks for functions and
       libraries included with the ESP8266 and the ESP32 processors.
@@ -783,10 +825,6 @@ $ ./SampleTest.out < /dev/null | less # works
 
 <a name="FeedbackAndSupport"></a>
 ## Feedback and Support
-
-If you find this library useful, consider starring this project on GitHub. The
-stars will let me prioritize the more popular libraries over the less popular
-ones.
 
 If you have any questions, comments and other support questions about how to
 use this library, please use the
