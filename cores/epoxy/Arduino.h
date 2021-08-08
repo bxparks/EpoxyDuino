@@ -2,12 +2,20 @@
  * Copyright (c) 2019 Brian T. Park
  * MIT License
  *
- * Parts derived from the Arduino SDK
+ * Parts derived from the AVR Arduino SDK version 1.8.3
+ * (https://github.com/arduino/ArduinoCore-avr).
  * Copyright (c) 2005-2013 Arduino Team
+ *
+ * Parts derived from the ESP8266 Arduino SDK version 2.7.4
+ * (https://github.com/esp8266/Arduino).
  */
 
 #ifndef EPOXY_DUINO_EPOXY_ARDUINO_H
 #define EPOXY_DUINO_EPOXY_ARDUINO_H
+
+// xx.yy.zz => xxyyzz (without leading 0)
+#define EPOXY_DUINO_VERSION 800
+#define EPOXY_DUINO_VERSION_STRING "0.8.0"
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -20,10 +28,6 @@
 #include "WCharacter.h"
 #include "Print.h"
 #include "StdioSerial.h"
-
-// xx.yy.zz => xxyyzz (without leading 0)
-#define EPOXY_DUINO_VERSION 700
-#define EPOXY_DUINO_VERSION_STRING "0.7.0"
 
 // Used by digitalRead() and digitalWrite()
 #define HIGH 0x1

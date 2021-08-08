@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* 0.8 (2021-08-08)
     * Add `EpoxyMockTimerOne` mock library for `TimerOne`
       (https://github.com/PaulStoffregen/TimerOne).
     * Add `library.json` to support
@@ -11,10 +12,12 @@
     * Move code that pumps the `Serial` object from `unixhostduino_main()`
       to `yield()`. Fix bug to allow correct handling of `NUL` byte in the
       serial stream. (See [PR #32] by https://github.com/lopsided98).
-    * Repurpose the `EPOXY_CORE` make variable to be the name of the macro that
-      defines the target architecture. Currently, the valid options are:
-        * `EPOXY_CORE_AVR` (default)
-        * `EPOXY_CORE_ESP8266`
+    * **Breaking** Repurpose the `EPOXY_CORE` make variable to be the name of
+      the macro that defines the target architecture so that `Arduino.h` brings
+      in definitions which target specific Arduino platforms:
+        * The valid options are:
+            * `EPOXY_CORE_AVR` (default)
+            * `EPOXY_CORE_ESP8266`
         * Merge ESP8266-specific changes from
           https://github.com/hsaturn/EspMock/cores/esp8266 into
           EpoxyDuino/cores/epoxy, guarded by `EPOXY_CORE_ESP8266` macro.
