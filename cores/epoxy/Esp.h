@@ -6,13 +6,6 @@
 #include <sys/time.h>
 #include "Stream.h"
 
-class _FLOAT
-{
-	public:
-		int digits;
-		float val;
-};
-
 class EspClass
 {
 	public:
