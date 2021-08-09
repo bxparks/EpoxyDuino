@@ -3,9 +3,8 @@
 
 #if defined(EPOXY_CORE_ESP8266)
 
-#include <Arduino.h>
-#include <Stream.h>
 #include <sys/time.h>
+#include "Stream.h"
 
 class _FLOAT
 {

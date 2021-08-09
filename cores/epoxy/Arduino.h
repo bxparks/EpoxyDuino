@@ -28,6 +28,9 @@
 #include "WCharacter.h"
 #include "Print.h"
 #include "StdioSerial.h"
+#if defined(EPOXY_CORE_ESP8266)
+  #include "Esp.h"
+#endif
 
 // Used by digitalRead() and digitalWrite()
 #define HIGH 0x1
