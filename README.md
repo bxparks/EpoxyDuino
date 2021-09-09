@@ -605,7 +605,8 @@ The following functions and features of the Arduino framework are implemented:
 * `Wire.h` (stub implementation)
 * `SPI.h` (stub implementation)
 
-See [Arduino.h](https://github.com/bxparks/EpoxyDuino/blob/develop/Arduino.h)
+See
+[Arduino.h](https://github.com/bxparks/EpoxyDuino/blob/develop/cores/epoxy/Arduino.h)
 for the latest list. Most of the header files included by this `Arduino.h`
 file were copied and modified from the [arduino:avr
 core](https://github.com/arduino/ArduinoCore-avr/tree/master/cores/arduino),
