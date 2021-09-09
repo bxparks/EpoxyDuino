@@ -2,11 +2,6 @@
 
 [![AUnit Tests](https://github.com/bxparks/EpoxyDuino/actions/workflows/aunit_tests.yml/badge.svg)](https://github.com/bxparks/EpoxyDuino/actions/workflows/aunit_tests.yml)
 
-**New**: [GitHub Discussions](https://github.com/bxparks/EpoxyDuino/discussions)
-for this project is now active! Let's use that for general support questions,
-and reserve the [GitHub Issues](https://github.com/bxparks/EpoxyDuino/issues)
-section for bugs and feature requests.
-
 This project contains a small (but often effective) implementation of the
 Arduino programming framework for Linux, MacOS, FreeBSD (experimental) and
 potentially other POSIX-like systems. Originally, it was created to allow
@@ -513,8 +508,12 @@ Core. EpoxyDuino provides the ability substitute a different Arduino API Core
 through 2 Makefile variables:
 
 * `EPOXY_CORE`
-    * This Makefile variable defines the C-preprocessor macro which will be
-      defined through the `-D` flag through `-D $(EPOXY_CORE)`.
+* `EPOXY_CORE_PATH`
+
+#### `EPOXY_CORE`
+
+The `EPOXY_CORE` Makefile variable defines the C-preprocessor macro which will
+be defined through the `-D` flag through `-D $(EPOXY_CORE)`.
 
 There are currently 2 valid options for this Makefile variable:
 
@@ -538,12 +537,12 @@ compiler, which will activate any code that is guarded by:
 #endif
 ```
 
+#### `EPOXY_CORE_PATH`
+
 If the `EPOXY_CORE` make variable is insufficient (e.g. because the appropriate
 changes have not been incorporated into `$(EPOXY_DUINO_DIR)/cores/epoxy/`), then
-there is an even bigger hammer with the following make variable:
-
-* `EPOXY_CORE_PATH`
-    * Defines the full-path to the Arduino Core API files.
+the `EPOXY_CORE_PATH` provides an even bigger hammer. It defines the the
+full-path to the Arduino Core API files.
 
 By default, this is set to `$(EPOXY_DUINO_DIR)/cores/epoxy`. You can create your
 own set of Arduino API files in a directory of your choosing, and set this
