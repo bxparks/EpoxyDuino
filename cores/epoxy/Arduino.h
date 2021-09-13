@@ -216,6 +216,12 @@ int unixhostduino_main(int argc, char** argv);
 /** Calls unixhostduino_main() unless overriden by user */
 int main(int argc, char** argv);
 
+/** Copy of the argc parameter of main() as a global variable. */
+extern int epoxy_argc;
+
+/** Copy of the argv parameter of main() as a global variable. */
+extern const char* const* epoxy_argv;
+
 }
 
 // WMath prototypes

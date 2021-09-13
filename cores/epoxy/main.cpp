@@ -106,7 +106,14 @@ static void handleControlC(int /*sig*/) {
 
 extern "C" {
 
-int unixhostduino_main(int /*argc*/, char** /*argv*/) {
+int epoxy_argc;
+
+const char* const* epoxy_argv;
+
+int unixhostduino_main(int argc, char** argv) {
+  epoxy_argc = argc;
+  epoxy_argv = argv;
+
   signal(SIGINT, handleControlC);
   atexit(disableRawMode);
   enableRawMode();

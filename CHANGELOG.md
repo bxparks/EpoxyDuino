@@ -1,6 +1,11 @@
 # Changelog
 
 * Unreleased
+    * Add `epoxy_argc` and `epoxy_argv` as extern global variables which
+      are set to the `argc` and `argv` parameters passed into the global
+      `main()`.
+        * Allows command line arguments to be passed into an Arduino
+          application, to facilitate debugging on a Unix desktop machine.
 * 0.8 (2021-08-08)
     * Add `EpoxyMockTimerOne` mock library for `TimerOne`
       (https://github.com/PaulStoffregen/TimerOne).
