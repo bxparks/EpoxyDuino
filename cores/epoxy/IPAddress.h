@@ -5,6 +5,8 @@
   Copied from Arduino AVR core 1.8.3 by Erik Tideman. Removed
   unnecessary 'friend' declarations.
 
+  Merged selected features from ESP8266 Core 2.7.4 by Brian T. Park.
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -32,8 +34,8 @@
 class IPAddress : public Printable {
 private:
     union {
-	uint8_t bytes[4];  // IPv4 address
-	uint32_t dword;
+      uint8_t bytes[4];  // IPv4 address
+      uint32_t dword;
     } _address;
 
     // Access the raw byte array containing the address.  Because this returns a pointer
@@ -73,6 +75,6 @@ public:
   #endif
 };
 
-const IPAddress INADDR_NONE(0,0,0,0);
+extern const IPAddress INADDR_NONE;
 
 #endif

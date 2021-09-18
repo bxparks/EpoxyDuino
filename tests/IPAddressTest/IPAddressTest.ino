@@ -1,12 +1,19 @@
 #line 2 "IPAddressTest"
 
 #include <Arduino.h>
-#include <IPAddress.h> // IPAddress
 #include <AUnit.h>
-#include <AceCommon.h> // PrintStr<N>)
+#include <IPAddress.h> // IPAddress
+#include <AceCommon.h> // PrintStr<N>
 
 using aunit::TestRunner;
 using ace_common::PrintStr;
+
+//---------------------------------------------------------------------------
+
+test(IPAddressTest, INADDR_NONE) {
+  IPAddress addr(0, 0, 0, 0);
+  assertTrue(addr == INADDR_NONE);
+}
 
 test(IPAddressTest, printTo) {
   IPAddress addr(127, 0, 0, 1);

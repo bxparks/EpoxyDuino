@@ -132,3 +132,5 @@ String IPAddress::toString() const
     return s;
 }
 #endif
+
+const IPAddress INADDR_NONE(0,0,0,0);
