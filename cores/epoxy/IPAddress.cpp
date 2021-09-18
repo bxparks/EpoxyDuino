@@ -114,3 +114,21 @@ size_t IPAddress::printTo(Print& p) const
     n += p.print(_address.bytes[3], DEC);
     return n;
 }
+
+#if defined(EPOXY_CORE_ESP8266)
+String IPAddress::toString() const
+{
+    String s;
+    s.reserve(16);
+
+    s.concat(_address.bytes[0]);
+    s.concat('.');
+    s.concat(_address.bytes[1]);
+    s.concat('.');
+    s.concat(_address.bytes[2]);
+    s.concat('.');
+    s.concat(_address.bytes[3]);
+
+    return s;
+}
+#endif

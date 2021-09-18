@@ -67,6 +67,10 @@ public:
     IPAddress& operator=(uint32_t address);
 
     virtual size_t printTo(Print& p) const;
+
+  #if defined(EPOXY_CORE_ESP8266)
+    String toString() const;
+  #endif
 };
 
 const IPAddress INADDR_NONE(0,0,0,0);

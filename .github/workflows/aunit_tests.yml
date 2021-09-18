@@ -26,5 +26,7 @@ jobs:
 
     - name: Verify tests
       run: |
+        make -C tests tests
+        make -C tests runtests
         make -C libraries tests
         make -C libraries runtests

@@ -6,6 +6,8 @@
       `main()`.
         * Allows command line arguments to be passed into an Arduino
           application, to facilitate debugging on a Unix desktop machine.
+    * Add `toString()` to `IPAddress` class, activated with `EPOXY_CORE_ESP8266`
+      for compatibility with ESP8266 Core.
 * 0.8 (2021-08-08)
     * Add `EpoxyMockTimerOne` mock library for `TimerOne`
       (https://github.com/PaulStoffregen/TimerOne).
