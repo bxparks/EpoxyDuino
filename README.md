@@ -594,7 +594,7 @@ The following functions and features of the Arduino framework are implemented:
     * `pgm_read_byte()`, `pgm_read_word()`, `pgm_read_dword()`,
       `pgm_read_float()`, `pgm_read_ptr()`
     * `strlen_P()`, `strcat_P()`, `strcpy_P()`, `strncpy_P()`, `strcmp_P()`,
-      `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`
+      `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`, `strstr_P()`
     * `memcpy_P()`, `vsnprintf_P()`
     * `PROGMEM`, `PGM_P`, `PGM_VOID_P`, `PSTR()`
 * `IPAddress.h`
