@@ -3,6 +3,10 @@
  * piping to a pager program like 'less' or 'more' fails if too much data is
  * written to the SERIAL_PORT_MONITOR.
  *
+ * NOTE: https://github.com/bxparks/EpoxyDuino/issues/2 and
+ * https://github.com/bxparks/EpoxyDuino/issues/25 are now fixed, but I'll keep
+ * this around just in case.
+ *
  * To run:
  *
  * $ make clean
