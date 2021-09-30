@@ -22,7 +22,7 @@
 #include <signal.h> // SIGINT
 #include <stdlib.h> // exit()
 #include <stdio.h> // perror()
-#include <unistd.h> // isatty(), STDIN_FILENO
+#include <unistd.h> // isatty(), STDIN_FILENO, STDOUT_FILENO
 #include <fcntl.h>
 #include <termios.h>
 
@@ -34,6 +34,7 @@
 static struct termios orig_termios;
 static int orig_stdin_flags;
 static bool inRawMode = false;
+static bool inNonBlockingMode = false;
 
 static void die(const char* s) {
   perror(s);
@@ -41,54 +42,70 @@ static void die(const char* s) {
 }
 
 static void disableRawMode() {
-  if (!isatty(STDIN_FILENO)) return;
-  if (!inRawMode) return;
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1) {
-    inRawMode = false; // prevent exit(1) from being called twice
-    die("disableRawMode(): tcsetattr() failure");
+  if (inRawMode) {
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1) {
+      inRawMode = false; // prevent exit(1) from being called twice
+      die("disableRawMode(): tcsetattr() failure");
+    }
   }
 
-  if (fcntl(STDIN_FILENO, F_SETFL, orig_stdin_flags) == -1) {
-    die("enableRawMode(): fcntl() failure");
+  if (inNonBlockingMode) {
+    if (fcntl(STDIN_FILENO, F_SETFL, orig_stdin_flags) == -1) {
+      die("enableRawMode(): fcntl() failure");
+    }
   }
 }
 
 static void enableRawMode() {
-  // If STDIN is not a real tty, simply return instead of dying so that the
-  // unit tests can run in a continuous integration framework, e.g. Jenkins.
-  if (!isatty(STDIN_FILENO)) return;
-  if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) {
-    die("enableRawMode(): tcgetattr() failure");
+  // Enter raw mode only if STDIN is a terminal. If the input is a file or a
+  // pipe (or even /dev/null), then raw mode does not make sense.
+  //
+  // In addition, enter raw mode only if STDOUT is also a terminal. If the
+  // output is a file or a pipe, it could be piping to a pager, like the less(1)
+  // program which wants to handle keyboard inputs in raw mode by itself.
+  //
+  // I believe this fixes https://github.com/bxparks/EpoxyDuino/issues/2 and
+  // https://github.com/bxparks/EpoxyDuino/issues/25 finally.
+  if (isatty(STDOUT_FILENO) && isatty(STDIN_FILENO)) {
+
+    // Save the original config.
+    if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) {
+      die("enableRawMode(): tcgetattr() failure");
+    }
+
+    // The 'Enter' key in raw mode is ^M (\r, CR). But internally, we want this
+    // to be ^J (\n, NL), so ICRNL and INLCR causes the ^M to become a \n.
+    struct termios raw = orig_termios;
+    raw.c_iflag &= ~(/*ICRNL | INLCR |*/ INPCK | ISTRIP | IXON);
+
+    // Set the output into cooked mode, to handle NL and CR properly.
+    // Print.println() sends CR-NL (\r\n). But some code will send just \n. The
+    // ONLCR translates \n into \r\n. So '\r\n' will become \r\r\n, which is
+    // just fine.
+    raw.c_oflag |= (OPOST | ONLCR);
+    raw.c_cflag |= (CS8);
+
+    // Enable ISIG to allow Ctrl-C to kill the program.
+    raw.c_lflag &= ~(/*ECHO | ISIG |*/ ICANON | IEXTEN);
+    raw.c_cc[VMIN] = 0;
+    raw.c_cc[VTIME] = 0;
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) {
+      die("enableRawMode(): tcsetattr() failure");
+    }
+
+    inRawMode = true;
   }
 
-  struct termios raw = orig_termios;
-  // The 'Enter' key in raw mode is ^M (\r, CR). But internally, we want this
-  // to be ^J (\n, NL), so ICRNL and INLCR causes the ^M to become a \n.
-  raw.c_iflag &= ~(/*ICRNL | INLCR |*/ INPCK | ISTRIP | IXON);
-  // Set the output into cooked mode, to handle NL and CR properly.
-  // Print.println() sends CR-NL (\r\n). But some code will send just \n. The
-  // ONLCR translates \n into \r\n. So '\r\n' will become \r\r\n, which is just
-  // fine.
-  raw.c_oflag |= (OPOST | ONLCR);
-  raw.c_cflag |= (CS8);
-  // Enable ISIG to allow Ctrl-C to kill the program.
-  raw.c_lflag &= ~(/*ECHO | ISIG |*/ ICANON | IEXTEN);
-  raw.c_cc[VMIN] = 0;
-  raw.c_cc[VTIME] = 0;
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) {
-    die("enableRawMode(): tcsetattr() failure");
-  }
-
+  // Always set input into non-blocking mode so that yield() does not block when
+  // it reads one character, emulating a read from the Serial port.
   orig_stdin_flags = fcntl(STDIN_FILENO, F_GETFL, 0);
   if (fcntl(STDIN_FILENO, F_SETFL, orig_stdin_flags | O_NONBLOCK) == -1) {
     die("enableRawMode(): fcntl() failure");
   }
-
-  inRawMode = true;
+  inNonBlockingMode = true;
 }
 
 static void handleControlC(int /*sig*/) {
-  if (!isatty(STDIN_FILENO)) return;
   if (inRawMode) {
     // If this returns an error, don't call die() because it will call exit(),
     // which may call this again, causing an infinite recursion.
@@ -97,6 +114,16 @@ static void handleControlC(int /*sig*/) {
     }
     inRawMode = false;
   }
+
+  if (inNonBlockingMode) {
+    // If this returns an error, don't call die() because it will call exit(),
+    // which may call this again, causing an infinite recursion.
+    if (fcntl(STDIN_FILENO, F_SETFL, orig_stdin_flags) == -1) {
+      perror("handleControlC(): fcntl() failure");
+    }
+    inNonBlockingMode = false;
+  }
+
   exit(1);
 }
 

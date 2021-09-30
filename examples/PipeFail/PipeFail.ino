@@ -18,7 +18,7 @@
 // * Ubuntu 20.04: 300-1000
 // * MacOS 10.13: ~1000
 // * FreeBSD 12: 1000-2000
-const int NUM_LINES = 2000;
+const int NUM_LINES = 100000;
 const char LINE[] = "Reproduce https://github.com/bxparks/EpoxyDuino/issues/2";
 
 void setup() {

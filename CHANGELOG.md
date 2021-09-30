@@ -11,6 +11,8 @@
     * Add `toString()` to `IPAddress` class, activated with `EPOXY_CORE_ESP8266`
       for compatibility with ESP8266 Core.
     * Add `strstr_P()` to `pgmspace.h`.
+    * Finally fix [Issue #2](https://github.com/bxparks/EpoxyDuino/issues/2) and
+      [Issue #25](https://github.com/bxparks/EpoxyDuino/issues/25).
 * 0.8 (2021-08-08)
     * Add `EpoxyMockTimerOne` mock library for `TimerOne`
       (https://github.com/PaulStoffregen/TimerOne).
