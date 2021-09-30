@@ -14,8 +14,8 @@
 #define EPOXY_DUINO_EPOXY_ARDUINO_H
 
 // xx.yy.zz => xxyyzz (without leading 0)
-#define EPOXY_DUINO_VERSION 800
-#define EPOXY_DUINO_VERSION_STRING "0.8.0"
+#define EPOXY_DUINO_VERSION 10000
+#define EPOXY_DUINO_VERSION_STRING "1.0.0"
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -28,6 +28,9 @@
 #include "WCharacter.h"
 #include "Print.h"
 #include "StdioSerial.h"
+#if defined(EPOXY_CORE_ESP8266)
+  #include "Esp.h"
+#endif
 
 // Used by digitalRead() and digitalWrite()
 #define HIGH 0x1
@@ -212,6 +215,12 @@ int unixhostduino_main(int argc, char** argv);
 
 /** Calls unixhostduino_main() unless overriden by user */
 int main(int argc, char** argv);
+
+/** Copy of the argc parameter of main() as a global variable. */
+extern int epoxy_argc;
+
+/** Copy of the argv parameter of main() as a global variable. */
+extern const char* const* epoxy_argv;
 
 }
 

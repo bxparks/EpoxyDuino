@@ -26,5 +26,11 @@ jobs:
 
     - name: Verify tests
       run: |
+        # tests/IPAddressTest requires EPOXY_CORE_ESP8266, which requires clean
+        make -C tests clean
+        make -C tests tests
+        make -C tests runtests
+        # clean after tests/IPAddressTest to revert to EPOXY_CORE_AVR
+        make -C libraries clean
         make -C libraries tests
         make -C libraries runtests

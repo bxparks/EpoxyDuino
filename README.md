@@ -2,11 +2,6 @@
 
 [![AUnit Tests](https://github.com/bxparks/EpoxyDuino/actions/workflows/aunit_tests.yml/badge.svg)](https://github.com/bxparks/EpoxyDuino/actions/workflows/aunit_tests.yml)
 
-**New**: [GitHub Discussions](https://github.com/bxparks/EpoxyDuino/discussions)
-for this project is now active! Let's use that for general support questions,
-and reserve the [GitHub Issues](https://github.com/bxparks/EpoxyDuino/issues)
-section for bugs and feature requests.
-
 This project contains a small (but often effective) implementation of the
 Arduino programming framework for Linux, MacOS, FreeBSD (experimental) and
 potentially other POSIX-like systems. Originally, it was created to allow
@@ -60,15 +55,9 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 0.8 (2021-08-08)
+**Version**: 1.0 (2021-09-30)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
-
-**Breaking Change**: Prior to v0.5, this project was known as "UnixHostDuino".
-The old `UNIX_HOST_DUINO` macro and `UnixHostDuino.mk` include file still exist
-for backwards compatibility. See
-[Issue #15](https://github.com/bxparks/EpoxyDuino/issues/15)
-for more details.
 
 ## Table of Contents
 
@@ -87,6 +76,7 @@ for more details.
     * [Additional Clean Up](#AdditionalCleanUp)
     * [Alternate Arduino Core](#AlternateArduinoCore)
     * [PlatformIO](#PlatformIO)
+    * [Command Line Flags and Arguments](#CommandLineFlagsAndArguments)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
@@ -320,9 +310,9 @@ FooLibrary
 |-- library.properties
 |-- src
 |   |-- FooLibrary.h
-|   |-- foolib
-|   |   |-- file.h
-|   |   `-- file.cpp
+|   `-- foolib
+|       |-- file.h
+|       `-- file.cpp
 `-- tests
     |-- AxxTest
     |   |-- AxxTest.ino
@@ -513,8 +503,12 @@ Core. EpoxyDuino provides the ability substitute a different Arduino API Core
 through 2 Makefile variables:
 
 * `EPOXY_CORE`
-    * This Makefile variable defines the C-preprocessor macro which will be
-      defined through the `-D` flag through `-D $(EPOXY_CORE)`.
+* `EPOXY_CORE_PATH`
+
+#### `EPOXY_CORE`
+
+The `EPOXY_CORE` Makefile variable defines the C-preprocessor macro which will
+be defined through the `-D` flag through `-D $(EPOXY_CORE)`.
 
 There are currently 2 valid options for this Makefile variable:
 
@@ -538,12 +532,12 @@ compiler, which will activate any code that is guarded by:
 #endif
 ```
 
+#### `EPOXY_CORE_PATH`
+
 If the `EPOXY_CORE` make variable is insufficient (e.g. because the appropriate
 changes have not been incorporated into `$(EPOXY_DUINO_DIR)/cores/epoxy/`), then
-there is an even bigger hammer with the following make variable:
-
-* `EPOXY_CORE_PATH`
-    * Defines the full-path to the Arduino Core API files.
+the `EPOXY_CORE_PATH` provides an even bigger hammer. It defines the the
+full-path to the Arduino Core API files.
 
 By default, this is set to `$(EPOXY_DUINO_DIR)/cores/epoxy`. You can create your
 own set of Arduino API files in a directory of your choosing, and set this
@@ -561,6 +555,50 @@ mode](https://docs.platformio.org/en/latest/platforms/native.html). It was added
 in [Issue #31](https://github.com/bxparks/EpoxyDuino/pull/31) (thanks
 https://github.com/lopsided98). However, this functionality is *unsupported*. If
 it becomes broken in the future, please send me a PR to fix it.
+
+<a name="CommandLineFlagsAndArguments"></a>
+### Command Line Flags and Arguments
+
+The standard Arduino environment does not provide command line arguments, since
+a microcontroller does not normally provide a command line environment.
+When an Arduino application is compiled Using EpoxyDuino, the Unix command line
+parameters (`argc` and `argv`) become available through 2 global variables:
+
+* `extern int epoxy_argc`
+* `extern const char* const* epoxy_argv`
+
+The [examples/CommandLine](examples/CommandLine) program contains a basic
+command line parser which can be copied and customized for different
+applications:
+
+```
+$ ./CommandLine.out --help
+Usage: ./CommandLine.out [--help|-h] [-s] [--include word] [--] [words ...]
+
+$ ./CommandLine.out one two
+arg: one
+arg: two
+
+$ ./CommandLine.out -s
+flag: -s
+
+$ ./CommandLine.out --include inc one two
+flag: --include inc
+arg: one
+arg: two
+
+$ ./CommandLine.out --include inc -- -one two
+flag: --include inc
+arg: -one
+arg: two
+
+$ ./CommandLine.out -a
+Unknonwn flag '-a'
+Usage: ./CommandLine.out [--help|-h] [-s] [--include word] [--] [words ...]
+```
+
+A more advanced example can be seen in
+[AUnit/TestRunner.cpp](https://github.com/bxparks/AUnit/blob/develop/src/aunit/TestRunner.cpp).
 
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
@@ -595,7 +633,7 @@ The following functions and features of the Arduino framework are implemented:
     * `pgm_read_byte()`, `pgm_read_word()`, `pgm_read_dword()`,
       `pgm_read_float()`, `pgm_read_ptr()`
     * `strlen_P()`, `strcat_P()`, `strcpy_P()`, `strncpy_P()`, `strcmp_P()`,
-      `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`
+      `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`, `strstr_P()`
     * `memcpy_P()`, `vsnprintf_P()`
     * `PROGMEM`, `PGM_P`, `PGM_VOID_P`, `PSTR()`
 * `IPAddress.h`
@@ -606,7 +644,8 @@ The following functions and features of the Arduino framework are implemented:
 * `Wire.h` (stub implementation)
 * `SPI.h` (stub implementation)
 
-See [Arduino.h](https://github.com/bxparks/EpoxyDuino/blob/develop/Arduino.h)
+See
+[Arduino.h](https://github.com/bxparks/EpoxyDuino/blob/develop/cores/epoxy/Arduino.h)
 for the latest list. Most of the header files included by this `Arduino.h`
 file were copied and modified from the [arduino:avr
 core](https://github.com/arduino/ArduinoCore-avr/tree/master/cores/arduino),
@@ -809,19 +848,7 @@ This library has been tested on:
 <a name="Bugs"></a>
 ## Bugs and Limitations
 
-If the executable (e.g. `SampleTest.out`) is piped to the `less(1)` or `more(1)`
-command, sometimes (not all the time) the executable hangs and displays nothing
-on the pager program. I don't know why, it probably has to do with the way that
-the `less` or `more` programs manipulate the `stdin`. The solution is to
-explicitly redirect the `stdin`:
-
-```
-$ ./SampleTest.out | grep failed # works
-
-$ ./SampleTest.out | less # hangs
-
-$ ./SampleTest.out < /dev/null | less # works
-```
+None that I am aware of.
 
 <a name="FeedbackAndSupport"></a>
 ## Feedback and Support

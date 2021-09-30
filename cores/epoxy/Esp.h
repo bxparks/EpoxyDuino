@@ -3,16 +3,8 @@
 
 #if defined(EPOXY_CORE_ESP8266)
 
-#include <Arduino.h>
-#include <Stream.h>
 #include <sys/time.h>
-
-class _FLOAT
-{
-	public:
-		int digits;
-		float val;
-};
+#include "Stream.h"
 
 class EspClass
 {
