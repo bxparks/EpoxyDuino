@@ -82,6 +82,7 @@ for more details.
     * [Additional Clean Up](#AdditionalCleanUp)
     * [Alternate Arduino Core](#AlternateArduinoCore)
     * [PlatformIO](#PlatformIO)
+    * [Command Line Flags and Arguments](#CommandLineFlagsAndArguments)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
@@ -315,9 +316,9 @@ FooLibrary
 |-- library.properties
 |-- src
 |   |-- FooLibrary.h
-|   |-- foolib
-|   |   |-- file.h
-|   |   `-- file.cpp
+|   `-- foolib
+|       |-- file.h
+|       `-- file.cpp
 `-- tests
     |-- AxxTest
     |   |-- AxxTest.ino
@@ -560,6 +561,50 @@ mode](https://docs.platformio.org/en/latest/platforms/native.html). It was added
 in [Issue #31](https://github.com/bxparks/EpoxyDuino/pull/31) (thanks
 https://github.com/lopsided98). However, this functionality is *unsupported*. If
 it becomes broken in the future, please send me a PR to fix it.
+
+<a name="CommandLineFlagsAndArguments"></a>
+### Command Line Flags and Arguments
+
+The standard Arduino environment does not provide command line arguments, since
+a microcontroller does not normally provide a command line environment.
+When an Arduino application is compiled Using EpoxyDuino, the Unix command line
+parameters (`argc` and `argv`) become available through 2 global variables:
+
+* `extern int epoxy_argc`
+* `extern const char* const* epoxy_argv`
+
+The [examples/CommandLine](examples/CommandLine) program contains a basic
+command line parser which can be copied and customized for different
+applications:
+
+```
+$ ./CommandLine.out --help
+Usage: ./CommandLine.out [--help|-h] [-s] [--include word] [--] [words ...]
+
+$ ./CommandLine.out one two
+arg: one
+arg: two
+
+$ ./CommandLine.out -s
+flag: -s
+
+$ ./CommandLine.out --include inc one two
+flag: --include inc
+arg: one
+arg: two
+
+$ ./CommandLine.out --include inc -- -one two
+flag: --include inc
+arg: -one
+arg: two
+
+$ ./CommandLine.out -a
+Unknonwn flag '-a'
+Usage: ./CommandLine.out [--help|-h] [-s] [--include word] [--] [words ...]
+```
+
+A more advanced example can be seen in
+[AUnit/TestRunner.cpp](https://github.com/bxparks/AUnit/blob/develop/src/aunit/TestRunner.cpp).
 
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features

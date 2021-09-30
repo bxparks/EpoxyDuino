@@ -6,6 +6,8 @@
       `main()`.
         * Allows command line arguments to be passed into an Arduino
           application, to facilitate debugging on a Unix desktop machine.
+        * Add `examples/CommandLine` which provides a basic command line parser
+          that can be copied and modified for other applications.
     * Add `toString()` to `IPAddress` class, activated with `EPOXY_CORE_ESP8266`
       for compatibility with ESP8266 Core.
     * Add `strstr_P()` to `pgmspace.h`.
