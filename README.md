@@ -74,6 +74,7 @@ The disadvantages are:
     * [Alternate C++ Compiler](#AlternateCompiler)
     * [Generated Source Code](#GeneratedSourceCode)
     * [Additional Clean Up](#AdditionalCleanUp)
+    * [Additional Dependencies](#AdditionalDependencies)
     * [Alternate Arduino Core](#AlternateArduinoCore)
     * [PlatformIO](#PlatformIO)
     * [Command Line Flags and Arguments](#CommandLineFlagsAndArguments)
@@ -486,6 +487,19 @@ include {path/to/EpoxyDuino.mk}
 
 more_clean:
     rm -f epoxyeepromdata
+```
+
+<a name="AdditionalDependencies"></a>
+### Additional Dependencies
+
+Sometimes the `*.ino` file depend on additional header files within the same
+directory. When these header files are modified, the `*.ino` file must be
+recompiled. These additional header files can be listed in the `DEPS` variable:
+
+```
+DEPS := header1.h header2.h
+...
+include {path/to/EpoxyDuino.mk}
 ```
 
 <a name="AlternateArduinoCore"></a>

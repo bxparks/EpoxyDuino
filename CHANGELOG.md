@@ -1,6 +1,8 @@
 # Changelog
 
 * Unreleased
+    * Add optional `DEPS` variable containing header files that the `*.ino`
+      depends on.
 * 1.0 (2021-09-30)
     * Add `epoxy_argc` and `epoxy_argv` as extern global variables which
       are set to the `argc` and `argv` parameters passed into the global
