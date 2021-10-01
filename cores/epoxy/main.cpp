@@ -45,13 +45,14 @@ static void disableRawMode() {
   if (inRawMode) {
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1) {
       inRawMode = false; // prevent exit(1) from being called twice
-      die("disableRawMode(): tcsetattr() failure");
+      perror("disableRawMode(): tcsetattr() failure");
     }
   }
 
   if (inNonBlockingMode) {
     if (fcntl(STDIN_FILENO, F_SETFL, orig_stdin_flags) == -1) {
-      die("enableRawMode(): fcntl() failure");
+      inNonBlockingMode = false; // prevent exit(1) from being called twice
+      perror("enableRawMode(): fcntl() failure");
     }
   }
 }
@@ -105,28 +106,6 @@ static void enableRawMode() {
   inNonBlockingMode = true;
 }
 
-static void handleControlC(int /*sig*/) {
-  if (inRawMode) {
-    // If this returns an error, don't call die() because it will call exit(),
-    // which may call this again, causing an infinite recursion.
-    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1) {
-      perror("handleControlC(): tcsetattr() failure");
-    }
-    inRawMode = false;
-  }
-
-  if (inNonBlockingMode) {
-    // If this returns an error, don't call die() because it will call exit(),
-    // which may call this again, causing an infinite recursion.
-    if (fcntl(STDIN_FILENO, F_SETFL, orig_stdin_flags) == -1) {
-      perror("handleControlC(): fcntl() failure");
-    }
-    inNonBlockingMode = false;
-  }
-
-  exit(1);
-}
-
 // -----------------------------------------------------------------------
 // Main loop. User code will provide setup() and loop().
 // -----------------------------------------------------------------------
@@ -141,7 +120,6 @@ int unixhostduino_main(int argc, char** argv) {
   epoxy_argc = argc;
   epoxy_argv = argv;
 
-  signal(SIGINT, handleControlC);
   atexit(disableRawMode);
   enableRawMode();
 
