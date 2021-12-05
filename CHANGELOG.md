@@ -10,6 +10,9 @@
     * Add `clockCyclesPerMicrosecond()`, `clockCyclesToMicroseconds(a)`,
       and `microsecondsToClockCycles(a)` macros. Set a fake `F_CPU` to 16MHz
       on Unix machines.
+    * Add `bitRead()`, `bitSet()`, `bitClear()`, `bitWrite()` macros. Add
+      `bitToggle()` macro as well, which seems to be defined only on the
+      Arduino AVR core.
 * 1.0 (2021-09-30)
     * Add `epoxy_argc` and `epoxy_argv` as extern global variables which
       are set to the `argc` and `argv` parameters passed into the global
