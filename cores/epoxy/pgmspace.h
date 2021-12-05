@@ -27,6 +27,18 @@
 #define pgm_read_float(p) (* (const float*) (p))
 #define pgm_read_ptr(p) (* (const void* const*) (p))
 
+#define pgm_read_byte_near(addr)  pgm_read_byte(addr)
+#define pgm_read_word_near(addr)  pgm_read_word(addr)
+#define pgm_read_dword_near(addr) pgm_read_dword(addr)
+#define pgm_read_float_near(addr) pgm_read_float(addr)
+#define pgm_read_ptr_near(addr)   pgm_read_ptr(addr)
+
+#define pgm_read_byte_far(addr)   pgm_read_byte(addr)
+#define pgm_read_word_far(addr)   pgm_read_word(addr)
+#define pgm_read_dword_far(addr)  pgm_read_dword(addr)
+#define pgm_read_float_far(addr)  pgm_read_float(addr)
+#define pgm_read_ptr_far(addr)    pgm_read_ptr(addr)
+
 #define strlen_P strlen
 #define strcat_P strcat
 #define strcpy_P strcpy
