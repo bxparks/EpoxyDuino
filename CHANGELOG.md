@@ -3,6 +3,8 @@
 * Unreleased
     * Add optional `DEPS` variable containing header files that the `*.ino`
       depends on.
+    * Change `Print::println()` to print just a `\n` instead of `\r\n`, which
+      is more compatible on Unix where the line terminator is a single `\n`.
 * 1.0 (2021-09-30)
     * Add `epoxy_argc` and `epoxy_argv` as extern global variables which
       are set to the `argc` and `argv` parameters passed into the global
