@@ -148,6 +148,12 @@
 #define interrupts()
 #define noInterrupts()
 
+// Fake the CPU clock to 16MHz on Linxu or MacOS.
+#define F_CPU 16000000
+#define clockCyclesPerMicrosecond() ( F_CPU / 1000000L )
+#define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
+#define microsecondsToClockCycles(a) ( (a) * clockCyclesPerMicrosecond() )
+
 #define bit(b) (1UL << (b))
 #if defined(EPOXY_CORE_ESP8266)
   #define _BV(b) (1UL << (b))

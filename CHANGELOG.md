@@ -7,6 +7,9 @@
       is more compatible on Unix where the line terminator is a single `\n`.
     * Add `pgm_read_XXX_near()` and `pgm_read_XXX_far()` macros which
       simply delegate to the `pgm_read_XXX()` macros.
+    * Add `clockCyclesPerMicrosecond()`, `clockCyclesToMicroseconds(a)`,
+      and `microsecondsToClockCycles(a)` macros. Set a fake `F_CPU` to 16MHz
+      on Unix machines.
 * 1.0 (2021-09-30)
     * Add `epoxy_argc` and `epoxy_argv` as extern global variables which
       are set to the `argc` and `argv` parameters passed into the global
