@@ -17,6 +17,8 @@
 #define EPOXY_DUINO_VERSION 10000
 #define EPOXY_DUINO_VERSION_STRING "1.0.0"
 
+#include <algorithm> // min(), max()
+#include <cmath> // abs()
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -144,11 +146,22 @@
 #define NOT_AN_INTERRUPT -1
 #define NOT_ON_TIMER 0
 
-#define min(a,b) ((a)<(b)?(a):(b))
-#define max(a,b) ((a)>(b)?(a):(b))
-#define abs(x) ((x)>0?(x):-(x))
+// Arduino defines min(), max(), abs(), and round() using c-preprocessor macros
+// in the global namespace. But this breaks the EpoxyFS library, which depends
+// on 3rd party Unix libraries, which in turn assume that these are functions
+// that can be overloaded. For EpoxyDuino, instead of macros, let's use the
+// versions defined by <algorithm> and <cmath> in the std:: namespace and lift
+// them into the global namespace.
+//
+// #define min(a,b) ((a)<(b)?(a):(b))
+// #define max(a,b) ((a)>(b)?(a):(b))
+// #define abs(x) ((x)>0?(x):-(x))
+// #define round(x)     ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
+using std::min;
+using std::max;
+using std::abs;
+using std::round;
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
-#define round(x)     ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
 #define radians(deg) ((deg)*DEG_TO_RAD)
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 #define sq(x) ((x)*(x))
