@@ -13,6 +13,9 @@
     * Add `bitRead()`, `bitSet()`, `bitClear()`, `bitWrite()` macros. Add
       `bitToggle()` macro as well, which seems to be defined only on the
       Arduino AVR core.
+    * Add `min()`, `max()`, `abs()`, etc. I don't normally use these Arduino
+      macros in my libraries, but many other 3rd party libraries do. To compile
+      those libraries under EpoxyDuino, we have to define them.
 * 1.0 (2021-09-30)
     * Add `epoxy_argc` and `epoxy_argv` as extern global variables which
       are set to the `argc` and `argv` parameters passed into the global
