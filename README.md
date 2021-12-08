@@ -23,8 +23,21 @@ produces an executable with a `.out` extension, for example, `SampleTest.out`.
 The `Serial` port object sends the output to the `STDOUT` and reads from the
 `STDIN` of the Unix host environment. Most other hardware dependent
 features (e.g. I2C, SPI, GPIO) are stubbed out (defined but don't do anything)
-to allow the Arduino programs to compile. This may be sufficient for a CI
-pipeline. For actual application development, I have started to build a set of
+to allow the Arduino programs to compile. Mock versions of various libraries are
+also provided:
+
+* `<Wire.h>`: mock I2C library
+* `<SPI.h>`: mock SPI library
+* [EpoxyMockDigitalWriteFast](libraries/EpoxyMockDigitalWriteFast): mock
+  version of the `digitalWriteFast` libraries
+* [EpoxyMockTimerOne](libraries/EpoxyMockTimerOne): mock version of the
+  TimerOne (https://github.com/PaulStoffregen/TimerOne) library
+* [EpoxyMockFastLED](libraries/EpoxyMockFastLED/): mock version of the
+  FastLED (https://github.com/FastLED/FastLED) library
+
+These mock libraries may be sufficient for a CI pipeline.
+
+For actual application development, I have started to build a set of
 libraries within EpoxyDuino which emulate the versions that run the actual
 hardware:
 
@@ -620,7 +633,8 @@ A more advanced example can be seen in
 <a name="ArduinoFunctions"></a>
 ### Arduino Functions
 
-The following functions and features of the Arduino framework are implemented:
+The following is an incomplete list of Arduino functions and features
+which are implemented:
 
 * `Arduino.h`
     * `setup()`, `loop()`
@@ -629,6 +643,12 @@ The following functions and features of the Arduino framework are implemented:
     * `digitalWrite()`, `digitalRead()`, `pinMode()` (empty stubs)
     * `analogRead()`, `analogWrite()` (empty stubs)
     * `pulseIn()`, `pulseInLong()`, `shiftIn()`, `shiftOut()` (empty stubs)
+    * `min()`, `max()`, `abs()`, `round()`, etc
+    * `bit()`, `bitRead()`, `bitSet()`, `bitClear()`, `bitWrite()`
+    * `random()`, `randomSeed()`, `map()`
+    * `makeWord()`
+    * `F_CPU`, `clockCyclesPerMicrosecond(), `clockCyclesToMicroseconds(),
+      `microsecondsToClockCycles()`
     * `HIGH`, `LOW`, `INPUT`, `OUTPUT`, `INPUT_PULLUP`
     * I2C and SPI pins: `SS`, `MOSI`, `MISO`, `SCK`, `SDA`, `SCL`
     * typedefs: `boolean`, `byte`, `word`
@@ -658,14 +678,13 @@ The following functions and features of the Arduino framework are implemented:
 * `Wire.h` (stub implementation)
 * `SPI.h` (stub implementation)
 
-See
-[Arduino.h](https://github.com/bxparks/EpoxyDuino/blob/develop/cores/epoxy/Arduino.h)
+See [Arduino.h](cores/epoxy/Arduino.h)
 for the latest list. Most of the header files included by this `Arduino.h`
 file were copied and modified from the [arduino:avr
 core](https://github.com/arduino/ArduinoCore-avr/tree/master/cores/arduino),
-versions 1.8.2 (if I recall) or 1.8.3. A number of tweaks have been made to
-support slight variations in the API of other platforms, particularly the
-ESP8266 and ESP32 cores.
+v1.8.2 or v1.8.3. A number of tweaks have been made to support slight variations
+in the API of other platforms, particularly the ESP8266 v2.7.4 and ESP32 v1.0.6
+cores.
 
 The `Print.printf()` function is an extension to the `Print` class that is
 provided by many Arduino-compatible microcontrollers (but not the AVR
@@ -743,7 +762,7 @@ These 3 types are described in more detail below.
 ### Inherently Compatible Libraries
 
 Almost all libraries that I write will be inherently compatible with EpoxyDuino
-because EpoxyDuino is what I use to my libraries.
+because EpoxyDuino is what I use to develop and test my libraries.
 
 * AUnit (https://github.com/bxparks/AUnit)
 * AceButton (https://github.com/bxparks/AceButton)
@@ -816,6 +835,8 @@ intended. This limitation may be sufficient for Continous Integration purposes.
 * [EpoxyMockTimerOne](libraries/EpoxyMockTimerOne)
     * A simple mock of the TimerOne (https://github.com/PaulStoffregen/TimerOne)
       library.
+* [EpoxyMockFastLED](libraries/EpoxyMockFastLED/)
+    * Mock version of the FastLED (https://github.com/FastLED/FastLED) library.
 * EspMock (https://github.com/hsaturn/EspMock)
     * This is a separate project that provides various mocks for functions and
       libraries included with the ESP8266 and the ESP32 processors.
@@ -825,7 +846,7 @@ intended. This limitation may be sufficient for Continous Integration purposes.
 <a name="SystemRequirements"></a>
 ## System Requirements
 
-This library has been tested on:
+This library has Tier 1 support on:
 
 * Ubuntu 18.04
     * g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
@@ -836,6 +857,9 @@ This library has been tested on:
     * g++ (Ubuntu 9.3.0-10ubuntu2) 9.3.0
     * clang++ version 10.0.0-4ubuntu1
     * GNU Make 4.2.1
+
+The following environments are Tier 2 because I do not test them often enough:
+
 * Raspbian GNU/Linux 10 (buster)
     * On Raspberry Pi Model 3B
     * g++ (Raspbian 8.3.0-6+rpi1) 8.3.0
@@ -889,5 +913,5 @@ people ask similar questions later.
 * Add `delayMicroSeconds()`, `WCharacter.h`, and stub implementations of
   `IPAddress.h`, `SPI.h`, by Erik Tideman (@ramboerik), see
   [PR #18](https://github.com/bxparks/EpoxyDuino/pull/18).
-* Add `memcpy_P()` and `vsnprintf_P()` by @pmp-p, 
+* Add `memcpy_P()` and `vsnprintf_P()` by @pmp-p,
   [PR #28](https://github.com/bxparks/EpoxyDuino/pull/28).
