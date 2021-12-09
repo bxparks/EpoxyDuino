@@ -1,7 +1,36 @@
 # Changelog
 
 * Unreleased
-* 1.0 (2021-09-30)
+* 1.1.0 (2021-12-09)
+    * Add optional `DEPS` variable containing header files that the `*.ino`
+      depends on.
+    * **Potential Breaking** Change `Print::println()` to print just a `\n`
+      instead of `\r\n`.
+        * This is more compatible on Unix where the line terminator is a single
+          `\n`
+        * This allows the text output of Arduino programs to be redirected to
+          a file or piped to another Unix program with the correct line
+          termination character.
+        * This change may break some programs (usually unit tests) which print
+          to a
+          [PrintStr](https://github.com/bxparks/AceCommon/tree/develop/src/print_str)
+          object (from my [AceCommon](https://github.com/bxparks/AceCommon)
+          library), and then expect `\r\n` instead of `\n`.
+    * Add `pgm_read_XXX_near()` and `pgm_read_XXX_far()` macros which
+      simply delegate to the `pgm_read_XXX()` macros.
+    * Add `clockCyclesPerMicrosecond()`, `clockCyclesToMicroseconds(a)`,
+      and `microsecondsToClockCycles(a)` macros. Set a fake `F_CPU` to 16MHz
+      on Unix machines.
+    * Add `bitRead()`, `bitSet()`, `bitClear()`, `bitWrite()` macros. Add
+      `bitToggle()` macro as well, which seems to be defined only on the
+      Arduino AVR core.
+    * Add `min()`, `max()`, `abs()`, etc. I don't normally use these Arduino
+      macros in my libraries, but many other 3rd party libraries do. To compile
+      those libraries under EpoxyDuino, we have to define them.
+    * Add a minimal mock implementation of
+      [FastLED](https://github.com/FastLED/FastLED) sufficient for my personal
+      project.
+* 1.0.0 (2021-09-30)
     * Add `epoxy_argc` and `epoxy_argv` as extern global variables which
       are set to the `argc` and `argv` parameters passed into the global
       `main()`.

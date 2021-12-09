@@ -14,9 +14,11 @@
 #define EPOXY_DUINO_EPOXY_ARDUINO_H
 
 // xx.yy.zz => xxyyzz (without leading 0)
-#define EPOXY_DUINO_VERSION 10000
-#define EPOXY_DUINO_VERSION_STRING "1.0.0"
+#define EPOXY_DUINO_VERSION 10100
+#define EPOXY_DUINO_VERSION_STRING "1.1.0"
 
+#include <algorithm> // min(), max()
+#include <cmath> // abs()
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -144,9 +146,35 @@
 #define NOT_AN_INTERRUPT -1
 #define NOT_ON_TIMER 0
 
+// Arduino defines min(), max(), abs(), and round() using c-preprocessor macros
+// in the global namespace. But this breaks the EpoxyFS library, which depends
+// on 3rd party Unix libraries, which in turn assume that these are functions
+// that can be overloaded. For EpoxyDuino, instead of macros, let's use the
+// versions defined by <algorithm> and <cmath> in the std:: namespace and lift
+// them into the global namespace.
+//
+// #define min(a,b) ((a)<(b)?(a):(b))
+// #define max(a,b) ((a)>(b)?(a):(b))
+// #define abs(x) ((x)>0?(x):-(x))
+// #define round(x)     ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
+using std::min;
+using std::max;
+using std::abs;
+using std::round;
+#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+#define radians(deg) ((deg)*DEG_TO_RAD)
+#define degrees(rad) ((rad)*RAD_TO_DEG)
+#define sq(x) ((x)*(x))
+
 // Stub implementations
 #define interrupts()
 #define noInterrupts()
+
+// Fake the CPU clock to 16MHz on Linxu or MacOS.
+#define F_CPU 16000000
+#define clockCyclesPerMicrosecond() ( F_CPU / 1000000L )
+#define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
+#define microsecondsToClockCycles(a) ( (a) * clockCyclesPerMicrosecond() )
 
 #define bit(b) (1UL << (b))
 #if defined(EPOXY_CORE_ESP8266)
@@ -155,6 +183,13 @@
 
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
 #define highByte(w) ((uint8_t) ((w) >> 8))
+
+// bitToggle() is defined only on Arduino AVR as far as I can tell.
+#define bitRead(value, bit) (((value) >> (bit)) & 0x01)
+#define bitSet(value, bit) ((value) |= (1UL << (bit)))
+#define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
+#define bitToggle(value, bit) ((value) ^= (1UL << (bit)))
+#define bitWrite(value, bit, bitvalue) ((bitvalue) ? bitSet(value, bit) : bitClear(value, bit))
 
 extern "C" {
 

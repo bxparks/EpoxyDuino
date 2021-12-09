@@ -1,4 +1,4 @@
-# EpocyMockTimerOne Library
+# EpoxyMockTimerOne Library
 
 A mock implementation of the `TimerOne` library
 (https://github.com/PaulStoffregen/TimerOne) to allow code written against
@@ -35,6 +35,6 @@ Then add `EpoxyMockTimerOne` to the `ARDUINO_LIBS` in the EpoxyDuino `Makefile`:
 
 ```make
 APP_NAME := MyApp
-ARDUINO_LIBS := EpocyMockTimerOne ...
+ARDUINO_LIBS := EpoxyMockTimerOne ...
 include ../../../../EpoxyDuino.mk
 ```
