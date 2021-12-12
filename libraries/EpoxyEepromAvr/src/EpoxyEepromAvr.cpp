@@ -53,15 +53,25 @@ const char* EpoxyEepromAvr::getDataPath() {
 }
 
 uint8_t EERef::operator*() const {
-	char c = 0;
+  char c = 0;
   // Ignore errors because the EEPROM API has no mechanism for dealing them.
-	pread(fd, &c, 1, index);
+#ifdef _WIN32
+  lseek(fd, index, SEEK_SET);
+  read(fd, &c, 1);
+#else
+  pread(fd, &c, 1, index);
+#endif
   return c;
 }
 
 EERef& EERef::operator=(uint8_t in) {
   // Ignore errors because the EEPROM API has no mechanism for dealing them.
+#ifdef _WIN32
+  lseek(fd, index, SEEK_SET);
+  write(fd, &in, 1);
+#else
   pwrite(fd, &in, 1, index);
+#endif
   return  *this;
 }
 

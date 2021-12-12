@@ -192,11 +192,19 @@ class EpoxyDirImpl: public DirImpl {
     time_t fileCreationTime() override { return 0; }
 
     bool isFile() const override {
+#ifdef _DIRENT_HAVE_D_TYPE
       return dirEntry_->d_type == DT_REG;
+#else
+      return (dirEntry_) ? S_ISREG(stat_.st_mode) : true;
+#endif
     }
 
     bool isDirectory() const override {
+#ifdef _DIRENT_HAVE_D_TYPE
       return dirEntry_->d_type == DT_DIR;
+#else
+      return (dirEntry_) ? S_ISDIR(stat_.st_mode) : false;
+#endif
     }
 
     bool next() override {
@@ -210,7 +218,11 @@ class EpoxyDirImpl: public DirImpl {
       }
       // TODO: Do I need to recreate the full path if this file is
       // under a subdirectory?
+#ifdef _WIN32
+      ::stat(fileName(), &stat_);
+#else
       ::lstat(fileName(), &stat_);
+#endif
       return dirEntry_ != nullptr;
     }
 
@@ -272,7 +284,11 @@ class EpoxyFSImpl: public FSImpl {
     bool exists(const char* path) override {
       struct stat stats;
       std::string unixPath = fileNameConcat(fsroot_, path);
+#ifdef _WIN32
+      int status = ::stat(unixPath.c_str(), &stats);
+#else
       int status = ::lstat(unixPath.c_str(), &stats);
+#endif
       return status == 0;
     }
 
@@ -301,7 +317,11 @@ class EpoxyFSImpl: public FSImpl {
     // for example.
     bool mkdir(const char* path) override {
       std::string unixPath = fileNameConcat(fsroot_, path);
+#ifdef _WIN32
+      int status = ::mkdir(unixPath.c_str());
+#else
       int status = ::mkdir(unixPath.c_str(), 0700);
+#endif
       return status == 0;
     }
 

@@ -69,12 +69,21 @@ bool EpoxyFSImpl::begin() {
 
   // Create the root directory if it does not exist.
   struct stat rootStats;
+#ifdef _WIN32
+  int status = ::stat(fsroot_, &rootStats);
+  if (status != 0) {
+    int mkdirStatus = ::mkdir(fsroot_);
+    if (mkdirStatus != 0) return false;
+    // Check the directory again
+    status = ::stat(fsroot_, &rootStats);
+#else
   int status = ::lstat(fsroot_, &rootStats);
   if (status != 0) {
     int mkdirStatus = ::mkdir(fsroot_, 0700);
     if (mkdirStatus != 0) return false;
     // Check the directory again
     status = ::lstat(fsroot_, &rootStats);
+#endif
     if (status != 0) return false;
   }
   if (! S_ISDIR(rootStats.st_mode)) return false;
