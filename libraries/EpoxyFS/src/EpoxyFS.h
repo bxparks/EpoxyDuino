@@ -195,7 +195,7 @@ class EpoxyDirImpl: public DirImpl {
 #ifdef _DIRENT_HAVE_D_TYPE
       return dirEntry_->d_type == DT_REG;
 #else
-      return (dirEntry_) ? S_ISREG(stat_.st_mode) : true;
+      return (dirEntry_) ? S_ISREG(stat_.st_mode) : false;
 #endif
     }
 
