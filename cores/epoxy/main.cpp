@@ -15,9 +15,9 @@
  * inserts it into the Serial buffer.
  */
 
-#if defined(EPOXY_DUINO) && __unix__
-
 #include "Arduino.h"
+
+#if __has_include(<termios.h>)
 #include <inttypes.h>
 #include <signal.h> // SIGINT
 #include <stdlib.h> // exit()
@@ -106,6 +106,11 @@ static void enableRawMode() {
   inNonBlockingMode = true;
 }
 
+#else
+static void enableRawMode() {}
+static void disableRawMode() {}
+#endif // #if __has_include(<termios.h>)
+
 // -----------------------------------------------------------------------
 // Main loop. User code will provide setup() and loop().
 // -----------------------------------------------------------------------
@@ -116,7 +121,7 @@ int epoxy_argc;
 
 const char* const* epoxy_argv;
 
-int unixhostduino_main(int argc, char** argv) {
+int hostduino_main(int argc, char** argv) {
   epoxy_argc = argc;
   epoxy_argv = argv;
 
@@ -130,14 +135,20 @@ int unixhostduino_main(int argc, char** argv) {
   }
 }
 
+#if defined(__MINGW32__)
+// Weak references to main() do not work properly under MING32
+// Define EPOXY_DUINO_NO_MAIN if the calling code provides its own main().
+#    ifndef EPOXY_DUINO_NO_MAIN
+int main(int argc, char** argv) {
+    return hostduino_main(argc, argv);
+}
+#    endif
+#else
 // Weak reference so that the calling code can provide its own main().
-int main(int argc, char** argv)
-__attribute__((weak));
+int main(int argc, char** argv) __attribute__((weak));
 
 int main(int argc, char** argv) {
-  return unixhostduino_main(argc, argv);
+    return hostduino_main(argc, argv);
 }
-
+#endif // #if defined(__MINGW32__)
 }
-
-#endif // #if defined(EPOXY_DUINO) && __unix__

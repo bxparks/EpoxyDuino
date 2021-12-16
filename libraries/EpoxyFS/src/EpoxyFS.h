@@ -11,6 +11,18 @@
 #include "FS.h"
 #include "FSImpl.h"
 
+// mkdir() is not required by ISO C++, but it is usually available.
+// The catch is that the Unix version has two arguments, while the
+// Windows version has only one - since the Unix-style mode is
+// meaningless on Windows.
+#ifdef __MINGW32__
+#    define sys_mkdir(a, b) mkdir(a)
+// MINGW32 omits lstat because older Windows file systems lack symlinks
+#    define lstat stat
+#else
+#    define sys_mkdir(a, b) mkdir(a, b)
+#endif
+
 namespace fs {
 
 /**
@@ -195,7 +207,7 @@ class EpoxyDirImpl: public DirImpl {
 #ifdef _DIRENT_HAVE_D_TYPE
       return dirEntry_->d_type == DT_REG;
 #else
-      return (dirEntry_) ? S_ISREG(stat_.st_mode) : false;
+      return S_ISREG(stat_.st_mode);
 #endif
     }
 
@@ -203,7 +215,7 @@ class EpoxyDirImpl: public DirImpl {
 #ifdef _DIRENT_HAVE_D_TYPE
       return dirEntry_->d_type == DT_DIR;
 #else
-      return (dirEntry_) ? S_ISDIR(stat_.st_mode) : false;
+      return S_ISDIR(stat_.st_mode);
 #endif
     }
 
@@ -218,11 +230,7 @@ class EpoxyDirImpl: public DirImpl {
       }
       // TODO: Do I need to recreate the full path if this file is
       // under a subdirectory?
-#ifdef _WIN32
-      ::stat(fileName(), &stat_);
-#else
       ::lstat(fileName(), &stat_);
-#endif
       return dirEntry_ != nullptr;
     }
 
@@ -284,11 +292,7 @@ class EpoxyFSImpl: public FSImpl {
     bool exists(const char* path) override {
       struct stat stats;
       std::string unixPath = fileNameConcat(fsroot_, path);
-#ifdef _WIN32
-      int status = ::stat(unixPath.c_str(), &stats);
-#else
       int status = ::lstat(unixPath.c_str(), &stats);
-#endif
       return status == 0;
     }
 
@@ -317,11 +321,7 @@ class EpoxyFSImpl: public FSImpl {
     // for example.
     bool mkdir(const char* path) override {
       std::string unixPath = fileNameConcat(fsroot_, path);
-#ifdef _WIN32
-      int status = ::mkdir(unixPath.c_str());
-#else
-      int status = ::mkdir(unixPath.c_str(), 0700);
-#endif
+      int status = ::sys_mkdir(unixPath.c_str(), 0700);
       return status == 0;
     }
 
