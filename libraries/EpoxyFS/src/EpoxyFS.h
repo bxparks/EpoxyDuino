@@ -11,19 +11,34 @@
 #include "FS.h"
 #include "FSImpl.h"
 
-// mkdir() is not required by ISO C++, but it is usually available.
-// The catch is that the Unix version has two arguments, while the
-// Windows version has only one - since the Unix-style mode is
-// meaningless on Windows.
-#ifdef __MINGW32__
-#    define sys_mkdir(a, b) mkdir(a)
-// MINGW32 omits lstat because older Windows file systems lack symlinks
-#    define lstat stat
-#else
-#    define sys_mkdir(a, b) mkdir(a, b)
-#endif
-
 namespace fs {
+
+/**
+ * Platform independent wrapper for lstat(). MINGW32 lacks lstat() because older
+ * Windows file systems lack symlinks
+ */
+inline int epoxy_lstat(const char* path, struct stat* stats) {
+#if defined(__MINGW32__)
+  return ::stat(path, stats);
+#else
+  return ::lstat(path, stats);
+#endif
+}
+
+/**
+ * Platform independent wrapper for mkdir() which is not required by POSIX, but
+ * it is usually available. The catch is that the Unix version has two
+ * arguments, while the Windows version has only one - since the Unix-style mode
+ * is meaningless on Windows.
+ */
+inline int epoxy_mkdir(const char* path, int mode) {
+#if defined(__MINGW32__)
+  (void) mode;
+  return ::mkdir(path);
+#else
+  return ::mkdir(path, mode);
+#endif
+}
 
 /**
  * Convert OpenMode and AccessMode to "r", "w", "r+", etc according to the
@@ -230,7 +245,7 @@ class EpoxyDirImpl: public DirImpl {
       }
       // TODO: Do I need to recreate the full path if this file is
       // under a subdirectory?
-      ::lstat(fileName(), &stat_);
+      epoxy_lstat(fileName(), &stat_);
       return dirEntry_ != nullptr;
     }
 
@@ -292,7 +307,7 @@ class EpoxyFSImpl: public FSImpl {
     bool exists(const char* path) override {
       struct stat stats;
       std::string unixPath = fileNameConcat(fsroot_, path);
-      int status = ::lstat(unixPath.c_str(), &stats);
+      int status = epoxy_lstat(unixPath.c_str(), &stats);
       return status == 0;
     }
 
@@ -321,7 +336,7 @@ class EpoxyFSImpl: public FSImpl {
     // for example.
     bool mkdir(const char* path) override {
       std::string unixPath = fileNameConcat(fsroot_, path);
-      int status = ::sys_mkdir(unixPath.c_str(), 0700);
+      int status = epoxy_mkdir(unixPath.c_str(), 0700);
       return status == 0;
     }
 

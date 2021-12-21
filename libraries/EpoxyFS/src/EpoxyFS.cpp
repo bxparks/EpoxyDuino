@@ -69,12 +69,12 @@ bool EpoxyFSImpl::begin() {
 
   // Create the root directory if it does not exist.
   struct stat rootStats;
-  int status = ::lstat(fsroot_, &rootStats);
+  int status = epoxy_lstat(fsroot_, &rootStats);
   if (status != 0) {
-    int mkdirStatus = ::sys_mkdir(fsroot_, 0700);
+    int mkdirStatus = epoxy_mkdir(fsroot_, 0700);
     if (mkdirStatus != 0) return false;
     // Check the directory again
-    status = ::lstat(fsroot_, &rootStats);
+    status = epoxy_lstat(fsroot_, &rootStats);
     if (status != 0) return false;
   }
   if (! S_ISDIR(rootStats.st_mode)) return false;
