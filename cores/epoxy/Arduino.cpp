@@ -13,7 +13,7 @@
  */
 
 #include <inttypes.h>
-#include <unistd.h> // read(), STDIN_FILENO, usleep()
+#include <unistd.h> // usleep()
 #include <time.h> // clock_gettime()
 #include "Arduino.h"
 

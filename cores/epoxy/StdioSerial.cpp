@@ -8,31 +8,29 @@
 #include "StdioSerial.h"
 
 size_t StdioSerial::write(uint8_t c) {
-  int result = putchar(c);
-  fflush(stdout);
-  return (result == EOF) ? 0 : 1;
-}
-
-void StdioSerial::flush() {
-  fflush(stdout);
+  ssize_t status = ::write(STDOUT_FILENO, &c, 1);
+  return (status <= 0) ? 0 : 1;
 }
 
 int StdioSerial::read() {
-  int res;
-  if (bufch == -1) ::read(STDIN_FILENO, &bufch, 1);
-  res = bufch;
+  int ch = peek();
   bufch = -1;
-  return res;
+  return ch;
 }
 
 int StdioSerial::peek() {
-  if (bufch == -1) ::read(STDIN_FILENO, &bufch, 1);
+  if (bufch == -1) {
+    // 'c' must be unsigned to avoid ambiguity with -1 in-band error condition
+    unsigned char c;
+    ssize_t status = ::read(STDIN_FILENO, &c, 1);
+    bufch = (status <= 0) ? -1 : c;
+  }
   return bufch;
 }
 
 int StdioSerial::available() {
-  if (bufch == -1) ::read(STDIN_FILENO, &bufch, 1);
-  return (bufch != -1);
+  int ch = peek();
+  return (int) (ch != -1);
 }
 
 StdioSerial Serial;

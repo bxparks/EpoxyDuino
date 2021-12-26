@@ -19,8 +19,6 @@ class StdioSerial: public Stream {
 
     size_t write(uint8_t c) override;
 
-    void flush() override;
-
     operator bool() { return true; }
 
     int available() override;
@@ -28,7 +26,6 @@ class StdioSerial: public Stream {
     int read() override;
 	
     int peek() override;
-
     
   private:
     int bufch;
