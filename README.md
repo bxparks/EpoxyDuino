@@ -94,6 +94,7 @@ The disadvantages are:
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
+    * [Unix Line Mode](#UnixLineMode)
 * [Libraries and Mocks](#LibrariesAndMocks)
     * [Inherently Compatible Libraries](#InherentlyCompatibleLibraries)
     * [Emulation Libraries](#EmulationLibraries)
@@ -728,6 +729,59 @@ the program. But this convenience means that the Arduino program running under
 `EpoxyDuino` will never receive a control character through the
 `Serial.read()` function. The advantages of having normal Unix signals seemed
 worth the trade-off.
+
+<a name="UnixLineMode"></a>
+### Unix Line Mode
+
+(Added in v1.2.0)
+
+The `Print` class in the Arduino API implements the `Print::println()` function
+by printing the DOS line terminator characters `\r\n`. This decision make sense
+when the serial port of the microcontroller is connected to a serial terminal,
+which requires a `\r\n` at the end of each line to render the text properly.
+
+But when the Arduino application is executed on Linux machine, and the output is
+redirected into a file, the `\r\n` is not consistent with the Unix convention
+of using only a single `\n` to terminate each line. This causes the file to be
+interpreted as a DOS-formatted file. Usually the DOS formatted file can be
+processed without problems by other Linux programs and scripts, but sometimes
+the extra `\r\n` causes problems, especially when mixed with a `Serial.printf()`
+function using a single `\n`.
+
+EpoxyDuino provides a mechanism to configure the line termination convention for
+a given application by providing 2 additional methods to its `Print` class:
+
+```C++
+class Print {
+  public:
+    // Use DOS line termination. This is the default.
+    void setLineModeNormal();
+
+    // Use Unix line termination.
+    void setLineModeUnix();
+
+    ...
+};
+```
+
+When an Arduino application is executed on a Linux machine using EpoxyDuino,
+you can configure the `Serial` object in the `*.ino` file to use the Unix
+convention like this:
+
+```C++
+void setup() {
+#if ! defined(EPOXY_DUINO)
+  delay(1000); // wait to prevent garbage on Serial
+#endif
+
+  Serial.begin(115200);
+  while (!Serial); // Leonardo/Micro
+
+#if defined(EPOXY_DUINO)
+  Serial.setLineModeUnix();
+#endif
+}
+```
 
 <a name="LibrariesAndMocks"></a>
 ## Libraries and Mocks
