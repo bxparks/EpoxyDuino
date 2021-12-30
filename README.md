@@ -983,10 +983,17 @@ people ask similar questions later.
 ## Authors
 
 * Created by Brian T. Park (brian@xparks.net).
-* Support for using as library, by making `main()` a weak reference, added
-  by Max Prokhorov (prokhorov.max@outlook.com).
+* Support for using as library, by making `main()` a weak reference,
+  by Max Prokhorov (@mcspr), see
+  [PR#6](https://github.com/bxparks/EpoxyDuino/pull/6).
 * Add `delayMicroSeconds()`, `WCharacter.h`, and stub implementations of
   `IPAddress.h`, `SPI.h`, by Erik Tideman (@ramboerik), see
-  [PR #18](https://github.com/bxparks/EpoxyDuino/pull/18).
-* Add `memcpy_P()` and `vsnprintf_P()` by @pmp-p,
-  [PR #28](https://github.com/bxparks/EpoxyDuino/pull/28).
+  [PR#18](https://github.com/bxparks/EpoxyDuino/pull/18).
+* Add `memcpy_P()` and `vsnprintf_P()` by Paul m. p. P. (@pmp-p),
+  [PR#28](https://github.com/bxparks/EpoxyDuino/pull/28).
+* Support PlatformIO native mode, by Ben Wolsieffer (@lopsided98),
+  see [PR#31](https://github.com/bxparks/EpoxyDuino/pull/31).
+* Move stdin processing to `yield()` by Ben Wolsieffer (@lopsided98),
+  see [PR#32](https://github.com/bxparks/EpoxyDuino/pull/32).
+* Simplify `StdioSerial` by Bernhard (@felias-fogg),
+  [Issue#43](https://github.com/bxparks/EpoxyDuino/issues/43).
