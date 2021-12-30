@@ -1,6 +1,12 @@
 # Changelog
 
 * Unreleased
+    * Simplify `StdioSerial`  class, see
+      [Issue#43](https://github.com/bxparks/EpoxyDuino/issues/43).
+        * Replace input ring buffer with a buffer of one character.
+        * Wire `StdioSerial::write(uint8_t)` directly to Posix `write()`,
+          by-passing the `<stdio.h>` buffer. `flush()` is no longer necessary.
+        * Thanks to @felias-fogg.
 * 1.1.0 (2021-12-09)
     * Add optional `DEPS` variable containing header files that the `*.ino`
       depends on.
