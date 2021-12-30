@@ -783,6 +783,27 @@ void setup() {
 }
 ```
 
+Why isn't `setLineModeUnix()` simply made to be the default on EpoxyDuino?
+Because people write [AUnit](https://github.com/bxparks/AUnit) unit tests which
+they expect will pass on both the microcontroller and on EpoxyDuino:
+
+```C++
+#include <Arduino.h>
+#include <AUnit.h>
+#include <AceCommon.h> // PrintStr<N>
+...
+
+static void sayHello(Print& printer) {
+  printer.println("hello");
+}
+
+test(myTest) {
+  PrintStr<200> observed;
+  sayHello(observed);
+  assertEqual(observed.cstr(), "hello\r\n");
+}
+```
+
 <a name="LibrariesAndMocks"></a>
 ## Libraries and Mocks
 
