@@ -129,7 +129,11 @@ size_t Print::print(const Printable& x)
 
 size_t Print::println(void)
 {
-  return write('\n');
+  if (isLineModeUnix) {
+    return write('\n');
+  } else {
+    return write("\r\n");
+  }
 }
 
 size_t Print::println(const String &s)

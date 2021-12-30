@@ -13,7 +13,7 @@
  */
 
 #include <inttypes.h>
-#include <unistd.h> // read(), STDIN_FILENO, usleep()
+#include <unistd.h> // usleep()
 #include <time.h> // clock_gettime()
 #include "Arduino.h"
 
@@ -22,11 +22,6 @@
 // -----------------------------------------------------------------------
 
 void yield() {
-  char c = '\0';
-  if (read(STDIN_FILENO, &c, 1) == 1) {
-    Serial.insertChar(c);
-  }
-
   usleep(1000); // prevents program from consuming 100% CPU
 }
 

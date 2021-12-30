@@ -87,7 +87,7 @@ static void enableRawMode() {
     raw.c_cflag |= (CS8);
 
     // Enable ISIG to allow Ctrl-C to kill the program.
-    raw.c_lflag &= ~(/*ECHO | ISIG |*/ ICANON | IEXTEN);
+    raw.c_lflag &= ~(ECHO | /*ISIG |*/ ICANON | IEXTEN);
     raw.c_cc[VMIN] = 0;
     raw.c_cc[VTIME] = 0;
     if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) {

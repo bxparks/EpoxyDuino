@@ -40,11 +40,27 @@ class Print
 {
   private:
     int write_error;
+    bool isLineModeUnix = false;
+
     size_t printNumber(unsigned long, uint8_t);
     size_t printFloat(double, uint8_t);
+
   protected:
     void setWriteError(int err = 1) { write_error = err; }
+
   public:
+    /**
+     * Set the line termination mode to Normal (i.e. \\r\\n). This is the
+     * default. This function is available only on EpoxyDuino.
+     */
+    void setLineModeNormal() { isLineModeUnix = false; }
+
+    /**
+     * Set the line termination mode to Unix (i.e. \\n). This function is
+     * available only on EpoxyDuino.
+     */
+    void setLineModeUnix() { isLineModeUnix = true; }
+
     Print() : write_error(0) {}
 
     int getWriteError() { return write_error; }
