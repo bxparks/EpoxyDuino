@@ -40,19 +40,20 @@
  * Serial port without interfering with the -1 error indicator.
  */
 void debugPrint(int c) {
-  // Print 2 digit hex padded with 0.
-  if (c < 16) {
-    Serial.print('0');
+  if (c < 0) {
+    // This should never happen, but print the value of c if it does.
+    Serial.print(c);
+  } else {
+    // Print 2 digit hex padded with 0.
+    if (c < 16) {
+      Serial.print('0');
+    }
+    Serial.print(c, 16);
   }
-  Serial.print(c, 16);
 
   // Print printable character, or space for non-printable.
   Serial.print("('");
-  if (c > 32 && c < 127) {
-    Serial.print((char) c);
-  } else {
-    Serial.print(' ');
-  }
+  Serial.print((c > 32 && c < 127) ? (char) c : ' ');
   Serial.print("')");
 }
 
