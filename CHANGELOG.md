@@ -7,6 +7,8 @@
         * Wire `StdioSerial::write(uint8_t)` directly to Posix `write()`,
           by-passing the `<stdio.h>` buffer. `flush()` is no longer necessary.
         * Thanks to @felias-fogg.
+    * Revert 432e304, so that `Print::writeln()` writes `\r\n` again, see
+      [Issue#45](https://github.com/bxparks/EpoxyDuino/issues/45).
 * 1.1.0 (2021-12-09)
     * Add optional `DEPS` variable containing header files that the `*.ino`
       depends on.
