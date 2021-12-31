@@ -68,7 +68,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 1.2.0 (2021-12-09)
+**Version**: 1.2.0 (2021-12-29)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -520,7 +520,7 @@ more_clean:
 <a name="AdditionalDependencies"></a>
 ### Additional Dependencies
 
-Sometimes the `*.ino` file depend on additional header files within the same
+Sometimes the `*.ino` file depends on additional header files within the same
 directory. When these header files are modified, the `*.ino` file must be
 recompiled. These additional header files can be listed in the `DEPS` variable:
 
@@ -594,9 +594,10 @@ EPOXY_CORE_PATH := {my_own_directory}/cores/mycore
 
 The `library.json` file supports [PlaformIO in Native
 mode](https://docs.platformio.org/en/latest/platforms/native.html). It was added
-in [Issue #31](https://github.com/bxparks/EpoxyDuino/pull/31) (thanks
-https://github.com/lopsided98). However, this functionality is *unsupported*. If
-it becomes broken in the future, please send me a PR to fix it.
+in [PR#31](https://github.com/bxparks/EpoxyDuino/pull/31) (thanks
+[@lopsided98](https://github.com/lopsided98)). However, this functionality is
+*unsupported*. If it becomes broken in the future, please send me a PR to fix
+it.
 
 <a name="CommandLineFlagsAndArguments"></a>
 ### Command Line Flags and Arguments
