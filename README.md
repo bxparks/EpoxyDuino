@@ -101,6 +101,7 @@ The disadvantages are:
     * [Mock Libraries](#MockLibraries)
 * [System Requirements](#SystemRequirements)
 * [License](#License)
+* [Bugs And Limitations](#BugsAndLimitations)
 * [Feedback and Support](#FeedbackAndSupport)
 * [Authors](#Authors)
 
@@ -973,10 +974,47 @@ The following environments are Tier 2 because I do not test them often enough:
 
 [MIT License](https://opensource.org/licenses/MIT)
 
-<a name="Bugs"></a>
+<a name="BugsAndLimitations"></a>
 ## Bugs and Limitations
 
-None that I am aware of.
+* There is no formal specification of the "Arduino API" that I am aware of.
+    * The reference documentation at https://www.arduino.cc/reference/ may be
+      good enough for beginners to blink a few LED lights, but it is not
+      sufficient to build an API emulator on a Linux machine.
+    * The version of the Arduino API implemented in this library has been
+      reverse engineered and inferred from
+      [ArduinoCore-avr](https://github.com/arduino/ArduinoCore-avr), either
+      v1.8.2 and v1.8.3 (I cannot remember).
+    * Each third party Arduino-compatible platform (e.g. STM32, ESP8266, ESP32)
+      has implemented a slightly different version of the "Arduino API".
+    * EpoxyDuino does not support the idiosyncrasies of all of these
+      different Arduino platforms.
+* The Arduino API on a microcontroller automatically provides a `main()`
+  function that calls the global `setup()` function, then calls the global
+  `loop()` function forever, as fast as possible.
+    * The EpoxyDuino version of `main()` calls `loop()` with a delay of 1 ms
+      per iteration. Without the 1 ms delay, the application consumes 100% of
+      CPU time on the host computer.
+    * This means that the maximum frequency that the `loop()` function is called
+      1000 Hz.
+* The Serial port emulation provided by `StdioSerial` may be buggy or behave in
+  non-intuitive ways.
+    * When the application is executed without input or output redirection, the
+      *stdin* is put into "raw" mode.
+    * If either the input or output is redirected (e.g. output redirected to a
+      file), then the *stdin* remains in normal Unix "cooked" mode.
+    * This allows the Arduino program to be piped into a screen pager (e.g.
+      `less(1)`, while allowing the `less(1)` program to support its normal
+      keyboard control keys.
+    * The *stdout* is wired directly into the POSIX `write()` function, which is
+      unbuffered. This may cause performance problems when generating a lot of
+      output.
+* The compiler used to compile the microcontroller binary may be significantly
+  different than the compiler used on the host Unix computer, even if they are
+  both `g++`.
+    * I am not sure that I have migrated all the relevant and important compiler
+      flags from the microcontroller environment (AVR, ESP8266, etc.) to
+      the EpoxyDuino environment.
 
 <a name="FeedbackAndSupport"></a>
 ## Feedback and Support
