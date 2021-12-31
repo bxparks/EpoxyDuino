@@ -121,7 +121,21 @@ $ git clone https://github.com/bxparks/EpoxyDuino.git
 ```
 
 This will create a directory called
-`{sketchbook_directory}/libraries/EpoxyDuino`.
+`{sketchbook_directory}/libraries/EpoxyDuino`, and put you on the default
+`develop` branch.
+
+You can be slightly conservative and use the latest stable release on the
+`master` branch:
+```
+$ cd {sketchbook_directory}/libraries/EpoxyDuino
+$ git checkout master
+```
+
+You can go to a specific release by checking out the corresponding tag, for
+example `v1.2.0`:
+```
+$ git checkout v1.2.0
+```
 
 ### Dependencies
 
