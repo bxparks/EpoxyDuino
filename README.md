@@ -989,13 +989,20 @@ The following environments are Tier 2 because I do not test them often enough:
       has implemented a slightly different version of the "Arduino API".
     * EpoxyDuino does not support the idiosyncrasies of all of these
       different Arduino platforms.
+* There is yet another version of the "Arduino API" described by
+  [ArduinoCore-API](https://github.com/arduino/ArduinoCore-API).
+    * Some Arduino-branded microcontrollers have been migrated to
+      this new API (e.g. Nano Every, MKR1000, Nano 33 IoT).
+    * The new Arduino API has a number of backwards incompatible changes to
+      the old Arduino API.
+    * EpoxyDuino does *not* support this new Arduino API.
 * The Arduino API on a microcontroller automatically provides a `main()`
   function that calls the global `setup()` function, then calls the global
   `loop()` function forever, as fast as possible.
     * The EpoxyDuino version of `main()` calls `loop()` with a delay of 1 ms
       per iteration. Without the 1 ms delay, the application consumes 100% of
       CPU time on the host computer.
-    * This means that the maximum frequency that the `loop()` function is called
+    * This means that the `loop()` function is called at a maximum frequency of
       1000 Hz.
 * The Serial port emulation provided by `StdioSerial` may be buggy or behave in
   non-intuitive ways.
