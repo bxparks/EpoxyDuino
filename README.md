@@ -432,6 +432,7 @@ Arduino CLI. You need:
 
 Take a look at some of my GitHub Actions YAML config files:
 
+* [.github/workflows](.github/workflows) used by this project
 * https://github.com/bxparks/AceButton/tree/develop/.github/workflows
 * https://github.com/bxparks/AceCRC/tree/develop/.github/workflows
 * https://github.com/bxparks/AceCommon/tree/develop/.github/workflows
