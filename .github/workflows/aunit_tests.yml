@@ -1,5 +1,7 @@
 name: AUnit Tests
 
+# Trigger on 'push'. Some may find adding 'pull_request' to be useful, see
+# https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#pull_request
 on: [push]
 
 jobs:
