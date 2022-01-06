@@ -1,6 +1,8 @@
 # Changelog
 
 * Unreleased
+    * Add `strncasecmp_P()` to `pgmspace.h`. See
+      [PR#52](https://github.com/bxparks/EpoxyDuino/pull/52).
 * 1.2.0 (2021-12-29)
     * Simplify `StdioSerial`  class, see
       [Issue#43](https://github.com/bxparks/EpoxyDuino/issues/43).
