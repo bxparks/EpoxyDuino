@@ -6,8 +6,7 @@
       [PR#52](https://github.com/bxparks/EpoxyDuino/pull/52).
     * Add [Bugs and Limitations](README.md##BugsAndLimitations) section in
       README.md
-    * Add comment in
-      [github/workflows/aunit_tests.yml](github/workflows/aunit_tests.yml)
+    * Add comment in [aunit_tests.yml](.github/workflows/aunit_tests.yml)
       that a `pull_request` event may be useful. Upgrade GitHub docker image to
       Ubuntu 20.04.
 * 1.2.0 (2021-12-29)
