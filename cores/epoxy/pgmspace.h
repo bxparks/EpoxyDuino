@@ -46,6 +46,7 @@
 #define strcmp_P strcmp
 #define strncmp_P strncmp
 #define strcasecmp_P strcasecmp
+#define strncasecmp_P strncasecmp
 #define strchr_P strchr
 #define strrchr_P strrchr
 #define strstr_P strstr

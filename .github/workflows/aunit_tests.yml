@@ -1,11 +1,24 @@
 name: AUnit Tests
 
+# Trigger on 'push' on all branches.
+#
+# Some may find adding 'pull_request' to be useful (see
+# https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#pull_request).
+# But this may cause duplicate workflow iterations. Then consider restricting
+# the 'push' event to just the master branch, like this:
+#
+# on:
+#   push:
+#     branches:
+#     -master
+#   pull_request:
+#
 on: [push]
 
 jobs:
   build:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v2

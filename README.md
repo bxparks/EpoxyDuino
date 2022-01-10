@@ -68,7 +68,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 1.2.0 (2021-12-09)
+**Version**: 1.2.1 (2022-01-10)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -101,6 +101,7 @@ The disadvantages are:
     * [Mock Libraries](#MockLibraries)
 * [System Requirements](#SystemRequirements)
 * [License](#License)
+* [Bugs And Limitations](#BugsAndLimitations)
 * [Feedback and Support](#FeedbackAndSupport)
 * [Authors](#Authors)
 
@@ -121,7 +122,21 @@ $ git clone https://github.com/bxparks/EpoxyDuino.git
 ```
 
 This will create a directory called
-`{sketchbook_directory}/libraries/EpoxyDuino`.
+`{sketchbook_directory}/libraries/EpoxyDuino`, and put you on the default
+`develop` branch.
+
+You can be slightly conservative and use the latest stable release on the
+`master` branch:
+```
+$ cd {sketchbook_directory}/libraries/EpoxyDuino
+$ git checkout master
+```
+
+You can go to a specific release by checking out the corresponding tag, for
+example `v1.2.0`:
+```
+$ git checkout v1.2.0
+```
 
 ### Dependencies
 
@@ -417,6 +432,7 @@ Arduino CLI. You need:
 
 Take a look at some of my GitHub Actions YAML config files:
 
+* [.github/workflows](.github/workflows) used by this project
 * https://github.com/bxparks/AceButton/tree/develop/.github/workflows
 * https://github.com/bxparks/AceCRC/tree/develop/.github/workflows
 * https://github.com/bxparks/AceCommon/tree/develop/.github/workflows
@@ -506,7 +522,7 @@ more_clean:
 <a name="AdditionalDependencies"></a>
 ### Additional Dependencies
 
-Sometimes the `*.ino` file depend on additional header files within the same
+Sometimes the `*.ino` file depends on additional header files within the same
 directory. When these header files are modified, the `*.ino` file must be
 recompiled. These additional header files can be listed in the `DEPS` variable:
 
@@ -580,9 +596,10 @@ EPOXY_CORE_PATH := {my_own_directory}/cores/mycore
 
 The `library.json` file supports [PlaformIO in Native
 mode](https://docs.platformio.org/en/latest/platforms/native.html). It was added
-in [Issue #31](https://github.com/bxparks/EpoxyDuino/pull/31) (thanks
-https://github.com/lopsided98). However, this functionality is *unsupported*. If
-it becomes broken in the future, please send me a PR to fix it.
+in [PR#31](https://github.com/bxparks/EpoxyDuino/pull/31) (thanks
+[@lopsided98](https://github.com/lopsided98)). However, this functionality is
+*unsupported*. If it becomes broken in the future, please send me a PR to fix
+it.
 
 <a name="CommandLineFlagsAndArguments"></a>
 ### Command Line Flags and Arguments
@@ -958,10 +975,54 @@ The following environments are Tier 2 because I do not test them often enough:
 
 [MIT License](https://opensource.org/licenses/MIT)
 
-<a name="Bugs"></a>
+<a name="BugsAndLimitations"></a>
 ## Bugs and Limitations
 
-None that I am aware of.
+* There is no formal specification of the "Arduino API" that I am aware of.
+    * The reference documentation at https://www.arduino.cc/reference/ may be
+      good enough for beginners to blink a few LED lights, but it is not
+      sufficient to build an API emulator on a Linux machine.
+    * The version of the Arduino API implemented in this library has been
+      reverse engineered and inferred from
+      [ArduinoCore-avr](https://github.com/arduino/ArduinoCore-avr), either
+      v1.8.2 and v1.8.3 (I cannot remember).
+    * Each third party Arduino-compatible platform (e.g. STM32, ESP8266, ESP32)
+      has implemented a slightly different version of the "Arduino API".
+    * EpoxyDuino does not support the idiosyncrasies of all of these
+      different Arduino platforms.
+* There is yet another version of the "Arduino API" described by
+  [ArduinoCore-API](https://github.com/arduino/ArduinoCore-API).
+    * Some Arduino-branded microcontrollers have been migrated to
+      this new API (e.g. Nano Every, MKR1000, Nano 33 IoT).
+    * The new Arduino API has a number of backwards incompatible changes to
+      the old Arduino API.
+    * EpoxyDuino does *not* support this new Arduino API.
+* The Arduino API on a microcontroller automatically provides a `main()`
+  function that calls the global `setup()` function, then calls the global
+  `loop()` function forever, as fast as possible.
+    * The EpoxyDuino version of `main()` calls `loop()` with a delay of 1 ms
+      per iteration. Without the 1 ms delay, the application consumes 100% of
+      CPU time on the host computer.
+    * This means that the `loop()` function is called at a maximum frequency of
+      1000 Hz.
+* The Serial port emulation provided by `StdioSerial` may be buggy or behave in
+  non-intuitive ways.
+    * When the application is executed without input or output redirection, the
+      *stdin* is put into "raw" mode.
+    * If either the input or output is redirected (e.g. output redirected to a
+      file), then the *stdin* remains in normal Unix "cooked" mode.
+    * This allows the Arduino program to be piped into a screen pager (e.g.
+      `less(1)`, while allowing the `less(1)` program to support its normal
+      keyboard control keys.
+    * The *stdout* is wired directly into the POSIX `write()` function, which is
+      unbuffered. This may cause performance problems when generating a lot of
+      output.
+* The compiler used to compile the microcontroller binary may be significantly
+  different than the compiler used on the host Unix computer, even if they are
+  both `g++`.
+    * I am not sure that I have migrated all the relevant and important compiler
+      flags from the microcontroller environment (AVR, ESP8266, etc.) to
+      the EpoxyDuino environment.
 
 <a name="FeedbackAndSupport"></a>
 ## Feedback and Support
@@ -983,10 +1044,17 @@ people ask similar questions later.
 ## Authors
 
 * Created by Brian T. Park (brian@xparks.net).
-* Support for using as library, by making `main()` a weak reference, added
-  by Max Prokhorov (prokhorov.max@outlook.com).
+* Support for using as library, by making `main()` a weak reference,
+  by Max Prokhorov (@mcspr), see
+  [PR#6](https://github.com/bxparks/EpoxyDuino/pull/6).
 * Add `delayMicroSeconds()`, `WCharacter.h`, and stub implementations of
   `IPAddress.h`, `SPI.h`, by Erik Tideman (@ramboerik), see
-  [PR #18](https://github.com/bxparks/EpoxyDuino/pull/18).
-* Add `memcpy_P()` and `vsnprintf_P()` by @pmp-p,
-  [PR #28](https://github.com/bxparks/EpoxyDuino/pull/28).
+  [PR#18](https://github.com/bxparks/EpoxyDuino/pull/18).
+* Add `memcpy_P()` and `vsnprintf_P()` by Paul m. p. P. (@pmp-p),
+  [PR#28](https://github.com/bxparks/EpoxyDuino/pull/28).
+* Support PlatformIO native mode, by Ben Wolsieffer (@lopsided98),
+  see [PR#31](https://github.com/bxparks/EpoxyDuino/pull/31).
+* Move stdin processing to `yield()` by Ben Wolsieffer (@lopsided98),
+  see [PR#32](https://github.com/bxparks/EpoxyDuino/pull/32).
+* Simplify `StdioSerial` by Bernhard (@felias-fogg),
+  [Issue#43](https://github.com/bxparks/EpoxyDuino/issues/43).
