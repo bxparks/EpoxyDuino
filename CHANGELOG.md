@@ -1,8 +1,15 @@
 # Changelog
 
 * Unreleased
+* 1.2.1 (2022-01-10)
     * Add `strncasecmp_P()` to `pgmspace.h`. See
       [PR#52](https://github.com/bxparks/EpoxyDuino/pull/52).
+    * Add [Bugs and Limitations](README.md##BugsAndLimitations) section in
+      README.md
+    * Add comment in
+      [github/workflows/aunit_tests.yml](github/workflows/aunit_tests.yml)
+      that a `pull_request` event may be useful. Upgrade GitHub docker image to
+      Ubuntu 20.04.
 * 1.2.0 (2021-12-29)
     * Simplify `StdioSerial`  class, see
       [Issue#43](https://github.com/bxparks/EpoxyDuino/issues/43).
