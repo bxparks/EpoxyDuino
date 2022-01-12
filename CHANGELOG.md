@@ -4,7 +4,7 @@
 * 1.2.1 (2022-01-10)
     * Add `strncasecmp_P()` to `pgmspace.h`. See
       [PR#52](https://github.com/bxparks/EpoxyDuino/pull/52).
-    * Add [Bugs and Limitations](README.md##BugsAndLimitations) section in
+    * Add [Bugs and Limitations](README.md#BugsAndLimitations) section in
       README.md
     * Add comment in [aunit_tests.yml](.github/workflows/aunit_tests.yml)
       that a `pull_request` event may be useful. Upgrade GitHub docker image to
