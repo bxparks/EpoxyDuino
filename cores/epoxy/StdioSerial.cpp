@@ -12,6 +12,11 @@ size_t StdioSerial::write(uint8_t c) {
   return (status <= 0) ? 0 : 1;
 }
 
+size_t StdioSerial::write(const uint8_t* buf, size_t len) {
+  ssize_t status = ::write(STDOUT_FILENO, buf, len);
+  return (status <= 0) ? 0 : status;
+}
+
 int StdioSerial::read() {
   int ch = peek();
   bufch = -1;

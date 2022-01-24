@@ -18,15 +18,16 @@ class StdioSerial: public Stream {
     void begin(unsigned long /*baud*/) { bufch = -1; }
 
     size_t write(uint8_t c) override;
+    size_t write(const uint8_t* buf, size_t len);
 
     operator bool() { return true; }
 
     int available() override;
 
     int read() override;
-	
+
     int peek() override;
-    
+
   private:
     int bufch;
 };
