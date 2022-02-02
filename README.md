@@ -68,7 +68,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 1.2.1 (2022-01-10)
+**Version**: 1.2.2 (2022-02-02)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 

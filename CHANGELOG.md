@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* 1.2.2 (2022-02-02)
     * Add a `using Print::write` statement in `StdioSerial.h` to
       pull in all other overloaded `write()` methods from the parent `Print`
       class.
