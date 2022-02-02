@@ -68,7 +68,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 1.2.1 (2022-01-10)
+**Version**: 1.2.2 (2022-02-02)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -990,6 +990,9 @@ The following environments are Tier 2 because I do not test them often enough:
       has implemented a slightly different version of the "Arduino API".
     * EpoxyDuino does not support the idiosyncrasies of all of these
       different Arduino platforms.
+    * A few features relevant to the ESP8266 and ESP32 platforms can
+      be activated by setting `EPOXY_CORE := EPOXY_CORE_ESP8266` in the
+      `Makefile`. See [Alternate Arduino Core](#AlternateArduinoCore).
 * There is yet another version of the "Arduino API" described by
   [ArduinoCore-API](https://github.com/arduino/ArduinoCore-API).
     * Some Arduino-branded microcontrollers have been migrated to

@@ -4,27 +4,27 @@
  * Usage:
  *
  * To test keyboard input:
- *    $ ./echo.out
+ *    $ ./StdioSerialEcho.out
  *    Echo test
  *    'char' is signed.
  *    # Type 'a', 'b', 'c, 'd' on keyboad
  *    61('a')62('b')63('c')64('d')
  *
  * To test reading of 0xFF character (which should not interfere with -1 error):
- *    $ printf '\xff' | ./echo.out
+ *    $ printf '\xff' | ./StdioSerialEcho.out
  *    Echo test
  *    'char' is signed.
  *    FF(' ')
  *
  * To test reading from a directory, which generates a -1 error status when
  * ::read() is called:
- *    $ ./echo.out < .
+ *    $ ./StdioSerialEcho.out < .
  *    Echo test
  *    'char' is signed.
  *    # Nothing should print.
  *
  * To test piping:
- *    $ yes | ./echo.out
+ *    $ yes | ./StdioSerialEcho.out
  *    Echo test
  *    'char' is signed.
  *    79('y')0A(' ')79('y')0A(' ')[...]
@@ -87,9 +87,16 @@ void loopImplicitly() {
 //-----------------------------------------------------------------------------
 
 void setup(void) {
+#if ! defined(EPOXY_DUINO)
   delay(1000);
+#endif
+
   Serial.begin(115200);
   while (!Serial);
+
+#if defined(EPOXY_DUINO)
+  Serial.setLineModeUnix();
+#endif
 
   // Check if 'char' is a signed or unsigned on this system.
   Serial.println(F("Echo test"));
