@@ -422,9 +422,9 @@ These parent Makefiles can be used in Continuous Integration, as shown below.
 
 You can use EpoxyDuino to run continuous integration tests or
 validations on the [GitHub Actions](https://github.com/features/actions)
-infrastructure. The basic `ubuntu-18.04` docker image already contains the C++
-compiler and `make` binary. You don't need to install the Arduino IDE or the
-Arduino CLI. You need:
+infrastructure. The basic `ubuntu-18.04` or `ubuntu-20.04` docker image already
+contains the C++ compiler and `make` binary. You don't need to install the
+Arduino IDE or the Arduino CLI. You need:
 
 * EpoxyDuino,
 * your project that you want to test,
@@ -665,7 +665,7 @@ which are implemented:
     * `bit()`, `bitRead()`, `bitSet()`, `bitClear()`, `bitWrite()`
     * `random()`, `randomSeed()`, `map()`
     * `makeWord()`
-    * `F_CPU`, `clockCyclesPerMicrosecond(), `clockCyclesToMicroseconds(),
+    * `F_CPU`, `clockCyclesPerMicrosecond(), `clockCyclesToMicroseconds()`,
       `microsecondsToClockCycles()`
     * `HIGH`, `LOW`, `INPUT`, `OUTPUT`, `INPUT_PULLUP`
     * I2C and SPI pins: `SS`, `MOSI`, `MISO`, `SCK`, `SDA`, `SCL`
@@ -692,7 +692,7 @@ which are implemented:
     * `IPAddress` class
 * `WCharacter.h`
     * `isAlpha()`, `isAscii()`, etc.
-    * `toLowerCase(), `toUpperCase()`, etc
+    * `toLowerCase()`, `toUpperCase()`, etc
 * `Wire.h` (stub implementation)
 * `SPI.h` (stub implementation)
 
@@ -704,7 +704,7 @@ v1.8.2 or v1.8.3. A number of tweaks have been made to support slight variations
 in the API of other platforms, particularly the ESP8266 v2.7.4 and ESP32 v1.0.6
 cores.
 
-The `Print.printf()` function is an extension to the `Print` class that is
+The `Print::printf()` function is an extension to the `Print` class that is
 provided by many Arduino-compatible microcontrollers (but not the AVR
 controllers). It is implemented here for convenience. The size of the internal
 buffer is `250` characters, which can be changed by changing the
@@ -854,7 +854,8 @@ These 3 types are described in more detail below.
 ### Inherently Compatible Libraries
 
 Almost all libraries that I write will be inherently compatible with EpoxyDuino
-because EpoxyDuino is what I use to develop and test my libraries.
+because EpoxyDuino is what I use to develop and test my libraries. For example,
+the following should compile using EpoxyDuino:
 
 * AUnit (https://github.com/bxparks/AUnit)
 * AceButton (https://github.com/bxparks/AceButton)
@@ -906,7 +907,7 @@ compiles, but they do not allow us to actually verify that the library works as
 intended. This limitation may be sufficient for Continous Integration purposes.
 
 * Wire
-    * The `Wire.h` header file is provided automatically by the `<Arduino.h>`
+    * The `<Wire.h>` header file is provided automatically by the `<Arduino.h>`
       file in EpoxyDuino. No additional library needs to be added to the
       `ARDUINO_LIBS` variable in the `Makefile`.
     * It provides only mock functions of the actualy `Wire` library that
@@ -916,7 +917,7 @@ intended. This limitation may be sufficient for Continous Integration purposes.
       `Wire` is a separate (but built-in) library. In retrospect, it may have
       been better to split this file into a separate mock library.
 * SPI
-    * The `SPI.h` header file was contributed recently (see #18 and #19) and
+    * The `<SPI.h>` header file was contributed recently (see #18 and #19) and
       is included automatically by the `<Arduino.h>` file in EpoxyDuino.
     * It follows the same pattern as `Wire`, the header file provides only mock
       functions of the actual `SPI` library.
