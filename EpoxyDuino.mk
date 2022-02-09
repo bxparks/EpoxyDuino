@@ -181,9 +181,14 @@ OBJS += $(EPOXY_SRCS:%.cpp=%.o) $(APP_NAME).o
 $(APP_NAME).out: $(OBJS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
+ifeq ($(IS_CPP), true)
+$(APP_NAME).o: $(APP_NAME).cpp $(DEPS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -x c++ -c $<
+else
 # We need to add a rule to treat .ino file as just a  normal .cpp.
 $(APP_NAME).o: $(APP_NAME).ino $(DEPS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -x c++ -c $<
+endif
 
 %.o: %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
