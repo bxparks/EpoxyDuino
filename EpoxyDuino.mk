@@ -80,14 +80,17 @@ EPOXY_CORE_PATH ?= $(EPOXY_DUINO_DIR)/cores/epoxy
 # under directory given by EPOXY_DUINO_LIB_DIR, the directory given by
 # EPOXY_DUINO_PARENT_DIR to look for siblings, and each directory listed in
 # ARDUINO_LIB_DIRS.
-EPOXY_MODULES := $(foreach lib,$(ARDUINO_LIBS),${EPOXY_DUINO_LIB_DIR}/${lib})
-EPOXY_MODULES += $(foreach lib,$(ARDUINO_LIBS),${EPOXY_DUINO_PARENT_DIR}/${lib})
+EPOXY_MODULES := $(foreach lib,$(ARDUINO_LIBS),$(wildcard ${EPOXY_DUINO_LIB_DIR}/${lib}))
+EPOXY_MODULES += $(foreach lib,$(ARDUINO_LIBS),$(wildcard ${EPOXY_DUINO_PARENT_DIR}/${lib}))
 EPOXY_MODULES += \
 	$(foreach lib_dir,$(ARDUINO_LIB_DIRS),\
 		$(foreach lib,$(ARDUINO_LIBS),\
-			${lib_dir}/${lib}\
+			$(wildcard ${lib_dir}/${lib})\
 		)\
 	)
+# Old Arduino libraries place the header and source files right at the top.
+# New Arduino libraries tend to use the ./src/ subdirectory. We need to support both.
+EPOXY_MODULES += $(foreach module,$(EPOXY_MODULES),$(wildcard ${module}/src))
 
 # Compiler settings that depend on the OS (Linux, MacOS, FreeBSD). I'm not 100%
 # sure that these flags are correct, but they seem to work. Previously, I was
@@ -141,10 +144,8 @@ CPPFLAGS ?=
 CPPFLAGS += -D UNIX_HOST_DUINO -D EPOXY_DUINO -D $(EPOXY_CORE)
 # Add the header files for the Core files.
 CPPFLAGS += -I$(EPOXY_CORE_PATH)
-# Add the header files for libraries. Old Arduino libraries place the header
-# and source files right at the top. New Arduino libraries tend to use the
-# ./src/ subdirectory. We need to support both.
-CPPFLAGS_EXPANSION = -I$(module) -I$(module)/src
+# Add the header files for libraries.
+CPPFLAGS_EXPANSION = -I$(module)
 CPPFLAGS += $(foreach module,$(EPOXY_MODULES),$(CPPFLAGS_EXPANSION))
 
 # Linker settings (e.g. -lm).
