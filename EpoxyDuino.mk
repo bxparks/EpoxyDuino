@@ -180,7 +180,7 @@ OBJS += $(EPOXY_SRCS:%.cpp=%.o) $(APP_NAME).o
 $(APP_NAME).out: $(OBJS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
-ifeq ($(IS_CPP), true)
+ifeq ($(USE_CPP), true)
 $(APP_NAME).o: $(APP_NAME).cpp $(DEPS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -x c++ -c $<
 else
