@@ -94,7 +94,8 @@ The disadvantages are:
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
-    * [Unix Line Mode](#UnixLineMode)
+        * [Unix Line Mode](#UnixLineMode)
+        * [Enable Terminal Echo](#EnableTerminalEcho)
 * [Libraries and Mocks](#LibrariesAndMocks)
     * [Inherently Compatible Libraries](#InherentlyCompatibleLibraries)
     * [Emulation Libraries](#EmulationLibraries)
@@ -748,7 +749,7 @@ the program. But this convenience means that the Arduino program running under
 worth the trade-off.
 
 <a name="UnixLineMode"></a>
-### Unix Line Mode
+#### Unix Line Mode
 
 (Added in v1.2.0)
 
@@ -818,6 +819,31 @@ test(myTest) {
   PrintStr<200> observed;
   sayHello(observed);
   assertEqual(observed.cstr(), "hello\r\n");
+}
+```
+
+<a name="EnableTerminalEcho"></a>
+#### Enable Terminal Echno
+
+(Added in v1.2.3)
+
+By default, the `stdin` of the terminal is set to `NOECHO` mode for consistency
+with the actual serial port of an Arduino microcontroller. However when running
+a command line utility on a Unix terminal emulator using EpoxyDuino, it is often
+useful to enable echoing so that the characters being typed are visible.
+
+To enable echoing, call the `enableTerminalEcho()` function from the global
+`setup()`:
+
+```C++
+void setup() {
+  ...
+
+#if defined(EPOXY_DUINO)
+  enableTerminalEcho();
+#endif
+
+  ...
 }
 ```
 

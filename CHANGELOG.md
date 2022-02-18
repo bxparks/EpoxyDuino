@@ -3,6 +3,8 @@
 * Unreleased
     * Rename `unixhostduino_main()` to `epoxyduino_main()`, and make it
       static. No need to expose it publicly.
+    * Add `enableTerminalEcho()` function to enable terminal echoing.
+      See [Enable Terminal Echo](README.md#EnableTerminalEcho).
 * 1.2.2 (2022-02-02)
     * Add a `using Print::write` statement in `StdioSerial.h` to
       pull in all other overloaded `write()` methods from the parent `Print`

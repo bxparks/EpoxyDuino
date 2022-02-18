@@ -130,6 +130,17 @@ static int epoxyduino_main(int argc, char** argv) {
   }
 }
 
+void enableTerminalEcho() {
+  struct termios term;
+  if (tcgetattr(STDIN_FILENO, &term) == -1) {
+    return;
+  }
+  term.c_lflag |= ECHO;
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &term) == -1) {
+    return;
+  }
+}
+
 // Weak reference so that the calling code can provide its own main().
 int main(int argc, char** argv)
 __attribute__((weak));

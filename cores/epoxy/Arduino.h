@@ -254,6 +254,16 @@ extern int epoxy_argc;
 /** Copy of the argv parameter of main() as a global variable. */
 extern const char* const* epoxy_argv;
 
+/**
+ * Enable echoing of each character. By default echoing is turned off for
+ * consistency with the behavior of the serial port of a real Arduino
+ * microcontroller. However when running on a Unix machine inside a terminal
+ * emulator, it is often more useful to enable echoing so that the user can see
+ * the characters being typed. This function should be called in the setup(),
+ * guarded by a `#if defined(EPOXY_DUINO)`.
+ */
+void enableTerminalEcho();
+
 }
 
 // WMath prototypes
