@@ -116,7 +116,7 @@ int epoxy_argc;
 
 const char* const* epoxy_argv;
 
-int unixhostduino_main(int argc, char** argv) {
+static int epoxyduino_main(int argc, char** argv) {
   epoxy_argc = argc;
   epoxy_argv = argv;
 
@@ -135,7 +135,7 @@ int main(int argc, char** argv)
 __attribute__((weak));
 
 int main(int argc, char** argv) {
-  return unixhostduino_main(argc, argv);
+  return epoxyduino_main(argc, argv);
 }
 
 }

@@ -1,6 +1,8 @@
 # Changelog
 
 * Unreleased
+    * Rename `unixhostduino_main()` to `epoxyduino_main()`, and make it
+      static. No need to expose it publicly.
 * 1.2.2 (2022-02-02)
     * Add a `using Print::write` statement in `StdioSerial.h` to
       pull in all other overloaded `write()` methods from the parent `Print`
