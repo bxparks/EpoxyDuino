@@ -41,7 +41,7 @@ For actual application development, I have started to build a set of
 libraries within EpoxyDuino which emulate the versions that run the actual
 hardware:
 
-* EpoxyFS: emulation of the ESP8266 LittleFS or ESP32 LITTLEFS
+* EpoxyFS: emulation of the ESP8266 LittleFS or ESP32 LittleFS
 * EpoxyEepromAvr: emulation of AVR-flavored `EEPROM`
 * EpoxyEepromEsp: emulation of ESP-flavored `EEPROM`
 
@@ -51,7 +51,7 @@ portable to a vanilla Unix environment, EpoxyDuino may work well for you.
 Running an Arduino program natively on a desktop-class machine has some
 advantages:
 
-* The development cycle can be lot faster because the compilers on the the
+* The development cycle can be lot faster because the compilers on the
   desktop machines are a lot faster, and we also avoid the upload and flash
   process to the microcontroller.
 * The desktop machine can run unit tests which require too much flash or too
@@ -259,7 +259,7 @@ provided by the Arduino IDE:
   an `#include <Arduino.h>` include line at the top of the file. This is
   compatible with the Arduino IDE which automatically includes `<Arduino.h>`.
 * The Arduino IDE supports multiple `ino` files in the same directory. (I
-  believe it simply concontenates them all into a single file.) EpoxyDuino
+  believe it simply concatenates them all into a single file.) EpoxyDuino
   supports only one `ino` file in a given directory.
 * The Arduino IDE automatically generates forward declarations for functions
   that appear *after* the global `setup()` and `loop()` methods. In a normal
@@ -581,8 +581,8 @@ compiler, which will activate any code that is guarded by:
 
 If the `EPOXY_CORE` make variable is insufficient (e.g. because the appropriate
 changes have not been incorporated into `$(EPOXY_DUINO_DIR)/cores/epoxy/`), then
-the `EPOXY_CORE_PATH` provides an even bigger hammer. It defines the the
-full-path to the Arduino Core API files.
+the `EPOXY_CORE_PATH` provides an even bigger hammer. It defines the full-path
+to the Arduino Core API files.
 
 By default, this is set to `$(EPOXY_DUINO_DIR)/cores/epoxy`. You can create your
 own set of Arduino API files in a directory of your choosing, and set this
@@ -908,7 +908,7 @@ EpoxyDuino. I have provided 3 such libraries within the EpoxyDuino project:
 * [libraries/EpoxyFS](libraries/EpoxyFS)
     * An implementation of a file system compatible with
       [ESP8266 LittleFS](https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html)
-      and [ESP32 LITTLEFS](https://github.com/lorol/LITTLEFS).
+      and [ESP32 LitteFS](https://github.com/espressif/arduino-esp32/tree/master/libraries/LittleFS).
 * Two EEPROM implementations:
     * [libraries/EpoxyEepromAvr](libraries/EpoxyEepromAvr)
         * API compatible with
@@ -930,13 +930,13 @@ the Linux/MacOS host.
 Mock libraries are designed to run under EpoxyDuino and provide non-working API
 stubs of the target library. These libraries are useful to verify that a program
 compiles, but they do not allow us to actually verify that the library works as
-intended. This limitation may be sufficient for Continous Integration purposes.
+intended. This limitation may be sufficient for Continuous Integration purposes.
 
 * Wire
     * The `<Wire.h>` header file is provided automatically by the `<Arduino.h>`
       file in EpoxyDuino. No additional library needs to be added to the
       `ARDUINO_LIBS` variable in the `Makefile`.
-    * It provides only mock functions of the actualy `Wire` library that
+    * It provides only mock functions of the actually `Wire` library that
       is provided by real Arduino frameworks.
     * This was added very early in the development of EpoxyDuino so that I could
       compile some of my programs. I don't think I realized at the time that

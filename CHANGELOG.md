@@ -5,6 +5,8 @@
       static. No need to expose it publicly.
     * Add `enableTerminalEcho()` function to enable terminal echoing.
       See [Enable Terminal Echo](README.md#EnableTerminalEcho).
+    * Update examples and [EpoxyFS/README.md](libraries/EpoxyFS) to be
+      compatible with new `LittleFS` library in ESP32 >=2.0.0.
 * 1.2.2 (2022-02-02)
     * Add a `using Print::write` statement in `StdioSerial.h` to
       pull in all other overloaded `write()` methods from the parent `Print`
