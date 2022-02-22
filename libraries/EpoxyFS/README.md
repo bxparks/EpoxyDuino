@@ -9,6 +9,7 @@ that runs on a POSIX-like environment (Linux, MacOS, FreeBSD) using EpoxyDuino.
 ## Table of Contents
 
 * [Usage](#Usage)
+* [Examples](#Examples)
 * [Portability](#Portability)
 * [File System Location](#FileSystemLocation)
 * [Bugs and Limitations](#BugsAndLimitations)
@@ -20,7 +21,7 @@ The `FS` class in EpoxyFS is compatible with the `FS` class on the ESP8266 and
 ESP32 platforms. There are several implementations of the `FS` class on various
 platforms:
 
-* ESP8266
+* ESP8266 v3.0.2
     * Built-in library
       [LittleFS](https://github.com/esp8266/Arduino/tree/master/libraries/LittleFS)
     * Built-in library
@@ -30,25 +31,27 @@ platforms:
     * Built-in library
       [SDFS](https://github.com/esp8266/Arduino/tree/master/libraries/SDFS)
       (never tested by me)
-* ESP32
-    * For >= 2.0.0, provides built-in library
+* ESP32 v2.0.2
+    * Built-in library
       [LittleFS](https://github.com/espressif/arduino-esp32/tree/master/libraries/LittleFS)
-      which follows the same conventions as ESP8266
-    * For < 2.0.0, requires [LITTLEFS](https://github.com/lorol/LITTLEFS) third
-      party library.
+      which follows similar (but not always the same) conventions as the ESP8266
+      LittleFS library.
     * Built-in library
       [SPIFFS](https://github.com/espressif/arduino-esp32/tree/master/libraries/SPIFFS)
       (Not sure if this is deprecated as well.)
+    * Early versions of EpoxyFS tested against the
+      [LITTLEFS](https://github.com/lorol/LITTLEFS) third party library.
+      I'm not sure if this still works.
 
 Each file system automatically creates a global instance of `FS` class for
 convenience:
 
 * `LittleFS.h` libraries create instances named `LittleFS`
 * `LITTLEFS.h` library creates an instance named `LITTLEFS`
-* `EpoxyFS.h` library creates an instance named `fs::EpoxyFS` (in the `fs`
-  namespace to reduce name collision)
 * `SPIFFS.h` libraries create instances named `SPIFFS`
 * `SDFS.h` library creates a instance named `SDFS`
+* `EpoxyFS.h` library creates an instance named `fs::EpoxyFS` (in the `fs`
+  namespace to reduce name collision)
 
 To write code that's compatible across multiple platforms, including EpoxyDuino,
 I recommend using C-preprocessor macros to to set the correct file system
@@ -84,14 +87,14 @@ void setup() {
 
   SERIAL_PORT_MONITOR.println(F("Initializing file system"));
   if (! FILE_SYSTEM.begin()){
-    SERIAL_PORT_MONITOR.println(F("Failed to init file system"));
+    SERIAL_PORT_MONITOR.println(F("Error initializing file system"));
     // handle error
   }
 
   SERIAL_PORT_MONITOR.println(F("Opening myfile.txt"));
   fs::File file = FILE_SYSTEM.open("myfile.txt", "r");
   if (! file) {
-    SERIAL_PORT_MONITOR.println(F("Failed to open myfile.txt"));
+    SERIAL_PORT_MONITOR.println(F("Error opening myfile.txt"));
     // handle error
   }
 
@@ -104,10 +107,16 @@ void loop() {
 }
 ```
 
+<a name="Examples"></a>
+## Examples
+
+* [examples/HelloEpoxyFS](examples/HelloEpoxyFS)
+    * Tested on EpoxyDuino, ESP8266 3.0.2 and ESP32 2.0.2.
+
 <a name="Portability"></a>
 ## Portability
 
-I have tested mostly against the "LittleFS" libraries.
+I have tested mostly against the "LittleFS" libraries on the ESP8266 and ESP32.
 
 In my experience, the `fs::File` class is more compatible across different
 platforms than the `fs::FS` class. So instead of passing around the `fs::FS`

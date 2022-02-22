@@ -1,3 +1,95 @@
+/*
+Test writing and reading to the filesystem using EpoxyFS on EpoxyDuino, and
+LittleFS on ESP8266 and ESP32. The expected output on various platforms is shown
+below:
+
+EpoxyDuino:
+
+```
+== Initializing EpoxyFS
+== Formatting file system
+== List '/' using fs::Dir
+== Writing /testfile.txt
+Created /testfile.txt
+== List '/' using fs::Dir
+Dir entry #1
+Dir: fileName()=testfile.txt
+isDirectory=false
+fileSize()=0
+File: name()=testfile.txt
+fullName()=/testfile.txt
+size()=31
+== Reading /testfile.txt
+name(): testfile.txt
+fullName(): /testfile.txt
+This is a test
+42
+42.00
+2A
+== Recursively remove '/' using nftw()
+File: epoxyfsdata/testfile.txt
+Post Dir: epoxyfsdata
+== List '/' using fs::Dir
+== Done
+```
+
+# ESP8266:
+
+```
+== Initializing LittleFS
+== Formatting file system
+== List '/' using fs::Dir
+== Writing /testfile.txt
+Created /testfile.txt
+== List '/' using fs::Dir
+Dir entry #1
+Dir: fileName()=testfile.txt
+isDirectory=false
+fileSize()=31
+File: name()=testfile.txt
+fullName()=testfile.txt
+size()=31
+== Reading /testfile.txt
+name(): testfile.txt
+fullName(): /testfile.txt
+This is a test
+42
+42.00
+2A
+== Recursively remove '/' not implemented
+== List '/' using fs::Dir
+Dir entry #1
+Dir: fileName()=testfile.txt
+isDirectory=false
+fileSize()=31
+File: name()=testfile.txt
+fullName()=testfile.txt
+size()=31
+== Done
+```
+
+# ESP32:
+
+```
+== Initializing LittleFS
+== Formatting file system
+== List '/' not implemented on ESP32
+== Writing /testfile.txt
+Created /testfile.txt
+== List '/' not implemented on ESP32
+== Reading /testfile.txt
+name(): testfile.txt
+path()=/testfile.txt
+This is a test
+42
+42.00
+2A
+== Recursively remove '/' not implemented
+== List '/' not implemented on ESP32
+== Done
+```
+*/
+
 #include <stdio.h> // remove()
 #include <Arduino.h>
 
