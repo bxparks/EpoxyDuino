@@ -11,8 +11,8 @@
   #include <LittleFS.h>
   #define FILE_SYSTEM LittleFS
 #elif defined(ESP32)
-  #include <LITTLEFS.h>
-  #define FILE_SYSTEM LITTLEFS
+  #include <LittleFS.h>
+  #define FILE_SYSTEM LittleFS
 #else
   #error Unsupported platform
 #endif

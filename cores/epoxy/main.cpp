@@ -116,7 +116,7 @@ int epoxy_argc;
 
 const char* const* epoxy_argv;
 
-int unixhostduino_main(int argc, char** argv) {
+static int epoxyduino_main(int argc, char** argv) {
   epoxy_argc = argc;
   epoxy_argv = argv;
 
@@ -130,12 +130,23 @@ int unixhostduino_main(int argc, char** argv) {
   }
 }
 
+void enableTerminalEcho() {
+  struct termios term;
+  if (tcgetattr(STDIN_FILENO, &term) == -1) {
+    return;
+  }
+  term.c_lflag |= ECHO;
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &term) == -1) {
+    return;
+  }
+}
+
 // Weak reference so that the calling code can provide its own main().
 int main(int argc, char** argv)
 __attribute__((weak));
 
 int main(int argc, char** argv) {
-  return unixhostduino_main(argc, argv);
+  return epoxyduino_main(argc, argv);
 }
 
 }

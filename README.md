@@ -41,7 +41,7 @@ For actual application development, I have started to build a set of
 libraries within EpoxyDuino which emulate the versions that run the actual
 hardware:
 
-* EpoxyFS: emulation of the ESP8266 LittleFS or ESP32 LITTLEFS
+* EpoxyFS: emulation of the ESP8266 LittleFS or ESP32 LittleFS
 * EpoxyEepromAvr: emulation of AVR-flavored `EEPROM`
 * EpoxyEepromEsp: emulation of ESP-flavored `EEPROM`
 
@@ -51,7 +51,7 @@ portable to a vanilla Unix environment, EpoxyDuino may work well for you.
 Running an Arduino program natively on a desktop-class machine has some
 advantages:
 
-* The development cycle can be lot faster because the compilers on the the
+* The development cycle can be lot faster because the compilers on the
   desktop machines are a lot faster, and we also avoid the upload and flash
   process to the microcontroller.
 * The desktop machine can run unit tests which require too much flash or too
@@ -68,7 +68,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 1.2.2 (2022-02-02)
+**Version**: 1.2.3 (2022-02-24)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -91,10 +91,13 @@ The disadvantages are:
     * [Alternate Arduino Core](#AlternateArduinoCore)
     * [PlatformIO](#PlatformIO)
     * [Command Line Flags and Arguments](#CommandLineFlagsAndArguments)
+    * [Debugging](#Debugging)
+        * [Valgrind](#Valgrind)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
-    * [Unix Line Mode](#UnixLineMode)
+        * [Unix Line Mode](#UnixLineMode)
+        * [Enable Terminal Echo](#EnableTerminalEcho)
 * [Libraries and Mocks](#LibrariesAndMocks)
     * [Inherently Compatible Libraries](#InherentlyCompatibleLibraries)
     * [Emulation Libraries](#EmulationLibraries)
@@ -258,7 +261,7 @@ provided by the Arduino IDE:
   an `#include <Arduino.h>` include line at the top of the file. This is
   compatible with the Arduino IDE which automatically includes `<Arduino.h>`.
 * The Arduino IDE supports multiple `ino` files in the same directory. (I
-  believe it simply concontenates them all into a single file.) EpoxyDuino
+  believe it simply concatenates them all into a single file.) EpoxyDuino
   supports only one `ino` file in a given directory.
 * The Arduino IDE automatically generates forward declarations for functions
   that appear *after* the global `setup()` and `loop()` methods. In a normal
@@ -422,9 +425,9 @@ These parent Makefiles can be used in Continuous Integration, as shown below.
 
 You can use EpoxyDuino to run continuous integration tests or
 validations on the [GitHub Actions](https://github.com/features/actions)
-infrastructure. The basic `ubuntu-18.04` docker image already contains the C++
-compiler and `make` binary. You don't need to install the Arduino IDE or the
-Arduino CLI. You need:
+infrastructure. The basic `ubuntu-18.04` or `ubuntu-20.04` docker image already
+contains the C++ compiler and `make` binary. You don't need to install the
+Arduino IDE or the Arduino CLI. You need:
 
 * EpoxyDuino,
 * your project that you want to test,
@@ -580,8 +583,8 @@ compiler, which will activate any code that is guarded by:
 
 If the `EPOXY_CORE` make variable is insufficient (e.g. because the appropriate
 changes have not been incorporated into `$(EPOXY_DUINO_DIR)/cores/epoxy/`), then
-the `EPOXY_CORE_PATH` provides an even bigger hammer. It defines the the
-full-path to the Arduino Core API files.
+the `EPOXY_CORE_PATH` provides an even bigger hammer. It defines the full-path
+to the Arduino Core API files.
 
 By default, this is set to `$(EPOXY_DUINO_DIR)/cores/epoxy`. You can create your
 own set of Arduino API files in a directory of your choosing, and set this
@@ -645,6 +648,52 @@ Usage: ./CommandLine.out [--help|-h] [-s] [--include word] [--] [words ...]
 A more advanced example can be seen in
 [AUnit/TestRunner.cpp](https://github.com/bxparks/AUnit/blob/develop/src/aunit/TestRunner.cpp).
 
+<a name="Debugging"></a>
+### Debugging
+
+A huge benefit of compiling Arduino programs using EpoxyDuino is that all the
+debugging tools in a Unix environment become automatically available. For
+example:
+
+* External Tools
+    * [Valgrind](https://valgrind.org/docs/manual/quick-start.html)
+    * [GDB Debugger](https://www.sourceware.org/gdb/)
+* Compiler Options
+    * [Address Sanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer) (ASan)
+    * [Memory Sanitizer](https://github.com/google/sanitizers/wiki/MemorySanitizer)
+      (MSan)
+    * [Undefined Behavior Sanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html) (UBSan)
+
+I am not an expert on any of these sanitizers, and I have not enabled them by
+default in the `EpoxyDuino.mk` file. But you have the capability to add them to
+your `Makefile` through the `CXXFLAGS` variable.
+
+Below are some things that I have found useful in my own limited experience.
+
+<a name="Valgrind"></a>
+#### Valgrind
+
+I have found the [Valgrind](https://valgrind.org/docs/manual/quick-start.html)
+tool quite helpful in tracking down Segmentation Fault crashes. Here is a quick
+start:
+
+1. Compile your program using the `-g` flag.
+    * This is not strictly necessary but this will allow Valgrind to print line
+      numbers to the source code in the stack trace.
+    * Two ways:
+        * Pass the pass through the command line: `$ make CXXFLAGS=-g`
+        * Edit the `Makefile` and add a `CXXFLAGS += -g` directive
+          near the top of the file.
+2. Run the program under the `valgrind` program.
+    * Valgrind has tons of options and flags. Here are the flags that I use
+      (don't remember where I got them):
+        * `$ alias val='valgrind --tool=memcheck --leak-check=yes
+        --show-reachable=yes --num-callers=20 --track-fds=yes'`
+        * `$ val ./MyProgram.out`
+
+When the program crashes because of a `nullptr` dereference, Valgrind will show
+exactly where that happened in the source code.
+
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
 
@@ -665,7 +714,7 @@ which are implemented:
     * `bit()`, `bitRead()`, `bitSet()`, `bitClear()`, `bitWrite()`
     * `random()`, `randomSeed()`, `map()`
     * `makeWord()`
-    * `F_CPU`, `clockCyclesPerMicrosecond(), `clockCyclesToMicroseconds(),
+    * `F_CPU`, `clockCyclesPerMicrosecond(), `clockCyclesToMicroseconds()`,
       `microsecondsToClockCycles()`
     * `HIGH`, `LOW`, `INPUT`, `OUTPUT`, `INPUT_PULLUP`
     * I2C and SPI pins: `SS`, `MOSI`, `MISO`, `SCK`, `SDA`, `SCL`
@@ -692,7 +741,7 @@ which are implemented:
     * `IPAddress` class
 * `WCharacter.h`
     * `isAlpha()`, `isAscii()`, etc.
-    * `toLowerCase(), `toUpperCase()`, etc
+    * `toLowerCase()`, `toUpperCase()`, etc
 * `Wire.h` (stub implementation)
 * `SPI.h` (stub implementation)
 
@@ -704,7 +753,7 @@ v1.8.2 or v1.8.3. A number of tweaks have been made to support slight variations
 in the API of other platforms, particularly the ESP8266 v2.7.4 and ESP32 v1.0.6
 cores.
 
-The `Print.printf()` function is an extension to the `Print` class that is
+The `Print::printf()` function is an extension to the `Print` class that is
 provided by many Arduino-compatible microcontrollers (but not the AVR
 controllers). It is implemented here for convenience. The size of the internal
 buffer is `250` characters, which can be changed by changing the
@@ -748,7 +797,7 @@ the program. But this convenience means that the Arduino program running under
 worth the trade-off.
 
 <a name="UnixLineMode"></a>
-### Unix Line Mode
+#### Unix Line Mode
 
 (Added in v1.2.0)
 
@@ -821,6 +870,31 @@ test(myTest) {
 }
 ```
 
+<a name="EnableTerminalEcho"></a>
+#### Enable Terminal Echno
+
+(Added in v1.2.3)
+
+By default, the `stdin` of the terminal is set to `NOECHO` mode for consistency
+with the actual serial port of an Arduino microcontroller. However when running
+a command line utility on a Unix terminal emulator using EpoxyDuino, it is often
+useful to enable echoing so that the characters being typed are visible.
+
+To enable echoing, call the `enableTerminalEcho()` function from the global
+`setup()`:
+
+```C++
+void setup() {
+  ...
+
+#if defined(EPOXY_DUINO)
+  enableTerminalEcho();
+#endif
+
+  ...
+}
+```
+
 <a name="LibrariesAndMocks"></a>
 ## Libraries and Mocks
 
@@ -854,7 +928,8 @@ These 3 types are described in more detail below.
 ### Inherently Compatible Libraries
 
 Almost all libraries that I write will be inherently compatible with EpoxyDuino
-because EpoxyDuino is what I use to develop and test my libraries.
+because EpoxyDuino is what I use to develop and test my libraries. For example,
+the following should compile using EpoxyDuino:
 
 * AUnit (https://github.com/bxparks/AUnit)
 * AceButton (https://github.com/bxparks/AceButton)
@@ -881,7 +956,7 @@ EpoxyDuino. I have provided 3 such libraries within the EpoxyDuino project:
 * [libraries/EpoxyFS](libraries/EpoxyFS)
     * An implementation of a file system compatible with
       [ESP8266 LittleFS](https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html)
-      and [ESP32 LITTLEFS](https://github.com/lorol/LITTLEFS).
+      and [ESP32 LitteFS](https://github.com/espressif/arduino-esp32/tree/master/libraries/LittleFS).
 * Two EEPROM implementations:
     * [libraries/EpoxyEepromAvr](libraries/EpoxyEepromAvr)
         * API compatible with
@@ -903,20 +978,20 @@ the Linux/MacOS host.
 Mock libraries are designed to run under EpoxyDuino and provide non-working API
 stubs of the target library. These libraries are useful to verify that a program
 compiles, but they do not allow us to actually verify that the library works as
-intended. This limitation may be sufficient for Continous Integration purposes.
+intended. This limitation may be sufficient for Continuous Integration purposes.
 
 * Wire
-    * The `Wire.h` header file is provided automatically by the `<Arduino.h>`
+    * The `<Wire.h>` header file is provided automatically by the `<Arduino.h>`
       file in EpoxyDuino. No additional library needs to be added to the
       `ARDUINO_LIBS` variable in the `Makefile`.
-    * It provides only mock functions of the actualy `Wire` library that
+    * It provides only mock functions of the actually `Wire` library that
       is provided by real Arduino frameworks.
     * This was added very early in the development of EpoxyDuino so that I could
       compile some of my programs. I don't think I realized at the time that
       `Wire` is a separate (but built-in) library. In retrospect, it may have
       been better to split this file into a separate mock library.
 * SPI
-    * The `SPI.h` header file was contributed recently (see #18 and #19) and
+    * The `<SPI.h>` header file was contributed recently (see #18 and #19) and
       is included automatically by the `<Arduino.h>` file in EpoxyDuino.
     * It follows the same pattern as `Wire`, the header file provides only mock
       functions of the actual `SPI` library.
