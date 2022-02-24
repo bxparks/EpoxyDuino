@@ -16,6 +16,8 @@
         * This benchmark shows that `seek()` causes significant performance
           loss, even if the `seek()` offset is identical to the internal cursor,
           so might be expected to be optimized away.
+    * Add notes about [Debugging](README.md#Debugging) tools and options
+      under a Unix environment.
 * 1.2.2 (2022-02-02)
     * Add a `using Print::write` statement in `StdioSerial.h` to
       pull in all other overloaded `write()` methods from the parent `Print`

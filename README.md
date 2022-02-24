@@ -91,6 +91,8 @@ The disadvantages are:
     * [Alternate Arduino Core](#AlternateArduinoCore)
     * [PlatformIO](#PlatformIO)
     * [Command Line Flags and Arguments](#CommandLineFlagsAndArguments)
+    * [Debugging](#Debugging)
+        * [Valgrind](#Valgrind)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
@@ -645,6 +647,52 @@ Usage: ./CommandLine.out [--help|-h] [-s] [--include word] [--] [words ...]
 
 A more advanced example can be seen in
 [AUnit/TestRunner.cpp](https://github.com/bxparks/AUnit/blob/develop/src/aunit/TestRunner.cpp).
+
+<a name="Debugging"></a>
+### Debugging
+
+A huge benefit of compiling Arduino programs using EpoxyDuino is that all the
+debugging tools in a Unix environment become automatically available. For
+example:
+
+* External Tools
+    * [Valgrind](https://valgrind.org/docs/manual/quick-start.html)
+    * [GDB Debugger](https://www.sourceware.org/gdb/)
+* Compiler Options
+    * [Address Sanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer) (ASan)
+    * [Memory Sanitizer](https://github.com/google/sanitizers/wiki/MemorySanitizer)
+      (MSan)
+    * [Undefined Behavior Sanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html) (UBSan)
+
+I am not an expert on any of these sanitizers, and I have not enabled them by
+default in the `EpoxyDuino.mk` file. But you have the capability to add them to
+your `Makefile` through the `CXXFLAGS` variable.
+
+Below are some things that I have found useful in my own limited experience.
+
+<a name="Valgrind"></a>
+#### Valgrind
+
+I have found the [Valgrind](https://valgrind.org/docs/manual/quick-start.html)
+quite helpful in tracking down Segmentation Fault crashes. Here is a quick
+start:
+
+1. Compile your program using the `-g` flag.
+    * This is not strictly necessary but this will allow Valgrind to print line
+      numbers to the source code in the stack trace.
+    * Two ways:
+        * Pass the pass through the command line: `$ make CXXFLAGS=-g`
+        * Edit the `Makefile` and add a `CXXFLAGS += -g` directive
+          near the top of the file.
+2. Run the program under the `valgrind` program.
+    * Valgrind has tons of options and flags. Here are the flags that I use
+      (don't remember where I got them):
+        * `$ alias val='valgrind --tool=memcheck --leak-check=yes
+        --show-reachable=yes --num-callers=20 --track-fds=yes'`
+        * `$ val ./MyProgram.out`
+
+When the program crashes because of a `nullptr` dereference, Valgrind will show
+exactly where that happened in the source code.
 
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
