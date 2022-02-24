@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* 1.2.3 (2022-02-24)
     * Rename `unixhostduino_main()` to `epoxyduino_main()`, and make it
       static. No need to expose it publicly.
     * Add `enableTerminalEcho()` function to enable terminal echoing.
@@ -17,7 +18,7 @@
           loss, even if the `seek()` offset is identical to the internal cursor,
           so might be expected to be optimized away.
     * Add notes about [Debugging](README.md#Debugging) tools and options
-      under a Unix environment.
+      under a Unix environment, such as Valgrind.
 * 1.2.2 (2022-02-02)
     * Add a `using Print::write` statement in `StdioSerial.h` to
       pull in all other overloaded `write()` methods from the parent `Print`

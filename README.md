@@ -68,7 +68,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 1.2.2 (2022-02-02)
+**Version**: 1.2.3 (2022-02-24)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -674,7 +674,7 @@ Below are some things that I have found useful in my own limited experience.
 #### Valgrind
 
 I have found the [Valgrind](https://valgrind.org/docs/manual/quick-start.html)
-quite helpful in tracking down Segmentation Fault crashes. Here is a quick
+tool quite helpful in tracking down Segmentation Fault crashes. Here is a quick
 start:
 
 1. Compile your program using the `-g` flag.
