@@ -133,7 +133,7 @@ endif
 CXXFLAGS += $(EXTRA_CXXFLAGS)
 
 # Pre-processor flags (-I, -D, etc), mostly for header files.
-CPPFLAGS ?=
+CPPFLAGS += $(EXTRA_CPPFLAGS)
 # Define a macro to indicate that EpoxyDuino is being used. Defined here
 # instead of Arduino.h so that files like 'compat.h' can determine the
 # compile-time environment without having to include <Arduino.h>.

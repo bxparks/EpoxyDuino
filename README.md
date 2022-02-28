@@ -85,9 +85,11 @@ The disadvantages are:
     * [Continuous Integration](#ContinuousIntegration)
 * [Advanced Usage](#AdvancedUsage)
     * [Alternate C++ Compiler](#AlternateCompiler)
-    * [Generated Source Code](#GeneratedSourceCode)
+    * [Additional Cpp Flags](#AdditionalCppFlags)
+    * [Additional Compiler Flags](#AdditionalCompilerFlags)
     * [Additional Clean Up](#AdditionalCleanUp)
     * [Additional Dependencies](#AdditionalDependencies)
+    * [Generated Source Code](#GeneratedSourceCode)
     * [Alternate Arduino Core](#AlternateArduinoCore)
     * [PlatformIO](#PlatformIO)
     * [Command Line Flags and Arguments](#CommandLineFlagsAndArguments)
@@ -449,52 +451,35 @@ Take a look at some of my GitHub Actions YAML config files:
 ### Alternate C++ Compiler
 
 Normally the C++ compiler on Linux is `g++`. If you have `clang++` installed
-you can use that instead by specifying the `CXX` environment variable:
+you can use that instead by specifying the `CXX` makefile variable:
 ```
-$ CXX=clang++ make
+$ make CXX=clang++
 ```
-(This sets the `CXX` shell environment variable temporarily, for the duration of
-the `make` command, which causes `make` to set its internal `CXX` variable,
-which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
+(This tells `make` to set the `CXX` variable to `clang++` within the context of
+`EpoxyDuino.mk` which causes `clang++` to be used over the default `g++`.)
 
-The `clang++` compiler will sometimes catch a different set of programming
-errors.
+One reason to use `clang++` instead of `g++` is that the `clang++` compiler will
+sometimes catch a different set of programming errors.
 
-<a name="GeneratedSourceCode"></a>
-### Generated Source Code
+<a name="AdditionalCppFlags"></a>
+### Additional Cpp Flags
 
-If a source file is generated dynamically through a code generation script,
-and the source file is *not* checked into the repository because it is too
-dynamic, then you can include the generated files using the `GENERATED`
-and the `OBJS` variables.
-
-First add the list of generated files `*.cpp` or `*.c` to the `GENERATED`
-variable. Then add the corresponding `*.o` files to the `OBJS` variable, like
-this:
+You can pass additional flags to the C preprocessor through the `EXTRA_CPPFLAGS`
+variable, like this:
 
 ```
-GENERATED := foo.cpp bar.cpp
-OBJS := foo.o bar.o
-APP_NAME := {name of project}
-ARDUINO_LIBS := {list of dependent Arduino libraries}
-include {path/to/EpoxyDuino.mk}
-
-foo.cpp: foo.h generate_foo.sh
-    ./generate_foo.sh # creates 'foo.cpp'
-
-bar.cpp: bar.h generate_bar.sh
-    ./generate_bar.sh # creates 'bar.cpp'
-
-...
+$ make EXTRA_CPPFLAGS='-D DEBUG=2'
 ```
 
-The `*.o` files in `OJBS` are passed to the linker when the `app.out` binary
-file is created.
+<a name="AdditionalCompilerFlags"></a>
+### Additional Compiler Flags
 
-The `GENERATED` is not strictly required, since the default rules already know
-how to compile the `*.o` files from the `*.cpp` or `*.c` files. The primary
-effect of `GENERATED` currently is to cause the generated files to be removed
-when `make clean` is called.
+You can pass additional flags to the C++ compiler through the `EXTRA_CXXFLAGS`
+variable, like this:
+
+```
+$ make EXTRA_CXXFLAGS='-g'
+```
 
 <a name="AdditionalCleanUp"></a>
 ### Additional Clean Up
@@ -534,6 +519,42 @@ DEPS := header1.h header2.h
 ...
 include {path/to/EpoxyDuino.mk}
 ```
+
+<a name="GeneratedSourceCode"></a>
+### Generated Source Code
+
+If a source file is generated dynamically through a code generation script,
+and the source file is *not* checked into the repository because it is too
+dynamic, then you can include the generated files using the `GENERATED`
+and the `OBJS` variables.
+
+First add the list of generated files `*.cpp` or `*.c` to the `GENERATED`
+variable. Then add the corresponding `*.o` files to the `OBJS` variable, like
+this:
+
+```
+GENERATED := foo.cpp bar.cpp
+OBJS := foo.o bar.o
+APP_NAME := {name of project}
+ARDUINO_LIBS := {list of dependent Arduino libraries}
+include {path/to/EpoxyDuino.mk}
+
+foo.cpp: foo.h generate_foo.sh
+    ./generate_foo.sh # creates 'foo.cpp'
+
+bar.cpp: bar.h generate_bar.sh
+    ./generate_bar.sh # creates 'bar.cpp'
+
+...
+```
+
+The `*.o` files in `OJBS` are passed to the linker when the `app.out` binary
+file is created.
+
+The `GENERATED` is not strictly required, since the default rules already know
+how to compile the `*.o` files from the `*.cpp` or `*.c` files. The primary
+effect of `GENERATED` currently is to cause the generated files to be removed
+when `make clean` is called.
 
 <a name="AlternateArduinoCore"></a>
 ### Alternate Arduino Core
