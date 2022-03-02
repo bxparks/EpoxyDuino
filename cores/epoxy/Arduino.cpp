@@ -20,6 +20,7 @@
 // -----------------------------------------------------------------------
 // Arduino methods emulated in Unix
 // -----------------------------------------------------------------------
+static uint32_t arduinoPins = 0;
 
 void yield() {
   usleep(1000); // prevents program from consuming 100% CPU
@@ -27,9 +28,19 @@ void yield() {
 
 void pinMode(uint8_t /*pin*/, uint8_t /*mode*/) {}
 
-void digitalWrite(uint8_t /*pin*/, uint8_t /*val*/) {}
+void digitalWrite(uint8_t pin, uint8_t val) {
+  if( val == HIGH ){
+    arduinoPins |= ( 1LU << ( pin - 1 ) );
+  }
+  if( ( val == LOW ) && ( digitalRead( pin ) ) ){
+    arduinoPins ^= ( 1LU << ( pin - 1 ) );
+  }
+}
 
-int digitalRead(uint8_t /*pin*/) { return 0; }
+int digitalRead(uint8_t pin) { 
+  return ( arduinoPins & ( 1LU << ( pin - 1 ) ) ) == ( 1LU << ( pin - 1 ) ); 
+}
+
 
 int analogRead(uint8_t /*pin*/) { return 0; }
 
