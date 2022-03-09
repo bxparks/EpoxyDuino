@@ -2,6 +2,12 @@
 
 * Unreleased
     * Add support for `EXTRA_CPPFLAGS`, similar to `EXTRA_CXXFLAGS`.
+    * Add `digitalReadValue(pin, val)` to control the return value of
+      `digitalRead(pin)`.
+        * May be useful for testing purposes.
+        * The `pin` parameter must satisfy `0 <= pin < 32`, otherwise
+          `digitalReadValue()` is a no-op.
+        * See [PR#61](https://github.com/bxparks/EpoxyDuino/pull/61).
 * 1.2.3 (2022-02-24)
     * Rename `unixhostduino_main()` to `epoxyduino_main()`, and make it
       static. No need to expose it publicly.
