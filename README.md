@@ -95,6 +95,7 @@ The disadvantages are:
     * [Command Line Flags and Arguments](#CommandLineFlagsAndArguments)
     * [Debugging](#Debugging)
         * [Valgrind](#Valgrind)
+    * [Controlling digitalRead()](#DigitalReadValue)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
@@ -715,6 +716,45 @@ start:
 When the program crashes because of a `nullptr` dereference, Valgrind will show
 exactly where that happened in the source code.
 
+<a name="DigitalReadValue"></a>
+### Controlling digitalRead()
+
+By default, the `digitalRead(pin)` function simply returns a 0, because
+EpoxyDuino does not actually have any hardware pins. For testing purposes, it
+can be useful to control the value that will be returned by a `digitalRead()`.
+
+The `digitalReadValue(pin, val)` function sets the value that will be returned
+by the corresponding `digitalRead(pin)`. Here is an example of how this can be
+used:
+
+```C++
+#include <Arduino.h>
+
+...
+const uint8_t PIN = 8;
+
+void something() {
+  uint8_t val = digitalRead(PIN); // val == 0
+
+#if defined(EPOXY_DUINO)
+  digitalReadValue(PIN, 1);
+#endif
+  val = digitalRead(PIN); // val == 1
+
+#if defined(EPOXY_DUINO)
+  digitalReadValue(PIN, 0);
+#endif
+  val = digitalRead(PIN); // val == 0
+}
+```
+
+The `#if defined(EPOXY_DUINO)` is recommended because `digitalReadValue()` is
+not a standard Arduino function. It is defined only in EpoxyDuino.
+
+The `pin` parameter should satisfy `0 <= pin < 32`. If `pin >= 32`, then
+`digitalReadValue()` is a no-op and the corresponding `digitalRead(pin)` will
+always return 0.
+
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
 
@@ -1157,3 +1197,6 @@ people ask similar questions later.
   see [PR#32](https://github.com/bxparks/EpoxyDuino/pull/32).
 * Simplify `StdioSerial` by Bernhard (@felias-fogg),
   [Issue#43](https://github.com/bxparks/EpoxyDuino/issues/43).
+* Add `digitalReadValue(pin, val)` to control the return value of
+  `digitalRead(pin)` by @CaioPellicani. See
+  [PR#61](https://github.com/bxparks/EpoxyDuino/pull/61).
