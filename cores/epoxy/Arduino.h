@@ -223,6 +223,18 @@ void analogWrite(uint8_t pin, int val);
   void analogWriteRange(uint32_t range);
 #endif
 
+/**
+ * Control the value that will be returned by `digitalRead(pin)` by setting it
+ * to `val`, where `val` is either 0 or 1. This may be useful for testing
+ * purposes. This works only if `pin < 32` because the underlying implementation
+ * uses a `uint32_t` for storage. If the `pin` is greater than or equal to 32,
+ * this function does nothing and `digitalRead(pin)` will return 0.
+ *
+ * This function is available only on EpoxyDuino. It is not a standard Arduino
+ * function, so it is not available when compiling on actual hardware.
+ */
+void digitalReadValue(uint8_t pin, uint8_t val);
+
 unsigned long millis();
 unsigned long micros();
 void delay(unsigned long ms);
