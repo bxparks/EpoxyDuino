@@ -11,6 +11,8 @@
     * Add an empty `EpoxyDuino.h` at the top level to stop warning messages from
       the Arduino IDE. Fixes
       [Issue#62](https://github.com/bxparks/EpoxyDuino/issues/62).
+    * Add [libraries/EpoxyMockSTM32RTC](libraries/EpoxyMockSTM32RTC) which is a
+      mock of the [STM32RTC](https://github.com/stm32duino/STM32RTC) library.
 * 1.2.3 (2022-02-24)
     * Rename `unixhostduino_main()` to `epoxyduino_main()`, and make it
       static. No need to expose it publicly.

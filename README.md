@@ -34,6 +34,8 @@ also provided:
   TimerOne (https://github.com/PaulStoffregen/TimerOne) library
 * [EpoxyMockFastLED](libraries/EpoxyMockFastLED/): mock version of the
   FastLED (https://github.com/FastLED/FastLED) library
+* [EpoxyMockSTM32RTC](libraries/EpoxyMockSTM32RTC/): mock version of the
+  STM32RTC (https://github.com/stm32duino/STM32RTC) library
 
 These mock libraries may be sufficient for a CI pipeline.
 
@@ -1065,6 +1067,9 @@ intended. This limitation may be sufficient for Continuous Integration purposes.
       library.
 * [EpoxyMockFastLED](libraries/EpoxyMockFastLED/)
     * Mock version of the FastLED (https://github.com/FastLED/FastLED) library.
+* [EpoxyMockSTM32RTC](libraries/EpoxyMockSTM32RTC/)
+    * Mock version of the STM32RTC (https://github.com/stm32duino/STM32RTC)
+      library.
 * EspMock (https://github.com/hsaturn/EspMock)
     * This is a separate project that provides various mocks for functions and
       libraries included with the ESP8266 and the ESP32 processors.
@@ -1076,18 +1081,18 @@ intended. This limitation may be sufficient for Continuous Integration purposes.
 
 This library has Tier 1 support on:
 
-* Ubuntu 18.04
-    * g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
-    * clang++ 8.0.0-3~ubuntu18.04.2
-    * clang++ 6.0.0-1ubuntu2
-    * GNU Make 4.1
-* Ubuntu 20.04
-    * g++ (Ubuntu 9.3.0-10ubuntu2) 9.3.0
+* Ubuntu 20.04.4 LTS
+    * g++ (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
     * clang++ version 10.0.0-4ubuntu1
     * GNU Make 4.2.1
 
 The following environments are Tier 2 because I do not test them often enough:
 
+* Ubuntu 18.04 LTS
+    * g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+    * clang++ 8.0.0-3~ubuntu18.04.2
+    * clang++ 6.0.0-1ubuntu2
+    * GNU Make 4.1
 * Raspbian GNU/Linux 10 (buster)
     * On Raspberry Pi Model 3B
     * g++ (Raspbian 8.3.0-6+rpi1) 8.3.0
