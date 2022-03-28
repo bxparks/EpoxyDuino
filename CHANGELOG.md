@@ -1,6 +1,20 @@
 # Changelog
 
 * Unreleased
+* 1.3.0 (2022-03-28)
+    * Add support for `EXTRA_CPPFLAGS`, similar to `EXTRA_CXXFLAGS`.
+    * Add `digitalReadValue(pin, val)` to control the return value of
+      `digitalRead(pin)`.
+        * May be useful for testing purposes.
+        * The `pin` parameter must satisfy `0 <= pin < 32`, otherwise
+          `digitalReadValue()` is a no-op.
+        * See [PR#61](https://github.com/bxparks/EpoxyDuino/pull/61).
+    * Add an empty `EpoxyDuino.h` at the top level to stop warning messages from
+      the Arduino IDE.
+        * Fixes [Issue#62](https://github.com/bxparks/EpoxyDuino/issues/62).
+    * Add [libraries/EpoxyMockSTM32RTC](libraries/EpoxyMockSTM32RTC)
+        * A mock of the [STM32RTC](https://github.com/stm32duino/STM32RTC)
+          library.
 * 1.2.3 (2022-02-24)
     * Rename `unixhostduino_main()` to `epoxyduino_main()`, and make it
       static. No need to expose it publicly.

@@ -14,8 +14,8 @@
 #define EPOXY_DUINO_EPOXY_ARDUINO_H
 
 // xx.yy.zz => xxyyzz (without leading 0)
-#define EPOXY_DUINO_VERSION 10203
-#define EPOXY_DUINO_VERSION_STRING "1.2.3"
+#define EPOXY_DUINO_VERSION 10300
+#define EPOXY_DUINO_VERSION_STRING "1.3.0"
 
 #include <algorithm> // min(), max()
 #include <cmath> // abs()
@@ -222,6 +222,18 @@ void analogWrite(uint8_t pin, int val);
   void analogWriteResolution(int res);
   void analogWriteRange(uint32_t range);
 #endif
+
+/**
+ * Control the value that will be returned by `digitalRead(pin)` by setting it
+ * to `val`, where `val` is either 0 or 1. This may be useful for testing
+ * purposes. This works only if `pin < 32` because the underlying implementation
+ * uses a `uint32_t` for storage. If the `pin` is greater than or equal to 32,
+ * this function does nothing and `digitalRead(pin)` will return 0.
+ *
+ * This function is available only on EpoxyDuino. It is not a standard Arduino
+ * function, so it is not available when compiling on actual hardware.
+ */
+void digitalReadValue(uint8_t pin, uint8_t val);
 
 unsigned long millis();
 unsigned long micros();

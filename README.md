@@ -34,6 +34,8 @@ also provided:
   TimerOne (https://github.com/PaulStoffregen/TimerOne) library
 * [EpoxyMockFastLED](libraries/EpoxyMockFastLED/): mock version of the
   FastLED (https://github.com/FastLED/FastLED) library
+* [EpoxyMockSTM32RTC](libraries/EpoxyMockSTM32RTC/): mock version of the
+  STM32RTC (https://github.com/stm32duino/STM32RTC) library
 
 These mock libraries may be sufficient for a CI pipeline.
 
@@ -41,9 +43,10 @@ For actual application development, I have started to build a set of
 libraries within EpoxyDuino which emulate the versions that run the actual
 hardware:
 
-* EpoxyFS: emulation of the ESP8266 LittleFS or ESP32 LittleFS
-* EpoxyEepromAvr: emulation of AVR-flavored `EEPROM`
-* EpoxyEepromEsp: emulation of ESP-flavored `EEPROM`
+* [EpoxyFS](libraries/EpoxyFS): emulation of the ESP8266 LittleFS or
+  ESP32 LittleFS filesystem
+* [EpoxyEepromAvr](libraries/EpoxyEepromAvr): emulation of AVR-flavored `EEPROM`
+* [EpoxyEepromEsp](libraries/EpoxyEepromEsp): emulation of ESP-flavored `EEPROM`
 
 If your program has limited hardware dependencies so that it is conceptually
 portable to a vanilla Unix environment, EpoxyDuino may work well for you.
@@ -68,7 +71,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 1.2.3 (2022-02-24)
+**Version**: 1.3.0 (2022-03.28)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -85,14 +88,17 @@ The disadvantages are:
     * [Continuous Integration](#ContinuousIntegration)
 * [Advanced Usage](#AdvancedUsage)
     * [Alternate C++ Compiler](#AlternateCompiler)
-    * [Generated Source Code](#GeneratedSourceCode)
+    * [Additional Cpp Flags](#AdditionalCppFlags)
+    * [Additional Compiler Flags](#AdditionalCompilerFlags)
     * [Additional Clean Up](#AdditionalCleanUp)
     * [Additional Dependencies](#AdditionalDependencies)
+    * [Generated Source Code](#GeneratedSourceCode)
     * [Alternate Arduino Core](#AlternateArduinoCore)
     * [PlatformIO](#PlatformIO)
     * [Command Line Flags and Arguments](#CommandLineFlagsAndArguments)
     * [Debugging](#Debugging)
         * [Valgrind](#Valgrind)
+    * [Controlling digitalRead()](#DigitalReadValue)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
@@ -449,52 +455,35 @@ Take a look at some of my GitHub Actions YAML config files:
 ### Alternate C++ Compiler
 
 Normally the C++ compiler on Linux is `g++`. If you have `clang++` installed
-you can use that instead by specifying the `CXX` environment variable:
+you can use that instead by specifying the `CXX` makefile variable:
 ```
-$ CXX=clang++ make
+$ make CXX=clang++
 ```
-(This sets the `CXX` shell environment variable temporarily, for the duration of
-the `make` command, which causes `make` to set its internal `CXX` variable,
-which causes `EpoxyDuino.mk` to use `clang++` over the default `g++`.)
+(This tells `make` to set the `CXX` variable to `clang++` within the context of
+`EpoxyDuino.mk` which causes `clang++` to be used over the default `g++`.)
 
-The `clang++` compiler will sometimes catch a different set of programming
-errors.
+One reason to use `clang++` instead of `g++` is that the `clang++` compiler will
+sometimes catch a different set of programming errors.
 
-<a name="GeneratedSourceCode"></a>
-### Generated Source Code
+<a name="AdditionalCppFlags"></a>
+### Additional Cpp Flags
 
-If a source file is generated dynamically through a code generation script,
-and the source file is *not* checked into the repository because it is too
-dynamic, then you can include the generated files using the `GENERATED`
-and the `OBJS` variables.
-
-First add the list of generated files `*.cpp` or `*.c` to the `GENERATED`
-variable. Then add the corresponding `*.o` files to the `OBJS` variable, like
-this:
+You can pass additional flags to the C preprocessor through the `EXTRA_CPPFLAGS`
+variable, like this:
 
 ```
-GENERATED := foo.cpp bar.cpp
-OBJS := foo.o bar.o
-APP_NAME := {name of project}
-ARDUINO_LIBS := {list of dependent Arduino libraries}
-include {path/to/EpoxyDuino.mk}
-
-foo.cpp: foo.h generate_foo.sh
-    ./generate_foo.sh # creates 'foo.cpp'
-
-bar.cpp: bar.h generate_bar.sh
-    ./generate_bar.sh # creates 'bar.cpp'
-
-...
+$ make EXTRA_CPPFLAGS='-D DEBUG=2'
 ```
 
-The `*.o` files in `OJBS` are passed to the linker when the `app.out` binary
-file is created.
+<a name="AdditionalCompilerFlags"></a>
+### Additional Compiler Flags
 
-The `GENERATED` is not strictly required, since the default rules already know
-how to compile the `*.o` files from the `*.cpp` or `*.c` files. The primary
-effect of `GENERATED` currently is to cause the generated files to be removed
-when `make clean` is called.
+You can pass additional flags to the C++ compiler through the `EXTRA_CXXFLAGS`
+variable, like this:
+
+```
+$ make EXTRA_CXXFLAGS='-g'
+```
 
 <a name="AdditionalCleanUp"></a>
 ### Additional Clean Up
@@ -534,6 +523,42 @@ DEPS := header1.h header2.h
 ...
 include {path/to/EpoxyDuino.mk}
 ```
+
+<a name="GeneratedSourceCode"></a>
+### Generated Source Code
+
+If a source file is generated dynamically through a code generation script,
+and the source file is *not* checked into the repository because it is too
+dynamic, then you can include the generated files using the `GENERATED`
+and the `OBJS` variables.
+
+First add the list of generated files `*.cpp` or `*.c` to the `GENERATED`
+variable. Then add the corresponding `*.o` files to the `OBJS` variable, like
+this:
+
+```
+GENERATED := foo.cpp bar.cpp
+OBJS := foo.o bar.o
+APP_NAME := {name of project}
+ARDUINO_LIBS := {list of dependent Arduino libraries}
+include {path/to/EpoxyDuino.mk}
+
+foo.cpp: foo.h generate_foo.sh
+    ./generate_foo.sh # creates 'foo.cpp'
+
+bar.cpp: bar.h generate_bar.sh
+    ./generate_bar.sh # creates 'bar.cpp'
+
+...
+```
+
+The `*.o` files in `OJBS` are passed to the linker when the `app.out` binary
+file is created.
+
+The `GENERATED` is not strictly required, since the default rules already know
+how to compile the `*.o` files from the `*.cpp` or `*.c` files. The primary
+effect of `GENERATED` currently is to cause the generated files to be removed
+when `make clean` is called.
 
 <a name="AlternateArduinoCore"></a>
 ### Alternate Arduino Core
@@ -694,6 +719,45 @@ start:
 When the program crashes because of a `nullptr` dereference, Valgrind will show
 exactly where that happened in the source code.
 
+<a name="DigitalReadValue"></a>
+### Controlling digitalRead()
+
+By default, the `digitalRead(pin)` function simply returns a 0, because
+EpoxyDuino does not actually have any hardware pins. For testing purposes, it
+can be useful to control the value that will be returned by a `digitalRead()`.
+
+The `digitalReadValue(pin, val)` function sets the value that will be returned
+by the corresponding `digitalRead(pin)`. Here is an example of how this can be
+used:
+
+```C++
+#include <Arduino.h>
+
+...
+const uint8_t PIN = 8;
+
+void something() {
+  uint8_t val = digitalRead(PIN); // val == 0
+
+#if defined(EPOXY_DUINO)
+  digitalReadValue(PIN, 1);
+#endif
+  val = digitalRead(PIN); // val == 1
+
+#if defined(EPOXY_DUINO)
+  digitalReadValue(PIN, 0);
+#endif
+  val = digitalRead(PIN); // val == 0
+}
+```
+
+The `#if defined(EPOXY_DUINO)` is recommended because `digitalReadValue()` is
+not a standard Arduino function. It is defined only in EpoxyDuino.
+
+The `pin` parameter should satisfy `0 <= pin < 32`. If `pin >= 32`, then
+`digitalReadValue()` is a no-op and the corresponding `digitalRead(pin)` will
+always return 0.
+
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
 
@@ -799,8 +863,6 @@ worth the trade-off.
 <a name="UnixLineMode"></a>
 #### Unix Line Mode
 
-(Added in v1.2.0)
-
 The `Print` class in the Arduino API implements the `Print::println()` function
 by printing the DOS line terminator characters `\r\n`. This decision make sense
 when the serial port of the microcontroller is connected to a serial terminal,
@@ -872,8 +934,6 @@ test(myTest) {
 
 <a name="EnableTerminalEcho"></a>
 #### Enable Terminal Echno
-
-(Added in v1.2.3)
 
 By default, the `stdin` of the terminal is set to `NOECHO` mode for consistency
 with the actual serial port of an Arduino microcontroller. However when running
@@ -1004,6 +1064,9 @@ intended. This limitation may be sufficient for Continuous Integration purposes.
       library.
 * [EpoxyMockFastLED](libraries/EpoxyMockFastLED/)
     * Mock version of the FastLED (https://github.com/FastLED/FastLED) library.
+* [EpoxyMockSTM32RTC](libraries/EpoxyMockSTM32RTC/)
+    * Mock version of the STM32RTC (https://github.com/stm32duino/STM32RTC)
+      library.
 * EspMock (https://github.com/hsaturn/EspMock)
     * This is a separate project that provides various mocks for functions and
       libraries included with the ESP8266 and the ESP32 processors.
@@ -1015,18 +1078,18 @@ intended. This limitation may be sufficient for Continuous Integration purposes.
 
 This library has Tier 1 support on:
 
-* Ubuntu 18.04
-    * g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
-    * clang++ 8.0.0-3~ubuntu18.04.2
-    * clang++ 6.0.0-1ubuntu2
-    * GNU Make 4.1
-* Ubuntu 20.04
-    * g++ (Ubuntu 9.3.0-10ubuntu2) 9.3.0
+* Ubuntu 20.04.4 LTS
+    * g++ (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
     * clang++ version 10.0.0-4ubuntu1
     * GNU Make 4.2.1
 
 The following environments are Tier 2 because I do not test them often enough:
 
+* Ubuntu 18.04 LTS
+    * g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+    * clang++ 8.0.0-3~ubuntu18.04.2
+    * clang++ 6.0.0-1ubuntu2
+    * GNU Make 4.1
 * Raspbian GNU/Linux 10 (buster)
     * On Raspberry Pi Model 3B
     * g++ (Raspbian 8.3.0-6+rpi1) 8.3.0
@@ -1136,3 +1199,6 @@ people ask similar questions later.
   see [PR#32](https://github.com/bxparks/EpoxyDuino/pull/32).
 * Simplify `StdioSerial` by Bernhard (@felias-fogg),
   [Issue#43](https://github.com/bxparks/EpoxyDuino/issues/43).
+* Add `digitalReadValue(pin, val)` to control the return value of
+  `digitalRead(pin)` by @CaioPellicani. See
+  [PR#61](https://github.com/bxparks/EpoxyDuino/pull/61).
