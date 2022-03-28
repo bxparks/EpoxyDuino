@@ -43,9 +43,10 @@ For actual application development, I have started to build a set of
 libraries within EpoxyDuino which emulate the versions that run the actual
 hardware:
 
-* EpoxyFS: emulation of the ESP8266 LittleFS or ESP32 LittleFS
-* EpoxyEepromAvr: emulation of AVR-flavored `EEPROM`
-* EpoxyEepromEsp: emulation of ESP-flavored `EEPROM`
+* [EpoxyFS](libraries/EpoxyFS): emulation of the ESP8266 LittleFS or
+  ESP32 LittleFS filesystem
+* [EpoxyEepromAvr](libraries/EpoxyEepromAvr): emulation of AVR-flavored `EEPROM`
+* [EpoxyEepromEsp](libraries/EpoxyEepromEsp): emulation of ESP-flavored `EEPROM`
 
 If your program has limited hardware dependencies so that it is conceptually
 portable to a vanilla Unix environment, EpoxyDuino may work well for you.
@@ -70,7 +71,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 1.2.3 (2022-02-24)
+**Version**: 1.3.0 (2022-03.28)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -862,8 +863,6 @@ worth the trade-off.
 <a name="UnixLineMode"></a>
 #### Unix Line Mode
 
-(Added in v1.2.0)
-
 The `Print` class in the Arduino API implements the `Print::println()` function
 by printing the DOS line terminator characters `\r\n`. This decision make sense
 when the serial port of the microcontroller is connected to a serial terminal,
@@ -935,8 +934,6 @@ test(myTest) {
 
 <a name="EnableTerminalEcho"></a>
 #### Enable Terminal Echno
-
-(Added in v1.2.3)
 
 By default, the `stdin` of the terminal is set to `NOECHO` mode for consistency
 with the actual serial port of an Arduino microcontroller. However when running
