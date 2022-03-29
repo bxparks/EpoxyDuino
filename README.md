@@ -691,7 +691,7 @@ example:
 
 I am not an expert on any of these sanitizers, and I have not enabled them by
 default in the `EpoxyDuino.mk` file. But you have the capability to add them to
-your `Makefile` through the `CXXFLAGS` variable.
+your `Makefile` through the `EXTRA_CXXFLAGS` variable.
 
 Below are some things that I have found useful in my own limited experience.
 
@@ -706,8 +706,8 @@ start:
     * This is not strictly necessary but this will allow Valgrind to print line
       numbers to the source code in the stack trace.
     * Two ways:
-        * Pass the pass through the command line: `$ make CXXFLAGS=-g`
-        * Edit the `Makefile` and add a `CXXFLAGS += -g` directive
+        * Pass the pass through the command line: `$ make EXTRA_CXXFLAGS=-g`
+        * Edit the `Makefile` and add a `EXTRA_CXXFLAGS = -g` directive
           near the top of the file.
 2. Run the program under the `valgrind` program.
     * Valgrind has tons of options and flags. Here are the flags that I use
