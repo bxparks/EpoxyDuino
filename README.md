@@ -1126,30 +1126,30 @@ intended. This limitation may be sufficient for Continuous Integration purposes.
 <a name="SystemRequirements"></a>
 ## System Requirements
 
-This library has Tier 1 support on:
+**Tier 1: Fully Supported**
+
+The following environments are tested on each release of EpoxyDuino.
 
 * Ubuntu 20.04.4 LTS
     * g++ (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
     * clang++ version 10.0.0-4ubuntu1
     * GNU Make 4.2.1
 
-The following environments are Tier 2 because I do not test them often enough:
+**Tier 2: Best Effort**
 
-* Ubuntu 18.04 LTS
-    * g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
-    * clang++ 8.0.0-3~ubuntu18.04.2
-    * clang++ 6.0.0-1ubuntu2
-    * GNU Make 4.1
+The following environments are supported on a best-effort basis because I don't
+test them as often.
+
+* MacOS 11.6.7 (Big Sur)
+    * clang++
+        * Apple clang version 13.0.0 (clang-1300.0.29.30)
+        * Target: x86_64-apple-darwin20.6.0
+    * GNU Make 3.81
+    * (Big Sur is the latest MacOS that I am able to test.)
 * Raspbian GNU/Linux 10 (buster)
     * On Raspberry Pi Model 3B
     * g++ (Raspbian 8.3.0-6+rpi1) 8.3.0
     * GNU Make 4.2.1
-* MacOS 10.14.5 (Mojave)
-    * clang++ Apple LLVM version 10.0.1
-    * GNU Make 3.81
-* MacOS 10.14.6 (Mojave)
-    * Apple clang version 11.0.0 (clang-1100.0.33.17)
-    * GNU Make 3.81
 * FreeBSD 12.2
     * c++: FreeBSD clang version 10.0.1
     * gmake: GNU Make 4.3
@@ -1157,6 +1157,24 @@ The following environments are Tier 2 because I do not test them often enough:
         * You can type `gmake` instead of `make`, or
         * Create a shell alias, or
         * Create a symlink in `~/bin`.
+
+**Tier 3: Should Work**
+
+The following environments are older OS environments which worked with previous
+versions of EpoxyDuino. But I am not able to validate them against the latest
+EpoxyDuino release because I no longer use these older environments.
+
+* Ubuntu 18.04 LTS
+    * g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+    * clang++ 8.0.0-3~ubuntu18.04.2
+    * clang++ 6.0.0-1ubuntu2
+    * GNU Make 4.1
+* MacOS 10.14.6 (Mojave)
+    * Apple clang version 11.0.0 (clang-1100.0.33.17)
+    * GNU Make 3.81
+* MacOS 10.14.5 (Mojave)
+    * clang++ Apple LLVM version 10.0.1
+    * GNU Make 3.81
 
 <a name="License"></a>
 ## License
