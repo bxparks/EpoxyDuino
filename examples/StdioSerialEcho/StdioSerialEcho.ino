@@ -110,5 +110,8 @@ void setup(void) {
 }
 
 void loop(void) {
+  // Choose one of the following loop methods to test Serial.available()
+  // and Serial.read(). Both of them should work:
   loopExplicitly();
+  //loopImplicitly();
 }
