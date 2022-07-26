@@ -65,6 +65,10 @@ unsigned long micros() {
   return us;
 }
 
+void tone(uint8_t /*_pin*/, unsigned int /*frequency*/, unsigned long /*duration*/) {}
+
+void noTone(uint8_t /*_pin*/) {}
+
 void delay(unsigned long ms) {
   usleep(ms * 1000);
 }
