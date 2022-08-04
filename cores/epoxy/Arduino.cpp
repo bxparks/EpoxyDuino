@@ -22,6 +22,7 @@
 // -----------------------------------------------------------------------
 
 static uint32_t digitalPinValues = 0;
+static uint32_t digitalWritePinValues = 0;
 
 void yield() {
   usleep(1000); // prevents program from consuming 100% CPU
@@ -29,7 +30,21 @@ void yield() {
 
 void pinMode(uint8_t /*pin*/, uint8_t /*mode*/) {}
 
-void digitalWrite(uint8_t /*pin*/, uint8_t /*val*/) {}
+void digitalWrite(uint8_t pin, uint8_t val) {
+  if (pin >= 32) return;
+
+  if (val == 0) {
+    digitalWritePinValues &= ~(((uint32_t)0x1) << pin);
+  } else {
+    digitalWritePinValues |= ((uint32_t)0x1) << pin;
+  }
+}
+
+uint8_t digitalWriteValue(uint8_t pin) {
+  if (pin >= 32) return 0;
+
+  return (digitalWritePinValues & (((uint32_t)0x1) << pin)) != 0;
+}
 
 int digitalRead(uint8_t pin) {
   if (pin >= 32) return 0;
