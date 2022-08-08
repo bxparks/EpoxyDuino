@@ -21,7 +21,7 @@
 // Arduino methods emulated in Unix
 // -----------------------------------------------------------------------
 
-static uint32_t digitalPinValues = 0;
+static uint32_t digitalReadPinValues = 0;
 static uint32_t digitalWritePinValues = 0;
 
 void yield() {
@@ -49,16 +49,16 @@ uint8_t digitalWriteValue(uint8_t pin) {
 int digitalRead(uint8_t pin) {
   if (pin >= 32) return 0;
 
-  return (digitalPinValues & (((uint32_t)0x1) << pin)) != 0;
+  return (digitalReadPinValues & (((uint32_t)0x1) << pin)) != 0;
 }
 
 void digitalReadValue(uint8_t pin, uint8_t val) {
   if (pin >= 32) return;
 
   if (val == 0) {
-    digitalPinValues &= ~(((uint32_t)0x1) << pin);
+    digitalReadPinValues &= ~(((uint32_t)0x1) << pin);
   } else {
-    digitalPinValues |= ((uint32_t)0x1) << pin;
+    digitalReadPinValues |= ((uint32_t)0x1) << pin;
   }
 }
 
