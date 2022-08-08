@@ -99,6 +99,9 @@ The disadvantages are:
     * [Debugging](#Debugging)
         * [Valgrind](#Valgrind)
     * [Controlling digitalRead()](#DigitalReadValue)
+    * [Mock digitalRead() digitalWrite()](#MockDigitalReadDigitalWrite)
+        * [digitalReadValue()](#DigitalReadValue)
+        * [digitalWriteValue()](#DigitalWriteValue)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
@@ -719,15 +722,26 @@ start:
 When the program crashes because of a `nullptr` dereference, Valgrind will show
 exactly where that happened in the source code.
 
+<a name="MockDigitalReadDigitalWrite"></a>
+### Mock digitalRead() digitalWrite()
+
+EpoxyDuino is not meant to simulate the actual hardware. By default, the
+`digitalRead()` and `digitalWrite()` functions are just stubs which don't do
+anything. However for testing purposes, it is sometimes useful to be able to
+control the values returned by `digitalRead()`, or to read back the value
+written by `digitalWrite()`. Two functions have been added to EpoxyDuino to
+allow this mocking.
+
+* `void digitalReadValue(uint8_t pin, uint8_t val)`
+    * Sets the value returned by the subsequent `digitalRead(pin)` to `val`.
+* `uint8_t digitalWriteValue(uint8_t pin)`
+    * Returns the value of the most recent `digitalWrite(pin, val)`.
+
 <a name="DigitalReadValue"></a>
-### Controlling digitalRead()
+#### digitalReadValue()
 
-By default, the `digitalRead(pin)` function simply returns a 0, because
-EpoxyDuino does not actually have any hardware pins. For testing purposes, it
-can be useful to control the value that will be returned by a `digitalRead()`.
-
-The `digitalReadValue(pin, val)` function sets the value that will be returned
-by the corresponding `digitalRead(pin)`. Here is an example of how this can be
+The `digitalReadValue(pin, val)` function sets the value that will be
+returned by the next `digitalRead(pin)`. Here is an example of how this can be
 used:
 
 ```C++
@@ -757,6 +771,42 @@ not a standard Arduino function. It is defined only in EpoxyDuino.
 The `pin` parameter should satisfy `0 <= pin < 32`. If `pin >= 32`, then
 `digitalReadValue()` is a no-op and the corresponding `digitalRead(pin)` will
 always return 0.
+
+<a name="DigitalWriteValue"></a>
+#### digitalWriteValue()
+
+The `digitalWriteValue(pin)` function returns the value that was written by
+the most recent `digitalWrite(pin, val)`. Here is an example of how this can be
+used:
+
+```C++
+#include <Arduino.h>
+
+...
+const uint8_t PIN = 9;
+
+void something() {
+  digitalWrite(PIN, 0);
+
+#if defined(EPOXY_DUINO)
+  uint8_t val = digitalWriteValue(PIN);
+  // val should be 0
+#endif
+
+  digitalWrite(PIN, 1);
+
+#if defined(EPOXY_DUINO)
+  uint8_t val = digitalWriteValue(PIN);
+  // val should be 1
+#endif
+}
+```
+
+The `#if defined(EPOXY_DUINO)` is recommended because `digitalWriteValue()` is
+not a standard Arduino function. It is defined only in EpoxyDuino.
+
+The `pin` parameter should satisfy `0 <= pin < 32`. If `pin >= 32`, then
+`digitalWriteValue()` always return 0.
 
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
@@ -1204,3 +1254,5 @@ people ask similar questions later.
   [PR#61](https://github.com/bxparks/EpoxyDuino/pull/61).
 * Add `tone()` and `noTone()` stubs, by @kwisii in
   [PR#69](https://github.com/bxparks/EpoxyDuino/pull/69).
+* Add `uint8_t digitalWriteValue(pin)` by @kwisii in
+  [PR#68](https://github.com/bxparks/EpoxyDuino/pull/68).
