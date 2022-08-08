@@ -1,6 +1,8 @@
 # Changelog
 
 * Unreleased
+    * Add `tone()` and `noTone()` stubs, @kwisii in
+      [PR#69](https://github.com/bxparks/EpoxyDuino/pull/69).
 * 1.3.0 (2022-03-28)
     * Add support for `EXTRA_CPPFLAGS`, similar to `EXTRA_CXXFLAGS`.
     * Add `digitalReadValue(pin, val)` to control the return value of

@@ -1202,3 +1202,5 @@ people ask similar questions later.
 * Add `digitalReadValue(pin, val)` to control the return value of
   `digitalRead(pin)` by @CaioPellicani. See
   [PR#61](https://github.com/bxparks/EpoxyDuino/pull/61).
+* Add `tone()` and `noTone()` stubs, by @kwisii in
+  [PR#69](https://github.com/bxparks/EpoxyDuino/pull/69).
