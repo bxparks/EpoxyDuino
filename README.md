@@ -98,7 +98,6 @@ The disadvantages are:
     * [Command Line Flags and Arguments](#CommandLineFlagsAndArguments)
     * [Debugging](#Debugging)
         * [Valgrind](#Valgrind)
-    * [Controlling digitalRead()](#DigitalReadValue)
     * [Mock digitalRead() digitalWrite()](#MockDigitalReadDigitalWrite)
         * [digitalReadValue()](#DigitalReadValue)
         * [digitalWriteValue()](#DigitalWriteValue)
