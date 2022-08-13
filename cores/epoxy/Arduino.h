@@ -14,8 +14,8 @@
 #define EPOXY_DUINO_EPOXY_ARDUINO_H
 
 // xx.yy.zz => xxyyzz (without leading 0)
-#define EPOXY_DUINO_VERSION 10300
-#define EPOXY_DUINO_VERSION_STRING "1.3.0"
+#define EPOXY_DUINO_VERSION 10301
+#define EPOXY_DUINO_VERSION_STRING "1.3.1"
 
 #include <algorithm> // min(), max()
 #include <cmath> // abs()
@@ -235,6 +235,18 @@ void analogWrite(uint8_t pin, int val);
  */
 void digitalReadValue(uint8_t pin, uint8_t val);
 
+/**
+ * Check the value that was set by `digitalWrite(pin, val)` by setting the interesting
+ * pin argument, where the return value is either 0 or 1. This may be useful for testing
+ * purposes. This works only if `pin < 32` because the underlying implementation
+ * uses a `uint32_t` for storage. If the `pin` is greater than or equal to 32,
+ * this function will return 0.
+ *
+ * This function is available only on EpoxyDuino. It is not a standard Arduino
+ * function, so it is not available when compiling on actual hardware.
+ */
+uint8_t digitalWriteValue(uint8_t pin);
+
 unsigned long millis();
 unsigned long micros();
 void delay(unsigned long ms);
@@ -277,6 +289,9 @@ extern const char* const* epoxy_argv;
 void enableTerminalEcho();
 
 }
+
+void tone(uint8_t _pin, unsigned int frequency, unsigned long duration = 0);
+void noTone(uint8_t _pin);
 
 // WMath prototypes
 long random(long);

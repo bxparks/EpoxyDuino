@@ -71,7 +71,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 1.3.0 (2022-03.28)
+**Version**: 1.3.1 (2022-08-13)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -99,6 +99,9 @@ The disadvantages are:
     * [Debugging](#Debugging)
         * [Valgrind](#Valgrind)
     * [Controlling digitalRead()](#DigitalReadValue)
+    * [Mock digitalRead() digitalWrite()](#MockDigitalReadDigitalWrite)
+        * [digitalReadValue()](#DigitalReadValue)
+        * [digitalWriteValue()](#DigitalWriteValue)
 * [Supported Arduino Features](#SupportedArduinoFeatures)
     * [Arduino Functions](#ArduinoFunctions)
     * [Serial Port Emulation](#SerialPortEmulation)
@@ -691,7 +694,7 @@ example:
 
 I am not an expert on any of these sanitizers, and I have not enabled them by
 default in the `EpoxyDuino.mk` file. But you have the capability to add them to
-your `Makefile` through the `CXXFLAGS` variable.
+your `Makefile` through the `EXTRA_CXXFLAGS` variable.
 
 Below are some things that I have found useful in my own limited experience.
 
@@ -706,8 +709,8 @@ start:
     * This is not strictly necessary but this will allow Valgrind to print line
       numbers to the source code in the stack trace.
     * Two ways:
-        * Pass the pass through the command line: `$ make CXXFLAGS=-g`
-        * Edit the `Makefile` and add a `CXXFLAGS += -g` directive
+        * Pass the pass through the command line: `$ make EXTRA_CXXFLAGS=-g`
+        * Edit the `Makefile` and add a `EXTRA_CXXFLAGS = -g` directive
           near the top of the file.
 2. Run the program under the `valgrind` program.
     * Valgrind has tons of options and flags. Here are the flags that I use
@@ -719,15 +722,26 @@ start:
 When the program crashes because of a `nullptr` dereference, Valgrind will show
 exactly where that happened in the source code.
 
+<a name="MockDigitalReadDigitalWrite"></a>
+### Mock digitalRead() digitalWrite()
+
+EpoxyDuino is not meant to simulate the actual hardware. By default, the
+`digitalRead()` and `digitalWrite()` functions are just stubs which don't do
+anything. However for testing purposes, it is sometimes useful to be able to
+control the values returned by `digitalRead()`, or to read back the value
+written by `digitalWrite()`. Two functions have been added to EpoxyDuino to
+allow this mocking.
+
+* `void digitalReadValue(uint8_t pin, uint8_t val)`
+    * Sets the value returned by the subsequent `digitalRead(pin)` to `val`.
+* `uint8_t digitalWriteValue(uint8_t pin)`
+    * Returns the value of the most recent `digitalWrite(pin, val)`.
+
 <a name="DigitalReadValue"></a>
-### Controlling digitalRead()
+#### digitalReadValue()
 
-By default, the `digitalRead(pin)` function simply returns a 0, because
-EpoxyDuino does not actually have any hardware pins. For testing purposes, it
-can be useful to control the value that will be returned by a `digitalRead()`.
-
-The `digitalReadValue(pin, val)` function sets the value that will be returned
-by the corresponding `digitalRead(pin)`. Here is an example of how this can be
+The `digitalReadValue(pin, val)` function sets the value that will be
+returned by the next `digitalRead(pin)`. Here is an example of how this can be
 used:
 
 ```C++
@@ -757,6 +771,42 @@ not a standard Arduino function. It is defined only in EpoxyDuino.
 The `pin` parameter should satisfy `0 <= pin < 32`. If `pin >= 32`, then
 `digitalReadValue()` is a no-op and the corresponding `digitalRead(pin)` will
 always return 0.
+
+<a name="DigitalWriteValue"></a>
+#### digitalWriteValue()
+
+The `digitalWriteValue(pin)` function returns the value that was written by
+the most recent `digitalWrite(pin, val)`. Here is an example of how this can be
+used:
+
+```C++
+#include <Arduino.h>
+
+...
+const uint8_t PIN = 9;
+
+void something() {
+  digitalWrite(PIN, 0);
+
+#if defined(EPOXY_DUINO)
+  uint8_t val = digitalWriteValue(PIN);
+  // val should be 0
+#endif
+
+  digitalWrite(PIN, 1);
+
+#if defined(EPOXY_DUINO)
+  uint8_t val = digitalWriteValue(PIN);
+  // val should be 1
+#endif
+}
+```
+
+The `#if defined(EPOXY_DUINO)` is recommended because `digitalWriteValue()` is
+not a standard Arduino function. It is defined only in EpoxyDuino.
+
+The `pin` parameter should satisfy `0 <= pin < 32`. If `pin >= 32`, then
+`digitalWriteValue()` always return 0.
 
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
@@ -1076,30 +1126,30 @@ intended. This limitation may be sufficient for Continuous Integration purposes.
 <a name="SystemRequirements"></a>
 ## System Requirements
 
-This library has Tier 1 support on:
+**Tier 1: Fully Supported**
+
+The following environments are tested on each release of EpoxyDuino.
 
 * Ubuntu 20.04.4 LTS
     * g++ (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
     * clang++ version 10.0.0-4ubuntu1
     * GNU Make 4.2.1
 
-The following environments are Tier 2 because I do not test them often enough:
+**Tier 2: Best Effort**
 
-* Ubuntu 18.04 LTS
-    * g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
-    * clang++ 8.0.0-3~ubuntu18.04.2
-    * clang++ 6.0.0-1ubuntu2
-    * GNU Make 4.1
+The following environments are supported on a best-effort basis because I don't
+test them as often.
+
+* MacOS 11.6.7 (Big Sur)
+    * clang++
+        * Apple clang version 13.0.0 (clang-1300.0.29.30)
+        * Target: x86_64-apple-darwin20.6.0
+    * GNU Make 3.81
+    * (Big Sur is the latest MacOS that I am able to test.)
 * Raspbian GNU/Linux 10 (buster)
     * On Raspberry Pi Model 3B
     * g++ (Raspbian 8.3.0-6+rpi1) 8.3.0
     * GNU Make 4.2.1
-* MacOS 10.14.5 (Mojave)
-    * clang++ Apple LLVM version 10.0.1
-    * GNU Make 3.81
-* MacOS 10.14.6 (Mojave)
-    * Apple clang version 11.0.0 (clang-1100.0.33.17)
-    * GNU Make 3.81
 * FreeBSD 12.2
     * c++: FreeBSD clang version 10.0.1
     * gmake: GNU Make 4.3
@@ -1107,6 +1157,24 @@ The following environments are Tier 2 because I do not test them often enough:
         * You can type `gmake` instead of `make`, or
         * Create a shell alias, or
         * Create a symlink in `~/bin`.
+
+**Tier 3: Should Work**
+
+The following environments are older OS environments which worked with previous
+versions of EpoxyDuino. But I am not able to validate them against the latest
+EpoxyDuino release because I no longer use these older environments.
+
+* Ubuntu 18.04 LTS
+    * g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+    * clang++ 8.0.0-3~ubuntu18.04.2
+    * clang++ 6.0.0-1ubuntu2
+    * GNU Make 4.1
+* MacOS 10.14.6 (Mojave)
+    * Apple clang version 11.0.0 (clang-1100.0.33.17)
+    * GNU Make 3.81
+* MacOS 10.14.5 (Mojave)
+    * clang++ Apple LLVM version 10.0.1
+    * GNU Make 3.81
 
 <a name="License"></a>
 ## License
@@ -1202,3 +1270,7 @@ people ask similar questions later.
 * Add `digitalReadValue(pin, val)` to control the return value of
   `digitalRead(pin)` by @CaioPellicani. See
   [PR#61](https://github.com/bxparks/EpoxyDuino/pull/61).
+* Add `tone()` and `noTone()` stubs, by @kwisii in
+  [PR#69](https://github.com/bxparks/EpoxyDuino/pull/69).
+* Add `uint8_t digitalWriteValue(pin)` by @kwisii in
+  [PR#68](https://github.com/bxparks/EpoxyDuino/pull/68).

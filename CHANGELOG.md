@@ -1,6 +1,12 @@
 # Changelog
 
 * Unreleased
+* 1.3.1 (2022-08-13)
+    * Add `tone()` and `noTone()` stubs. By @kwisii in
+      [PR#69](https://github.com/bxparks/EpoxyDuino/pull/69).
+    * Add `uint8_t digitalWriteValue(pin)` which returns the value of the
+      most recent `digitalWrite(pin, val)`. By @kwisii in
+      [PR#68](https://github.com/bxparks/EpoxyDuino/pull/68).
 * 1.3.0 (2022-03-28)
     * Add support for `EXTRA_CPPFLAGS`, similar to `EXTRA_CXXFLAGS`.
     * Add `digitalReadValue(pin, val)` to control the return value of
