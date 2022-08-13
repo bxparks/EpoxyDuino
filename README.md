@@ -827,7 +827,7 @@ which are implemented:
     * `bit()`, `bitRead()`, `bitSet()`, `bitClear()`, `bitWrite()`
     * `random()`, `randomSeed()`, `map()`
     * `makeWord()`
-    * `F_CPU`, `clockCyclesPerMicrosecond(), `clockCyclesToMicroseconds()`,
+    * `F_CPU`, `clockCyclesPerMicrosecond()`, `clockCyclesToMicroseconds()`,
       `microsecondsToClockCycles()`
     * `HIGH`, `LOW`, `INPUT`, `OUTPUT`, `INPUT_PULLUP`
     * I2C and SPI pins: `SS`, `MOSI`, `MISO`, `SCK`, `SDA`, `SCL`
