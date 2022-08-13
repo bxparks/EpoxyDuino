@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* 1.3.1 (2022-08-13)
     * Add `tone()` and `noTone()` stubs. By @kwisii in
       [PR#69](https://github.com/bxparks/EpoxyDuino/pull/69).
     * Add `uint8_t digitalWriteValue(pin)` which returns the value of the

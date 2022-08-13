@@ -14,8 +14,8 @@
 #define EPOXY_DUINO_EPOXY_ARDUINO_H
 
 // xx.yy.zz => xxyyzz (without leading 0)
-#define EPOXY_DUINO_VERSION 10300
-#define EPOXY_DUINO_VERSION_STRING "1.3.0"
+#define EPOXY_DUINO_VERSION 10301
+#define EPOXY_DUINO_VERSION_STRING "1.3.1"
 
 #include <algorithm> // min(), max()
 #include <cmath> // abs()
