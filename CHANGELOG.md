@@ -1,6 +1,8 @@
 # Changelog
 
 * Unreleased
+    * Add `memcmp_P()` by @dawidchyrzynski in
+      [PR#71](https://github.com/bxparks/EpoxyDuino/pull/71).
 * 1.3.1 (2022-08-13)
     * Add `tone()` and `noTone()` stubs. By @kwisii in
       [PR#69](https://github.com/bxparks/EpoxyDuino/pull/69).

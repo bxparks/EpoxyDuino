@@ -848,7 +848,7 @@ which are implemented:
       `pgm_read_float()`, `pgm_read_ptr()`
     * `strlen_P()`, `strcat_P()`, `strcpy_P()`, `strncpy_P()`, `strcmp_P()`,
       `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`, `strstr_P()`
-    * `memcpy_P()`, `vsnprintf_P()`
+    * `memcpy_P()`, `memcmp_P()`, `vsnprintf_P()`
     * `PROGMEM`, `PGM_P`, `PGM_VOID_P`, `PSTR()`
 * `IPAddress.h`
     * `IPAddress` class
@@ -1273,3 +1273,5 @@ people ask similar questions later.
   [PR#69](https://github.com/bxparks/EpoxyDuino/pull/69).
 * Add `uint8_t digitalWriteValue(pin)` by @kwisii in
   [PR#68](https://github.com/bxparks/EpoxyDuino/pull/68).
+* Add `memcmp_P()` by @dawidchyrzynski in
+  [PR#71](https://github.com/bxparks/EpoxyDuino/pull/71).
