@@ -306,13 +306,20 @@ uint16_t makeWord(byte h, byte l);
 #endif
 
 #if defined(EPOXY_CORE_ESP8266)
-  void setTZ(const char* tz);
+  inline void setTZ(const char* /*tz*/) {}
 
-  void configTime(int timezone, int daylightOffset_sec, const char* server1,
-      const char* server2 = nullptr, const char* server3 = nullptr);
+  inline void configTime(
+      int /*timezone*/,
+      int /*daylightOffset_sec*/,
+      const char* /*server1*/,
+      const char* /*server2*/ = nullptr,
+      const char* /*server3*/ = nullptr) {}
 
-  void configTime(const char* tz, const char* server1,
-      const char* server2 = nullptr, const char* server3 = nullptr);
+  inline void configTime(
+      const char* /*tz*/,
+      const char* /*server1*/,
+      const char* /*server2*/ = nullptr,
+      const char* /*server3*/ = nullptr) {}
 
   // esp32 api compatibility
   inline void configTzTime(const char* tz, const char* server1,
