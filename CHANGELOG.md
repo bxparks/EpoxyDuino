@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* 1.4.0 (2022-11-06)
     * Add `memcmp_P()` by @dawidchyrzynski in
       [PR#71](https://github.com/bxparks/EpoxyDuino/pull/71).
     * Add `Udp.h` interface supporting both the AVR and ESP8266 variants.
