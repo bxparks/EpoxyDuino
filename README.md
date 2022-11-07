@@ -379,7 +379,7 @@ all:
 	set -e; \
 	for i in */Makefile; do \
 		echo '==== Making:' $$(dirname $$i); \
-		$(MAKE) -C $$(dirname $$i) -j; \
+		$(MAKE) -C $$(dirname $$i); \
 	done
 
 clean:
@@ -397,7 +397,7 @@ tests:
 	set -e; \
 	for i in *Test/Makefile; do \
 		echo '==== Making:' $$(dirname $$i); \
-		$(MAKE) -C $$(dirname $$i) -j; \
+		$(MAKE) -C $$(dirname $$i); \
 	done
 
 runtests:
@@ -587,7 +587,7 @@ be defined through the `-D` flag through `-D $(EPOXY_CORE)`.
 There are currently 2 valid options for this Makefile variable:
 
 * `EPOXY_CORE_AVR` (default)
-    * Causes `Arduino.h` to emulate the Arduino AVR core.
+    * Causes `Arduino.h` to emulate the Arduino AVR Core.
 * `EPOXY_CORE_ESP8266`
     * Causes `Arduino.h` to emulate the ESP8266 Core.
 
@@ -605,6 +605,18 @@ compiler, which will activate any code that is guarded by:
   ...
 #endif
 ```
+
+Note that:
+
+* `EPOXY_CORE_AVR` does **not** define the `ARDUINO_ARCH_AVR` macro,
+* `EPOXY_CORE_ESP8266` does **not** define the `ESP8266` or the
+  `ARDUINO_ARCH_ESP8266` macros.
+
+This is because EpoxyDuino cannot provide perfect emulation of all the classes
+and APIs of the AVR, the ESP8266, or any other third party cores. So defining
+these macros would break too much code. The developer must carefully evaluate
+whether a `#if defined(EXPOXY_CORE_ESP8266)` should be enabled for code that is
+guarded by `#if defined(ESP8266)`.
 
 #### `EPOXY_CORE_PATH`
 
