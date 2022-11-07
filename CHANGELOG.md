@@ -1,6 +1,11 @@
 # Changelog
 
 * Unreleased
+* 1.4.0 (2022-11-06)
+    * Add `memcmp_P()` by @dawidchyrzynski in
+      [PR#71](https://github.com/bxparks/EpoxyDuino/pull/71).
+    * Add `Udp.h` interface supporting both the AVR and ESP8266 variants.
+    * Provide actual stub implementations of `configTime()` for ESP8266.
 * 1.3.1 (2022-08-13)
     * Add `tone()` and `noTone()` stubs. By @kwisii in
       [PR#69](https://github.com/bxparks/EpoxyDuino/pull/69).

@@ -1,6 +1,6 @@
 {
     "name": "EpoxyDuino",
-    "version": "1.3.1",
+    "version": "1.4.0",
     "description": "Compile and run Arduino programs natively on Linux, MacOS and FreeBSD.",
     "keywords": [
         "unit-test",

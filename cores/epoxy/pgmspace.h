@@ -51,6 +51,7 @@
 #define strrchr_P strrchr
 #define strstr_P strstr
 #define memcpy_P memcpy
+#define memcmp_P memcmp
 #define snprintf_P snprintf
 #define vsnprintf_P vsnprintf
 

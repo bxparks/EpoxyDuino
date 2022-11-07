@@ -71,7 +71,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 1.3.1 (2022-08-13)
+**Version**: 1.4.0 (2022-11-06)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -98,7 +98,6 @@ The disadvantages are:
     * [Command Line Flags and Arguments](#CommandLineFlagsAndArguments)
     * [Debugging](#Debugging)
         * [Valgrind](#Valgrind)
-    * [Controlling digitalRead()](#DigitalReadValue)
     * [Mock digitalRead() digitalWrite()](#MockDigitalReadDigitalWrite)
         * [digitalReadValue()](#DigitalReadValue)
         * [digitalWriteValue()](#DigitalWriteValue)
@@ -380,7 +379,7 @@ all:
 	set -e; \
 	for i in */Makefile; do \
 		echo '==== Making:' $$(dirname $$i); \
-		$(MAKE) -C $$(dirname $$i) -j; \
+		$(MAKE) -C $$(dirname $$i); \
 	done
 
 clean:
@@ -398,7 +397,7 @@ tests:
 	set -e; \
 	for i in *Test/Makefile; do \
 		echo '==== Making:' $$(dirname $$i); \
-		$(MAKE) -C $$(dirname $$i) -j; \
+		$(MAKE) -C $$(dirname $$i); \
 	done
 
 runtests:
@@ -588,7 +587,7 @@ be defined through the `-D` flag through `-D $(EPOXY_CORE)`.
 There are currently 2 valid options for this Makefile variable:
 
 * `EPOXY_CORE_AVR` (default)
-    * Causes `Arduino.h` to emulate the Arduino AVR core.
+    * Causes `Arduino.h` to emulate the Arduino AVR Core.
 * `EPOXY_CORE_ESP8266`
     * Causes `Arduino.h` to emulate the ESP8266 Core.
 
@@ -606,6 +605,18 @@ compiler, which will activate any code that is guarded by:
   ...
 #endif
 ```
+
+Note that:
+
+* `EPOXY_CORE_AVR` does **not** define the `ARDUINO_ARCH_AVR` macro,
+* `EPOXY_CORE_ESP8266` does **not** define the `ESP8266` or the
+  `ARDUINO_ARCH_ESP8266` macros.
+
+This is because EpoxyDuino cannot provide perfect emulation of all the classes
+and APIs of the AVR, the ESP8266, or any other third party cores. So defining
+these macros would break too much code. The developer must carefully evaluate
+whether a `#if defined(EXPOXY_CORE_ESP8266)` should be enabled for code that is
+guarded by `#if defined(ESP8266)`.
 
 #### `EPOXY_CORE_PATH`
 
@@ -828,7 +839,7 @@ which are implemented:
     * `bit()`, `bitRead()`, `bitSet()`, `bitClear()`, `bitWrite()`
     * `random()`, `randomSeed()`, `map()`
     * `makeWord()`
-    * `F_CPU`, `clockCyclesPerMicrosecond(), `clockCyclesToMicroseconds()`,
+    * `F_CPU`, `clockCyclesPerMicrosecond()`, `clockCyclesToMicroseconds()`,
       `microsecondsToClockCycles()`
     * `HIGH`, `LOW`, `INPUT`, `OUTPUT`, `INPUT_PULLUP`
     * I2C and SPI pins: `SS`, `MOSI`, `MISO`, `SCK`, `SDA`, `SCL`
@@ -849,7 +860,7 @@ which are implemented:
       `pgm_read_float()`, `pgm_read_ptr()`
     * `strlen_P()`, `strcat_P()`, `strcpy_P()`, `strncpy_P()`, `strcmp_P()`,
       `strncmp_P()`, `strcasecmp_P()`, `strchr_P()`, `strrchr_P()`, `strstr_P()`
-    * `memcpy_P()`, `vsnprintf_P()`
+    * `memcpy_P()`, `memcmp_P()`, `vsnprintf_P()`
     * `PROGMEM`, `PGM_P`, `PGM_VOID_P`, `PSTR()`
 * `IPAddress.h`
     * `IPAddress` class
@@ -1274,3 +1285,5 @@ people ask similar questions later.
   [PR#69](https://github.com/bxparks/EpoxyDuino/pull/69).
 * Add `uint8_t digitalWriteValue(pin)` by @kwisii in
   [PR#68](https://github.com/bxparks/EpoxyDuino/pull/68).
+* Add `memcmp_P()` by @dawidchyrzynski in
+  [PR#71](https://github.com/bxparks/EpoxyDuino/pull/71).
