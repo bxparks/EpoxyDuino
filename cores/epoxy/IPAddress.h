@@ -43,6 +43,9 @@ private:
     // be used when you know that the usage of the returned uint8_t* will be transient and not
     // stored.
     uint8_t* raw_address() { return _address.bytes; };
+  #if defined(EPOXY_CORE_ESP8266)
+    const uint8_t* raw_address() const { return _address.bytes; };
+  #endif
 
 public:
     // Constructors
@@ -73,6 +76,13 @@ public:
   #if defined(EPOXY_CORE_ESP8266)
     String toString() const;
   #endif
+
+    friend class EthernetClass;
+    friend class UDP;
+    friend class Client;
+    friend class Server;
+    friend class DhcpClass;
+    friend class DNSClient;
 };
 
 extern const IPAddress INADDR_NONE;
