@@ -138,7 +138,7 @@ CPPFLAGS += $(EXTRA_CPPFLAGS)
 # instead of Arduino.h so that files like 'compat.h' can determine the
 # compile-time environment without having to include <Arduino.h>.
 # Also define UNIX_HOST_DUINO for backwards compatibility.
-CPPFLAGS += -D UNIX_HOST_DUINO -D EPOXY_DUINO -D $(EPOXY_CORE)
+CPPFLAGS += -D ARDUINO=100 -D UNIX_HOST_DUINO -D EPOXY_DUINO -D $(EPOXY_CORE)
 # Add the header files for the Core files.
 CPPFLAGS += -I$(EPOXY_CORE_PATH)
 # Add the header files for libraries. Old Arduino libraries place the header

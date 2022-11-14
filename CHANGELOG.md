@@ -1,6 +1,10 @@
 # Changelog
 
 * Unreleased
+    * Define the `-D ARDUINO=100` macro.
+        * Some 3rd party libraries test for `ARDUINO >= 100` to check if it's
+          being compiled under Arduino.
+        * Many will compile under EpoxyDuino with this macro set.
 * 1.4.0 (2022-11-06)
     * Add `memcmp_P()` by @dawidchyrzynski in
       [PR#71](https://github.com/bxparks/EpoxyDuino/pull/71).

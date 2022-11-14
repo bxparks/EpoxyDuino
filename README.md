@@ -822,6 +822,35 @@ The `pin` parameter should satisfy `0 <= pin < 32`. If `pin >= 32`, then
 <a name="SupportedArduinoFeatures"></a>
 ## Supported Arduino Features
 
+<a name="ArduinoMacros"></a>
+### Arduino Macros
+
+The following C-preprocessor macros are defined:
+
+* `ARDUINO=100`
+    * Indicates compilation under Arduino.
+* `EPOXY_DUINO`
+    * Indicates compilation under EpoxyDuino
+* `UNIX_HOST_DUINO`
+    * For backwards compatibility with previous version of `EpoxyDuino`
+      which was named `UnixHostDuino`.
+* `EPOXY_CORE_AVR`
+    * Defined when the Makefile variable `EPOXY_CORE` is set to
+      `ARDUINO_ARCH_AVR`.
+    * This is the default.
+* `EPOXY_CORE_ESP8266`
+    * Defined when the Makefile variable `EPOXY_CORE` is set to
+      `ARDUINO_ARCH_ESP8266`.
+
+The following are **not** defined. Many third party libraries tend to break with
+those defined because EpoxyDuino does not emulate those environments perfectly:
+
+* `ARDUINO_ARCH_AVR`
+* `ARDUINO_ARCH_ESP8266`
+* `ARDUINO_ARCH_ESP32`
+* `ESP8266`
+* `ESP32`
+
 <a name="ArduinoFunctions"></a>
 ### Arduino Functions
 
