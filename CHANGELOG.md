@@ -1,6 +1,8 @@
 # Changelog
 
 * Unreleased
+    * Support compiling plain `*.c` files in libraries and in the application.
+        * The C files are assumed to be written in C11.
     * Define the `-D ARDUINO=100` macro.
         * Some 3rd party libraries test for `ARDUINO >= 100` to check if it's
           being compiled under Arduino.

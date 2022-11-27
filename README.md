@@ -233,6 +233,13 @@ for these additional libraries at the following locations:
 * under each of the additional directories listed in `ARDUINO_LIB_DIRS` (see
   below)
 
+Version v1.5 supports compiling and linking plain C files in the third-party
+libraries (defined by `ARDUINO_LIBS`) or in the application directory itself.
+The C files are assumed to be written in C11 and are compiled using the `cc`
+compiler. It may be possible to override the compiler flags by adding `-std=c99`
+into the `EXTRA_CFLAGS` in the Makefile (which clobbers the default `-std=c11`)
+but this has not been tested.
+
 <a name="AdditionalLibraryLocations"></a>
 ### Additional Arduino Library Locations
 
@@ -461,8 +468,16 @@ you can use that instead by specifying the `CXX` makefile variable:
 ```
 $ make CXX=clang++
 ```
-(This tells `make` to set the `CXX` variable to `clang++` within the context of
-`EpoxyDuino.mk` which causes `clang++` to be used over the default `g++`.)
+
+This tells `make` to set the `CXX` variable to `clang++` within the context of
+`EpoxyDuino.mk` which causes `clang++` to be used over the default `g++`.
+
+If you have C files in your library or application, you can use to following to
+compile the C files using `clang` instead of `cc` (which is the same as `gcc` on
+Linux):
+```
+$ make CXX=clang++ CC=clang
+```
 
 One reason to use `clang++` instead of `g++` is that the `clang++` compiler will
 sometimes catch a different set of programming errors.
@@ -485,6 +500,12 @@ variable, like this:
 
 ```
 $ make EXTRA_CXXFLAGS='-g'
+```
+
+or
+
+```
+$ make EXTRA_CXXFLAGS='-g' EXTRA_CFLAGS='-g'
 ```
 
 <a name="AdditionalCleanUp"></a>
