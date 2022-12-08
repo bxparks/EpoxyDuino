@@ -68,8 +68,8 @@ EPOXY_DUINO_PARENT_DIR := $(abspath $(EPOXY_DUINO_DIR)/..)
 # directory.
 ARDUINO_LIB_DIRS ?=
 
-# C macro to select a specific core. Valid options are:
-# EPOXY_CORE_AVR (default), EPOXY_CORE_ESP8266.
+# CPP macro to select a specific core. Valid options are:
+# EPOXY_CORE_AVR (default), and EPOXY_CORE_ESP8266.
 EPOXY_CORE ?= EPOXY_CORE_AVR
 
 # Define the directory where the <Arduino.h> and other core API files are
@@ -77,9 +77,10 @@ EPOXY_CORE ?= EPOXY_CORE_AVR
 EPOXY_CORE_PATH ?= $(EPOXY_DUINO_DIR)/cores/epoxy
 
 # Find the directory paths of the libraries listed in ARDUINO_LIBS by looking
-# under directory given by EPOXY_DUINO_LIB_DIR, the directory given by
-# EPOXY_DUINO_PARENT_DIR to look for siblings, and each directory listed in
-# ARDUINO_LIB_DIRS.
+# at the following:
+# 1) under the directory given by EPOXY_DUINO_LIB_DIR,
+# 2) the sibling directories under EPOXY_DUINO_PARENT_DIR, and
+# 3) each directory listed in ARDUINO_LIB_DIRS.
 EPOXY_MODULES := $(foreach lib,$(ARDUINO_LIBS),${EPOXY_DUINO_LIB_DIR}/${lib})
 EPOXY_MODULES += $(foreach lib,$(ARDUINO_LIBS),${EPOXY_DUINO_PARENT_DIR}/${lib})
 EPOXY_MODULES += \
@@ -118,19 +119,29 @@ EPOXY_MODULES += \
 # like c++ on FreeBSD is actualy clang++. It's possible that FreeBSD has the
 # latest GNU version of libstdc++, but I'm not sure.
 #
-# I added EXTRA_CXXFLAGS to allow end-user Makefiles to specify additional
-# CXXFLAGs.
+# The CFLAGS assume that any C files are C11 files (not C99) because my
+# AceTimeC library requires C11. It may be possible to override that by passing
+# the `-std=c99` flag in the EXTRA_CFLAGS variable (which overrides the
+# `-std=c11` flag), but this has not been tested.
+#
+# I added EXTRA_CXXFLAGS and EXTRA_CFLAGS to allow end-user Makefiles to
+# specify additional flags to CXXFLAGS and CFLAGS.
 ifeq ($(UNAME), Linux)
 CXX ?= g++
-CXXFLAGS ?= -Wextra -Wall -std=gnu++11 -fno-exceptions -fno-threadsafe-statics -flto
+CXXFLAGS ?= -Wextra -Wall -std=gnu++11 -flto \
+	-fno-exceptions -fno-threadsafe-statics
+CFLAGS ?= -Wextra -Wall -std=c11 -flto
 else ifeq ($(UNAME), Darwin)
 CXX ?= clang++
 CXXFLAGS ?= -Wextra -Wall -std=c++11 -stdlib=libc++
+CFLAGS ?= -Wextra -Wall -std=c11
 else ifeq ($(UNAME), FreeBSD)
 CXX ?= clang++
 CXXFLAGS ?= -Wextra -Wall -std=c++11 -stdlib=libc++
+CFLAGS ?= -Wextra -Wall -std=c11
 endif
 CXXFLAGS += $(EXTRA_CXXFLAGS)
+CFLAGS += $(EXTRA_CFLAGS)
 
 # Pre-processor flags (-I, -D, etc), mostly for header files.
 CPPFLAGS += $(EXTRA_CPPFLAGS)
@@ -138,7 +149,7 @@ CPPFLAGS += $(EXTRA_CPPFLAGS)
 # instead of Arduino.h so that files like 'compat.h' can determine the
 # compile-time environment without having to include <Arduino.h>.
 # Also define UNIX_HOST_DUINO for backwards compatibility.
-CPPFLAGS += -D UNIX_HOST_DUINO -D EPOXY_DUINO -D $(EPOXY_CORE)
+CPPFLAGS += -D ARDUINO=100 -D UNIX_HOST_DUINO -D EPOXY_DUINO -D $(EPOXY_CORE)
 # Add the header files for the Core files.
 CPPFLAGS += -I$(EPOXY_CORE_PATH)
 # Add the header files for libraries. Old Arduino libraries place the header
@@ -150,9 +161,9 @@ CPPFLAGS += $(foreach module,$(EPOXY_MODULES),$(CPPFLAGS_EXPANSION))
 # Linker settings (e.g. -lm).
 LDFLAGS ?=
 
-# Generate list of C++ srcs to compile.
+# Collect list of C and C++ srcs to compile.
 #
-# 1) Add the source files in the Core directory. Support subdirectory
+# 1) Collect the source files in the Epoxy Core directory. Support subdirectory
 # expansions up to 3 levels below the given target. (There might be a better
 # way to do this using GNU Make but I can't find a mechanism that doesn't barf
 # when the 'src/' directory doesn't exist.)
@@ -160,23 +171,41 @@ EPOXY_SRCS := $(wildcard $(EPOXY_CORE_PATH)/*.cpp) \
 	$(wildcard $(EPOXY_CORE_PATH)/*/*.cpp) \
 	$(wildcard $(EPOXY_CORE_PATH)/*/*/*.cpp) \
 	$(wildcard $(EPOXY_CORE_PATH)/*/*/*/*.cpp)
-# 2) Add the source files of the libraries. Old Arduino libraries place the
-# source files at the top level. Later Arduino libraries put the source files
-# under the src/ directory. Also support 3 levels of subdirectories.
-MODULE_EXPANSION = $(wildcard $(module)/*.cpp) \
+# 2) Collect the source files of the libraries referenced by the EPOXY_MODULES
+# parameter. Old Arduino libraries place the source files at the top level.
+# Later Arduino libraries put the source files under the src/ directory. Also
+# support 3 levels of subdirectories. Support both C and C++ libraries files.
+MODULE_EXPANSION_CPP = $(wildcard $(module)/*.cpp) \
 	$(wildcard $(module)/src/*.cpp) \
 	$(wildcard $(module)/src/*/*.cpp) \
 	$(wildcard $(module)/src/*/*/*.cpp) \
 	$(wildcard $(module)/src/*/*/*/*.cpp)
-EPOXY_SRCS += $(foreach module,$(EPOXY_MODULES),$(MODULE_EXPANSION))
-# 3) Add the source files in the application directory, also 3 levels down.
-EPOXY_SRCS += $(wildcard *.cpp) $(wildcard */*.cpp) $(wildcard */*/*.cpp) \
+MODULE_EXPANSION_C = $(wildcard $(module)/*.c) \
+	$(wildcard $(module)/src/*.c) \
+	$(wildcard $(module)/src/*/*.c) \
+	$(wildcard $(module)/src/*/*/*.c) \
+	$(wildcard $(module)/src/*/*/*/*.c)
+MODULE_SRCS_CPP += $(foreach module,$(EPOXY_MODULES),$(MODULE_EXPANSION_CPP))
+MODULE_SRCS_C += $(foreach module,$(EPOXY_MODULES),$(MODULE_EXPANSION_C))
+# 3) Collect the source files in the application directory, also 3 levels down.
+APP_SRCS_CPP += $(wildcard *.cpp) \
+	$(wildcard */*.cpp) \
+	$(wildcard */*/*.cpp) \
 	$(wildcard */*/*/*.cpp)
+APP_SRCS_C += $(wildcard *.c) \
+	$(wildcard */*.c) \
+	$(wildcard */*/*.c) \
+	$(wildcard */*/*/*.c)
 
-# Objects including *.o from *.ino
-OBJS += $(EPOXY_SRCS:%.cpp=%.o) $(APP_NAME).o
+# Generate the list of object files from the *.cpp, *.c, and *.ino files.
+OBJS += $(EPOXY_SRCS:%.cpp=%.o)
+OBJS += $(MODULE_SRCS_CPP:%.cpp=%.o)
+OBJS += $(MODULE_SRCS_C:%.c=%.o)
+OBJS += $(APP_SRCS_CPP:%.cpp=%.o)
+OBJS += $(APP_SRCS_C:%.c=%.o)
+OBJS +=$(APP_NAME).o
 
-# Finally, the rule to generate the binary for the application.
+# Finally the rule to generate the *.out binary file for the application.
 $(APP_NAME).out: $(OBJS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
@@ -184,18 +213,36 @@ $(APP_NAME).out: $(OBJS)
 $(APP_NAME).o: $(APP_NAME).ino $(DEPS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -x c++ -c $<
 
-%.o: %.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+# We don't need this rule because the implicit GNU Make rules for converting
+# *.c and *.cpp into *.o files are sufficient.
+#
+# %.o: %.cpp
+#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-# This simple rule does not capture all header dependencies of a given cpp
-# file. Maybe it's better to make each cpp to depend on all headers of a given
-# module, and force a recompilation of all cpp files. As far as I understand,
-# this is what the Arduino IDE does upon each compile iteration.
+# The following simple rules do not capture all header dependencies of a given
+# *.cpp or *.c file. It's probably better to make each *.cpp and *.c to depend
+# on all headers of a given module, and force a recompilation of all the files.
+# As far as I understand, this is what the Arduino IDE does upon each compile
+# iteration. But this is good enough for now, but has the disadvantage that we
+# have to run `make clean` more often than necessary to reset all the
+# dependencies.
 %.cpp: %.h
+%.c: %.h
 
-.PHONY: all clean $(MORE_CLEAN)
+.PHONY: all clean run $(MORE_CLEAN)
 
+# Use 'make all' or just 'make' to compile the binary.
 all: $(APP_NAME).out
 
+# Use 'make run' to run the binary created by 'make all'. This is useful when
+# the (APP_NAME).out is an AUnit unit test. You can execute ': make run' inside
+# the vim editor. The error message of AUnit (as of v1.7) is compatible with
+# the quickfix errorformat of vim, so vim will automatically detect assertion
+# errors and jump directly to the line where the assertion failed.
+run:
+	./$(APP_NAME).out
+
+# Use 'make clean' to remove intermediate '*.o' files, the target '*.out' file,
+# and any generated files defined by $(GENERATED).
 clean: $(MORE_CLEAN)
 	rm -f $(OBJS) $(APP_NAME).out $(GENERATED)
