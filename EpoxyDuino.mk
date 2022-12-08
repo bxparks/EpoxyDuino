@@ -229,9 +229,20 @@ $(APP_NAME).o: $(APP_NAME).ino $(DEPS)
 %.cpp: %.h
 %.c: %.h
 
-.PHONY: all clean $(MORE_CLEAN)
+.PHONY: all clean run $(MORE_CLEAN)
 
+# Use 'make all' or just 'make' to compile the binary.
 all: $(APP_NAME).out
 
+# Use 'make run' to run the binary created by 'make all'. This is useful when
+# the (APP_NAME).out is an AUnit unit test. You can execute ': make run' inside
+# the vim editor. The error message of AUnit (as of v1.7) is compatible with
+# the quickfix errorformat of vim, so vim will automatically detect assertion
+# errors and jump directly to the line where the assertion failed.
+run:
+	./$(APP_NAME).out
+
+# Use 'make clean' to remove intermediate '*.o' files, the target '*.out' file,
+# and any generated files defined by $(GENERATED).
 clean: $(MORE_CLEAN)
 	rm -f $(OBJS) $(APP_NAME).out $(GENERATED)
