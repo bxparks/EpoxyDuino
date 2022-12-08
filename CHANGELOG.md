@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* 1.5.0 (2022-12-08)
     * Support compiling plain `*.c` files in libraries and in the application.
         * The C files are assumed to be written in C11.
     * Define the `-D ARDUINO=100` macro.
