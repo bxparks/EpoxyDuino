@@ -51,7 +51,7 @@ void SPIClass::transferReturnValue(uint16_t data)
 /*Number of calls previous written value*/
 uint16_t SPIClass::transferWriteValue(uint8_t n)
 {
-	return writeBuffer[((n-1)%4)];
+	return writeBuffer[((n-1)%BUFFERSIZE)];
 }
 
 void SPIClass::resetWriteBuffer()
@@ -63,9 +63,9 @@ void SPIClass::resetWriteBuffer()
 void SPIClass::addToBuffer(uint16_t data)
 {
 	/*clear write buffer*/
-	writeBuffer[callCount%4] = 0x0000;
+	writeBuffer[callCount%BUFFERSIZE] = 0x0000;
 	/*set lower byte to transferred value*/
-	writeBuffer[callCount%4] |= data;
+	writeBuffer[callCount%BUFFERSIZE] |= data;
 }
 
 uint8_t SPIClass::getCallCount(){
