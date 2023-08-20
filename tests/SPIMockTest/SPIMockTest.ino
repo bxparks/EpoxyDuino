@@ -317,7 +317,7 @@ test(SPIMockTestMultiple, quadWrite16){
 	
 	SPI_START;
 
-	/*three SPI transfers*/
+	/*four SPI transfers*/
 	SPI.transfer16(0x1122);
 	SPI.transfer16(0x2233); 
 	SPI.transfer16(0x3344); 
@@ -348,7 +348,7 @@ test(SPIMockTestMultiple, pentaWrite16){
 		
 	SPI_START;
 
-	/*three SPI transfers*/
+	/*five SPI transfers*/
 	SPI.transfer16(0x1122); 
 	SPI.transfer16(0x2233); 
 	SPI.transfer16(0x3344); 
