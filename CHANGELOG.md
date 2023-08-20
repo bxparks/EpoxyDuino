@@ -1,6 +1,11 @@
 # Changelog
 
 * Unreleased
+    * Add better SPI Mocking
+      * `transferWriteValue()` To see previous values written via SPI
+         * configurable by changing BUFFERSIZE in SPI.h
+      * `transferReturnValue()` Set return value for a SPI transfer
+      * `getCallCount()` To get number of times `transfer()` or `transfer16()` have been called
     * Add `strncat_P()` to `pgmspace.h`.
 * 1.5.0 (2022-12-08)
     * Support compiling plain `*.c` files in libraries and in the application.
