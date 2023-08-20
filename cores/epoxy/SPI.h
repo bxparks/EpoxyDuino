@@ -63,6 +63,10 @@
   #define SPI_AVR_EIMSK  GIMSK
 #endif
 
+/*Read and write buffers for mocking. 16 bits to support transfer16*/
+static uint16_t readBuffer = 0x0000;
+static uint16_t writeBuffer = 0x0000;
+
 class SPISettings {
 public:
   SPISettings(uint32_t /*clock*/, uint8_t /*bitOrder*/, uint8_t /*dataMode*/)
@@ -98,9 +102,38 @@ public:
   // and configure the correct settings.
   inline static void beginTransaction(SPISettings /*settings*/) { }
 
-  // Write to the SPI bus (MOSI pin) and also receive (MISO pin)
-  inline static uint8_t transfer(uint8_t /*data*/) { return 0; }
-  inline static uint16_t transfer16(uint16_t /*data*/) { return 0; }
+ // Write to the SPI bus (MOSI pin) and also receive (MISO pin)
+  inline static uint8_t transfer(uint8_t data)
+  {
+    /*clear write buffer*/
+    writeBuffer = 0x0000;
+    /*set lower byte to transferred value*/
+    writeBuffer |= data;
+    /*return what was in readbuffer
+      cast to uint8_t is safe as truncation will happen*/
+    return (uint8_t)readBuffer;
+  }
+
+  /*Used to set return value of subsequent transfer/transfer16 function calls
+
+    transfer() and transfer16() will return either the lower byte or both bytes of this
+    set value depending on which transfer() was called
+  */
+  inline static void transferReturnValue(uint16_t data) { readBuffer = data; }
+
+  /*Returns what was last written by either transfer() or transfer16()*/
+  inline static uint16_t transferWriteValue(void) { return writeBuffer; }
+
+  inline static uint16_t transfer16(uint16_t data)
+  {
+    /*clear write buffer*/
+    writeBuffer = 0x0000;
+    /*set to transferred value*/
+    writeBuffer |= data;
+    /*return what was in readbuffer
+      cast to uint8_t is safe as truncation will happen*/
+    return readBuffer;
+  }
   inline static void transfer(void * /*buf*/, size_t /*count*/) { }
   // After performing a group of transfers and releasing the chip select
   // signal, this function allows others to access the SPI bus
