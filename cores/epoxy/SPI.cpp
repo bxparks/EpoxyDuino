@@ -39,9 +39,7 @@ uint8_t SPIClass::transfer(uint8_t data)
 {
 
 	addToBuffer(data);
-	/*return what was in readbuffer
-	  cast to uint8_t is safe as truncation will happen*/
-	  callCount++;
+	callCount++;
 	return (uint8_t)readBuffer;
 }
 

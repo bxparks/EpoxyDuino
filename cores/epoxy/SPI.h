@@ -111,8 +111,7 @@ public:
   */
   void transferReturnValue(uint16_t data);
 
-  /*Returns what was written n calls ago by either transfer() or transfer16()
-    MAX = 4*/
+  /*Returns what was written at call n since the last time resetWriteBuffer was called*/
   uint16_t transferWriteValue(uint8_t n);
 
   uint16_t transfer16(uint16_t data);

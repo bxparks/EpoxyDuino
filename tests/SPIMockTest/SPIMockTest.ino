@@ -146,7 +146,7 @@ test(SPIMockTestBase, readWrite16)
 }
 
 /*Test that we are able to see the return value of the last two SPI Writes*/
-test(SPIMockTestMultiple, dualWrite){
+test(SPIMockTestMultiple, dualWrite8){
 
 	SPI_START;
 
@@ -170,7 +170,7 @@ test(SPIMockTestMultiple, dualWrite){
 }
 /*Test that we are able to see the return value of the last three SPI Writes*/
 
-test(SPIMockTestMultiple, tripleWrite){
+test(SPIMockTestMultiple, tripleWrite8){
 	
 	SPI_START;
 
@@ -197,7 +197,7 @@ test(SPIMockTestMultiple, tripleWrite){
 }
 /*Test that we are able to see the return value of the last four SPI Writes*/
 
-test(SPIMockTestMultiple, quadWrite){
+test(SPIMockTestMultiple, quadWrite8){
 	
 	SPI_START;
 
@@ -228,21 +228,21 @@ test(SPIMockTestMultiple, quadWrite){
 /*Test that we are able to see the return value of the last 4 SPI Writes
   where we have written five times so we should have a rollover*/
 
-test(SPIMockTestMultiple, pentaWrite){
+test(SPIMockTestMultiple, pentaWrite8){
 		
 	SPI_START;
 
 	/*three SPI transfers*/
-	SPI.transfer(0x11); //buffer[0]
-	SPI.transfer(0x22); //buffer[1]
-	SPI.transfer(0x33); //buffer[2]
-	SPI.transfer(0x44); //buffer[3]
-	SPI.transfer(0x55); //buffer[0]
+	SPI.transfer(0x11); 
+	SPI.transfer(0x22); 
+	SPI.transfer(0x33); 
+	SPI.transfer(0x44); 
+	SPI.transfer(0x55); 
 
 	SPI_END;
 
 	/* get the four previous writes*/
-	uint16_t secondCall = SPI.transferWriteValue(2); //buffer[(1-1)%4] = buffer[0]
+	uint16_t secondCall = SPI.transferWriteValue(2); 
 	uint16_t thirdCall = SPI.transferWriteValue(3);
 	uint16_t fourthCall = SPI.transferWriteValue(4);
 	uint16_t fifthCall = SPI.transferWriteValue(5);
@@ -260,6 +260,123 @@ test(SPIMockTestMultiple, pentaWrite){
 	assertEqual(0x5, callCount);
 
 }
+
+/*Test that we are able to see the return value of the last two SPI Writes*/
+test(SPIMockTestMultiple, dualWrite16){
+
+	SPI_START;
+
+	/*two SPI transfers*/
+	SPI.transfer16(0x1122);
+	SPI.transfer16(0x2233);
+
+	SPI_END;
+
+	/* get the two previous writes*/
+	uint16_t firstCall = SPI.transferWriteValue(1);
+	uint16_t secondCall = SPI.transferWriteValue(2);
+
+	SPI.resetWriteBuffer();
+
+	/* Make sure they are equal*/
+	assertEqual(0x1122, firstCall);
+	assertEqual(0x2233, secondCall);
+
+
+}
+/*Test that we are able to see the return value of the last three SPI Writes*/
+
+test(SPIMockTestMultiple, tripleWrite16){
+	
+	SPI_START;
+
+	/*three SPI transfers*/
+	SPI.transfer16(0x1122);
+	SPI.transfer16(0x2233);
+	SPI.transfer16(0x3344);
+
+	SPI_END;
+
+	/* get the three previous writes*/
+	uint16_t firstCall = SPI.transferWriteValue(1);
+	uint16_t secondCall = SPI.transferWriteValue(2);
+	uint16_t thirdCall = SPI.transferWriteValue(3);
+
+	SPI.resetWriteBuffer();
+
+	/* Make sure they are equal*/
+	assertEqual(0x1122, firstCall);
+	assertEqual(0x2233, secondCall);
+	assertEqual(0x3344, thirdCall);
+
+
+}
+/*Test that we are able to see the return value of the last four SPI Writes*/
+
+test(SPIMockTestMultiple, quadWrite16){
+	
+	SPI_START;
+
+	/*three SPI transfers*/
+	SPI.transfer16(0x1122);
+	SPI.transfer16(0x2233); 
+	SPI.transfer16(0x3344); 
+	SPI.transfer16(0x4455); 
+
+	SPI_END;
+
+	/* get the four previous writes*/
+	uint16_t firstCall = SPI.transferWriteValue(1); 
+	uint16_t secondCall = SPI.transferWriteValue(2); 
+	uint16_t thirdCall = SPI.transferWriteValue(3); 
+	uint16_t fourthCall = SPI.transferWriteValue(4); 
+
+	SPI.resetWriteBuffer();
+
+	/* Make sure they are equal*/
+	assertEqual(0x1122, firstCall);
+	assertEqual(0x2233, secondCall);
+	assertEqual(0x3344, thirdCall);
+	assertEqual(0x4455, fourthCall);
+
+
+}
+/*Test that we are able to see the return value of the last 4 SPI Writes
+  where we have written five times so we should have a rollover*/
+
+test(SPIMockTestMultiple, pentaWrite16){
+		
+	SPI_START;
+
+	/*three SPI transfers*/
+	SPI.transfer16(0x1122); 
+	SPI.transfer16(0x2233); 
+	SPI.transfer16(0x3344); 
+	SPI.transfer16(0x4455); 
+	SPI.transfer16(0x5566); 
+
+	SPI_END;
+
+	/* get the four previous writes*/
+	uint16_t secondCall = SPI.transferWriteValue(2); 
+	uint16_t thirdCall = SPI.transferWriteValue(3);
+	uint16_t fourthCall = SPI.transferWriteValue(4);
+	uint16_t fifthCall = SPI.transferWriteValue(5);
+
+	uint8_t callCount = SPI.getCallCount();
+
+	SPI.resetWriteBuffer();
+
+	/* Make sure they are equal*/
+	assertEqual(0x2233, secondCall);
+	assertEqual(0x3344, thirdCall);
+	assertEqual(0x4455, fourthCall);
+	assertEqual(0x5566, fifthCall);
+	//Make sure call count is as expected
+	assertEqual(0x5, callCount);
+
+}
+
 
 void setup()
 {
