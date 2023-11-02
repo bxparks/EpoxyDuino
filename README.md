@@ -1365,3 +1365,5 @@ people ask similar questions later.
   [PR#68](https://github.com/bxparks/EpoxyDuino/pull/68).
 * Add `memcmp_P()` by @dawidchyrzynski in
   [PR#71](https://github.com/bxparks/EpoxyDuino/pull/71).
+* Add additional ESP functions by @EricLauber in
+  [PR#71](https://github.com/bxparks/EpoxyDuino/pull/84).

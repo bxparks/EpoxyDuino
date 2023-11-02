@@ -2,6 +2,8 @@
 
 * Unreleased
     * Add `strncat_P()` to `pgmspace.h`.
+    * Add `ESP.restart()` and `ESP.getChipId()`. See
+      [PR#84](https://github.com/bxparks/EpoxyDuino/pull/84).
 * 1.5.0 (2022-12-08)
     * Support compiling plain `*.c` files in libraries and in the application.
         * The C files are assumed to be written in C11.
