@@ -15,6 +15,8 @@ class EspClass
 
 		void reset() {};
 
+		void restart() {};
+
 		// Very ugly approximation, this is freeStack
 		unsigned long getFreeHeap() {
       int i;
@@ -23,6 +25,8 @@ class EspClass
     }
 
 		uint32_t getCpuFreqMHZ() { return 80; }
+
+		uint32_t getChipId() { return 0; }
 
 		uint32_t getCycleCount() {
 			struct timeval now;
