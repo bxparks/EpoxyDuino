@@ -1,6 +1,11 @@
 # Changelog
 
 * Unreleased
+    * Add better SPI Mocking
+      * `transferWriteValue()` To see previous values written via SPI
+         * configurable by changing BUFFERSIZE in SPI.h
+      * `transferReturnValue()` Set return value for a SPI transfer
+      * `getCallCount()` To get number of times `transfer()` or `transfer16()` have been called
     * Add `strncat_P()` to `pgmspace.h`.
     * Add `ESP.restart()` and `ESP.getChipId()`. See
       [PR#84](https://github.com/bxparks/EpoxyDuino/pull/84).
