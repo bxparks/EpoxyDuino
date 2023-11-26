@@ -7,6 +7,11 @@
 #include <unistd.h>
 #include "StdioSerial.h"
 
+StdioSerial::StdioSerial() {
+}
+
+StdioSerial::StdioSerial(int8_t rxPin, int8_t txPin, bool invert) {}
+
 size_t StdioSerial::write(uint8_t c) {
   ssize_t status = ::write(STDOUT_FILENO, &c, 1);
   return (status <= 0) ? 0 : 1;

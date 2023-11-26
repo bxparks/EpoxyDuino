@@ -15,6 +15,9 @@
  */
 class StdioSerial: public Stream {
   public:
+    StdioSerial();
+    StdioSerial(int8_t rxPin, int8_t txPin = -1, bool invert = false);
+    
     void begin(unsigned long /*baud*/) { bufch = -1; }
 
     size_t write(uint8_t c) override;
