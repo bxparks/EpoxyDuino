@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* 1.6.0 (2024-07-25)
     * Add `strncat_P()` to `pgmspace.h`.
     * Add `ESP.restart()` and `ESP.getChipId()`. See
       [PR#84](https://github.com/bxparks/EpoxyDuino/pull/84).
