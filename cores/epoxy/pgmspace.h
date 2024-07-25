@@ -39,20 +39,21 @@
 #define pgm_read_float_far(addr)  pgm_read_float(addr)
 #define pgm_read_ptr_far(addr)    pgm_read_ptr(addr)
 
-#define strlen_P strlen
-#define strcat_P strcat
-#define strcpy_P strcpy
-#define strncpy_P strncpy
-#define strcmp_P strcmp
-#define strncmp_P strncmp
+#define memcmp_P memcmp
+#define memcpy_P memcpy
+#define snprintf_P snprintf
 #define strcasecmp_P strcasecmp
-#define strncasecmp_P strncasecmp
+#define strcat_P strcat
 #define strchr_P strchr
+#define strcmp_P strcmp
+#define strcpy_P strcpy
+#define strlen_P strlen
+#define strncasecmp_P strncasecmp
+#define strncat_P strncat
+#define strncmp_P strncmp
+#define strncpy_P strncpy
 #define strrchr_P strrchr
 #define strstr_P strstr
-#define memcpy_P memcpy
-#define memcmp_P memcmp
-#define snprintf_P snprintf
 #define vsnprintf_P vsnprintf
 
 #endif

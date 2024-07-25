@@ -71,7 +71,7 @@ The disadvantages are:
   environments (e.g. 16-bit `int` versus 32-bit `int`, or 32-bit `long` versus
   64-bit `long`).
 
-**Version**: 1.5.0 (2022-12-08)
+**Version**: 1.6.0 (2024-07-25)
 
 **Changelog**: See [CHANGELOG.md](CHANGELOG.md)
 
@@ -1311,6 +1311,16 @@ EpoxyDuino release because I no longer use these older environments.
     * I am not sure that I have migrated all the relevant and important compiler
       flags from the microcontroller environment (AVR, ESP8266, etc.) to
       the EpoxyDuino environment.
+* The `sizeof(int)` is `4` on EpoxyDuino as defined by C++ compilers on
+  Unix environments.
+    * This may cause problems with non-portable Arduino code that assumes that
+      `sizeof(int) == 2` which is true only on 8-bit AVR processors used by
+      older Arduino boards. All other Arduino-compatible microcontrollers (e.g.
+      ESP8266, ESP32, SAMD21, SAMD51) use 32-bit processors whose C++ compilers
+      define `sizeof(int) == 4`.
+    * Non-portable code can be converted into portable code by changing the
+      `short`, `int`, and `long` types into types with explicit sizes such as
+      `int16_t`, `uint16_t`, `int32_t`, `uint32_t`, and so on.
 
 <a name="FeedbackAndSupport"></a>
 ## Feedback and Support
@@ -1355,3 +1365,5 @@ people ask similar questions later.
   [PR#68](https://github.com/bxparks/EpoxyDuino/pull/68).
 * Add `memcmp_P()` by @dawidchyrzynski in
   [PR#71](https://github.com/bxparks/EpoxyDuino/pull/71).
+* Add additional ESP functions by @EricLauber in
+  [PR#71](https://github.com/bxparks/EpoxyDuino/pull/84).
