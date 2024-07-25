@@ -152,10 +152,12 @@ CPPFLAGS += $(EXTRA_CPPFLAGS)
 CPPFLAGS += -D ARDUINO=100 -D UNIX_HOST_DUINO -D EPOXY_DUINO -D $(EPOXY_CORE)
 # Add the header files for the Core files.
 CPPFLAGS += -I$(EPOXY_CORE_PATH)
-# Add the header files for libraries. Old Arduino libraries place the header
-# and source files right at the top. New Arduino libraries tend to use the
-# ./src/ subdirectory. We need to support both.
-CPPFLAGS_EXPANSION = -I$(module) -I$(module)/src
+# Add the header files for libraries. Old Arduino libraries (v1.0) place the
+# header and source files right at the top, or in a subdirectory named
+# 'utility'. New Arduino libraries (v1.5) place all their files recursively
+# under the ./src/ subdirectory. We need to support both. See details at:
+# https://arduino.github.io/arduino-cli/1.0/library-specification/ .
+CPPFLAGS_EXPANSION = -I$(module) -I$(module)/src -I$(module)/utility
 CPPFLAGS += $(foreach module,$(EPOXY_MODULES),$(CPPFLAGS_EXPANSION))
 
 # Linker settings (e.g. -lm).
@@ -176,11 +178,13 @@ EPOXY_SRCS := $(wildcard $(EPOXY_CORE_PATH)/*.cpp) \
 # Later Arduino libraries put the source files under the src/ directory. Also
 # support 3 levels of subdirectories. Support both C and C++ libraries files.
 MODULE_EXPANSION_CPP = $(wildcard $(module)/*.cpp) \
+	$(wildcard $(module)/utility/*.cpp) \
 	$(wildcard $(module)/src/*.cpp) \
 	$(wildcard $(module)/src/*/*.cpp) \
 	$(wildcard $(module)/src/*/*/*.cpp) \
 	$(wildcard $(module)/src/*/*/*/*.cpp)
 MODULE_EXPANSION_C = $(wildcard $(module)/*.c) \
+	$(wildcard $(module)/utility/*.c) \
 	$(wildcard $(module)/src/*.c) \
 	$(wildcard $(module)/src/*/*.c) \
 	$(wildcard $(module)/src/*/*/*.c) \
