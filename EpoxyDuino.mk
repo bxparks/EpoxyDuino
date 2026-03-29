@@ -191,15 +191,14 @@ MODULE_EXPANSION_C = $(wildcard $(module)/*.c) \
 	$(wildcard $(module)/src/*/*/*/*.c)
 MODULE_SRCS_CPP += $(foreach module,$(EPOXY_MODULES),$(MODULE_EXPANSION_CPP))
 MODULE_SRCS_C += $(foreach module,$(EPOXY_MODULES),$(MODULE_EXPANSION_C))
-# 3) Collect the source files in the application directory, also 3 levels down.
-APP_SRCS_CPP += $(wildcard *.cpp) \
-	$(wildcard */*.cpp) \
-	$(wildcard */*/*.cpp) \
-	$(wildcard */*/*/*.cpp)
-APP_SRCS_C += $(wildcard *.c) \
-	$(wildcard */*.c) \
-	$(wildcard */*/*.c) \
-	$(wildcard */*/*/*.c)
+# 3) Collect the source files in the application directory. Also follows symlinks.
+ifeq ($(OS),Windows_NT)
+	APP_SRCS_CPP += $(shell dir /S /B src/*.cpp)
+	APP_SRCS_C += $(shell dir /S /B src/*.c)
+else
+	APP_SRCS_CPP += $(shell find -L src -name '*.cpp')
+	APP_SRCS_C += $(shell find -L src -name '*.c')
+endif
 
 # Generate the list of object files from the *.cpp, *.c, and *.ino files.
 OBJS += $(EPOXY_SRCS:%.cpp=%.o)
