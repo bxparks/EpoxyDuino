@@ -12,7 +12,6 @@
  *
  */
 
-#include <inttypes.h>
 #include <unistd.h> // usleep()
 #include <time.h> // clock_gettime()
 #include "Arduino.h"
@@ -21,45 +20,45 @@
 // Arduino methods emulated in Unix
 // -----------------------------------------------------------------------
 
-static uint32_t digitalReadPinValues = 0;
-static uint32_t digitalWritePinValues = 0;
-
 void yield() {
   usleep(1000); // prevents program from consuming 100% CPU
 }
 
 void pinMode(uint8_t /*pin*/, uint8_t /*mode*/) {}
 
-void digitalWrite(uint8_t pin, uint8_t val) {
-  if (pin >= 32) return;
+static const uint8_t arr_size = 256 / 8;
+static uint8_t digitalWritePinValues[arr_size];
+static uint8_t digitalReadPinValues[arr_size];
 
-  if (val == 0) {
-    digitalWritePinValues &= ~(((uint32_t)0x1) << pin);
+void set_bit(uint8_t (&arr)[arr_size], uint8_t index, bool value) {
+  uint8_t &item = arr[index / 8];
+  uint8_t bit_index = index % 8;
+
+  if(value == 0) {
+    item &= ~(0x1 << bit_index);
   } else {
-    digitalWritePinValues |= ((uint32_t)0x1) << pin;
+    item |= (0x1 << bit_index);
   }
+}
+bool get_bit(uint8_t (&arr)[arr_size], uint8_t index) {
+  uint8_t &item = arr[index / 8];
+  uint8_t bit_index = index % 8;
+
+  return (item & (0x1 << bit_index)) != 0;
+}
+
+void digitalWrite(uint8_t pin, uint8_t val) {
+  set_bit(digitalWritePinValues, pin, val);
+}
+int digitalRead(uint8_t pin) {
+  return get_bit(digitalReadPinValues, pin);
 }
 
 uint8_t digitalWriteValue(uint8_t pin) {
-  if (pin >= 32) return 0;
-
-  return (digitalWritePinValues & (((uint32_t)0x1) << pin)) != 0;
+  return get_bit(digitalWritePinValues, pin);
 }
-
-int digitalRead(uint8_t pin) {
-  if (pin >= 32) return 0;
-
-  return (digitalReadPinValues & (((uint32_t)0x1) << pin)) != 0;
-}
-
 void digitalReadValue(uint8_t pin, uint8_t val) {
-  if (pin >= 32) return;
-
-  if (val == 0) {
-    digitalReadPinValues &= ~(((uint32_t)0x1) << pin);
-  } else {
-    digitalReadPinValues |= ((uint32_t)0x1) << pin;
-  }
+  set_bit(digitalReadPinValues, pin, val);
 }
 
 int analogRead(uint8_t /*pin*/) { return 0; }
